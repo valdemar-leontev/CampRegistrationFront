@@ -33,14 +33,13 @@ interface Invoice {
 
 // Пример данных
 const invoices: Invoice[] = [
-  { lastName: 'Иванов', firstName: 'Иван', middleName: 'Иванович', age: 30, city: 'Москва', church: 'Церковь Святого Петра', paymentStatus: 'Скинул скрин' },
-  { lastName: 'Петров', firstName: 'Петр', middleName: 'Петрович', age: 25, city: 'Санкт-Петербург', church: 'Церковь Спаса', paymentStatus: 'Не оплачено' },
-  { lastName: 'Сидоров', firstName: 'Сидор', middleName: 'Сидорович', age: 35, city: 'Новосибирск', church: 'Церковь Успения', paymentStatus: 'Скинул скрин' },
-  { lastName: 'Кузнецов', firstName: 'Алексей', middleName: 'Алексеевич', age: 40, city: 'Екатеринбург', church: 'Церковь Святого Николая', paymentStatus: 'Оплачено' },
-  { lastName: 'Смирнов', firstName: 'Дмитрий', middleName: 'Дмитриевич', age: 28, city: 'Казань', church: 'Церковь Казанской иконы', paymentStatus: 'Скинул скрин' },
-  { lastName: 'Попов', firstName: 'Анатолий', middleName: 'Анатолиевич', age: 33, city: 'Челябинск', church: 'Церковь Святой Троицы', paymentStatus: 'Оплачено' },
-  { lastName: 'Васильев', firstName: 'Сергей', middleName: 'Сергеевич', age: 29, city: 'Нижний Новгород', church: 'Церковь Святого Георгия', paymentStatus: 'Оплачено' },
-  { lastName: 'Зайцев', firstName: 'Олег', middleName: 'Олегович', age: 31, city: 'Ростов-на-Дону', church: 'Церковь Святого Иоанна', paymentStatus: 'Не оплачено' },
+  { lastName: 'Леонтьев', firstName: 'Владимир', middleName: 'Вячеславович', age: 22, city: 'Казань', church: 'Новая Жизнь', paymentStatus: 'Оплатил' },
+  { lastName: 'Леонтьев', firstName: 'Владимир', middleName: 'Вячеславович', age: 22, city: 'Казань', church: 'Новая Жизнь', paymentStatus: 'Скинул скрин' },
+  { lastName: 'Леонтьев', firstName: 'Владимир', middleName: 'Вячеславович', age: 22, city: 'Казань', church: 'Новая Жизнь', paymentStatus: 'Оплатил' },
+  { lastName: 'Леонтьев', firstName: 'Владимир', middleName: 'Вячеславович', age: 22, city: 'Казань', church: 'Новая Жизнь', paymentStatus: 'Скинул скрин' },
+  { lastName: 'Леонтьев', firstName: 'Владимир', middleName: 'Вячеславович', age: 22, city: 'Казань', church: 'Новая Жизнь', paymentStatus: 'Скинул скрин' },
+  { lastName: 'Леонтьев', firstName: 'Владимир', middleName: 'Вячеславович', age: 22, city: 'Казань', church: 'Новая Жизнь', paymentStatus: 'Скинул скрин' },
+  { lastName: 'Леонтьев', firstName: 'Владимир', middleName: 'Вячеславович', age: 22, city: 'Казань', church: 'Новая Жизнь', paymentStatus: 'Скинул скрин' },
 ];
 
 const App: FC = () => {
@@ -86,9 +85,9 @@ const App: FC = () => {
               </TableHeader>
               <TableBody>
                 {invoices.map((invoice, index) => (
-                  <TableRow 
-                    key={index} 
-                    className="border-b hover:bg-gray-50 transition-colors duration-200 cursor-pointer" 
+                  <TableRow
+                    key={index}
+                    className="border-b hover:bg-gray-50 transition-colors duration-200 cursor-pointer"
                     onClick={() => handleRowClick(invoice)}
                   >
                     <TableCell className="py-2 px-4">{invoice.lastName}</TableCell>
