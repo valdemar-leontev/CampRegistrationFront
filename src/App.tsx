@@ -67,16 +67,16 @@ const App: FC = () => {
         </TabsList>
         <TabsContent value="Детский">
           <div>
-            <Table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
+            <Table className="min-w-full bg-white border rounded-lg shadow-md">
               <TableHeader>
-                <TableRow className="bg-gray-100 border-b">
-                  <TableHead className="py-3 px-4 text-left text-gray-600">Фамилия</TableHead>
-                  <TableHead className="py-3 px-4 text-left text-gray-600">Имя</TableHead>
-                  <TableHead className="py-3 px-4 text-left text-gray-600">Отчество</TableHead>
-                  <TableHead className="py-3 px-4 text-right text-gray-600">Возраст</TableHead>
-                  <TableHead className="py-3 px-4 text-left text-gray-600">Город</TableHead>
-                  <TableHead className="py-3 px-4 text-left text-gray-600">Церковь</TableHead>
-                  <TableHead className="py-3 px-4 text-left text-gray-600">Статус оплаты</TableHead>
+                <TableRow className="bg-white border-b">
+                  <TableHead className="py-3 px-4 text-left">Фамилия</TableHead>
+                  <TableHead className="py-3 px-4 text-left">Имя</TableHead>
+                  <TableHead className="py-3 px-4 text-left">Отчество</TableHead>
+                  <TableHead className="py-3 px-4 text-right">Возраст</TableHead>
+                  <TableHead className="py-3 px-4 text-left">Город</TableHead>
+                  <TableHead className="py-3 px-4 text-left">Церковь</TableHead>
+                  <TableHead className="py-3 px-4 text-left">Статус оплаты</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
