@@ -24,7 +24,6 @@ import { motion } from 'framer-motion';
 interface Invoice {
   lastName: string;
   firstName: string;
-  middleName: string;
   age: number;
   city: string;
   church: string;
@@ -33,13 +32,13 @@ interface Invoice {
 
 // Пример данных
 const invoices: Invoice[] = [
-  { lastName: 'Леонтьев', firstName: 'Владимир', middleName: 'Вячеславович', age: 22, city: 'Казань', church: 'Новая Жизнь', paymentStatus: 'Оплатил' },
-  { lastName: 'Леонтьев', firstName: 'Владимир', middleName: 'Вячеславович', age: 22, city: 'Казань', church: 'Новая Жизнь', paymentStatus: 'Скинул скрин' },
-  { lastName: 'Леонтьев', firstName: 'Владимир', middleName: 'Вячеславович', age: 22, city: 'Казань', church: 'Новая Жизнь', paymentStatus: 'Оплатил' },
-  { lastName: 'Леонтьев', firstName: 'Владимир', middleName: 'Вячеславович', age: 22, city: 'Казань', church: 'Новая Жизнь', paymentStatus: 'Скинул скрин' },
-  { lastName: 'Леонтьев', firstName: 'Владимир', middleName: 'Вячеславович', age: 22, city: 'Казань', church: 'Новая Жизнь', paymentStatus: 'Скинул скрин' },
-  { lastName: 'Леонтьев', firstName: 'Владимир', middleName: 'Вячеславович', age: 22, city: 'Казань', church: 'Новая Жизнь', paymentStatus: 'Скинул скрин' },
-  { lastName: 'Леонтьев', firstName: 'Владимир', middleName: 'Вячеславович', age: 22, city: 'Казань', church: 'Новая Жизнь', paymentStatus: 'Скинул скрин' },
+  { lastName: 'Леонтьев', firstName: 'Владимир', age: 22, city: 'Казань', church: 'Новая Жизнь', paymentStatus: 'Оплатил' },
+  { lastName: 'Леонтьев', firstName: 'Владимир', age: 22, city: 'Казань', church: 'Новая Жизнь', paymentStatus: 'Скинул скрин' },
+  { lastName: 'Леонтьев', firstName: 'Владимир', age: 22, city: 'Казань', church: 'Новая Жизнь', paymentStatus: 'Оплатил' },
+  { lastName: 'Леонтьев', firstName: 'Владимир', age: 22, city: 'Казань', church: 'Новая Жизнь', paymentStatus: 'Скинул скрин' },
+  { lastName: 'Леонтьев', firstName: 'Владимир', age: 22, city: 'Казань', church: 'Новая Жизнь', paymentStatus: 'Скинул скрин' },
+  { lastName: 'Леонтьев', firstName: 'Владимир', age: 22, city: 'Казань', church: 'Новая Жизнь', paymentStatus: 'Скинул скрин' },
+  { lastName: 'Леонтьев', firstName: 'Владимир', age: 22, city: 'Казань', church: 'Новая Жизнь', paymentStatus: 'Скинул скрин' },
 ];
 
 const App: FC = () => {
@@ -76,7 +75,6 @@ const App: FC = () => {
                 <TableRow className="border-b bg-slate-100">
                   <TableHead className="py-3 px-4 text-left">Фамилия</TableHead>
                   <TableHead className="py-3 px-4 text-left">Имя</TableHead>
-                  <TableHead className="py-3 px-4 text-left">Отчество</TableHead>
                   <TableHead className="py-3 px-4 text-right">Возраст</TableHead>
                   <TableHead className="py-3 px-4 text-left">Город</TableHead>
                   <TableHead className="py-3 px-4 text-left">Церковь</TableHead>
@@ -92,7 +90,6 @@ const App: FC = () => {
                   >
                     <TableCell className="py-2 px-4">{invoice.lastName}</TableCell>
                     <TableCell className="py-2 px-4">{invoice.firstName}</TableCell>
-                    <TableCell className="py-2 px-4">{invoice.middleName}</TableCell>
                     <TableCell className="py-2 px-4 text-right">{invoice.age}</TableCell>
                     <TableCell className="py-2 px-4">{invoice.city}</TableCell>
                     <TableCell className="py-2 px-4">{invoice.church}</TableCell>
