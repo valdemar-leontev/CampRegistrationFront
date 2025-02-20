@@ -117,7 +117,6 @@ const App: FC = () => {
                         <div className='text-left'>
                           <p><strong>Фамилия:</strong> {selectedInvoice.lastName}</p>
                           <p><strong>Имя:</strong> {selectedInvoice.firstName}</p>
-                          <p><strong>Отчество:</strong> {selectedInvoice.middleName}</p>
                           <p><strong>Возраст:</strong> {selectedInvoice.age}</p>
                           <p><strong>Город:</strong> {selectedInvoice.city}</p>
                           <p><strong>Церковь:</strong> {selectedInvoice.church}</p>
