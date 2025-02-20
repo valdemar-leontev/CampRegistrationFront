@@ -5,7 +5,7 @@ import './App.css';
 const App: FC = () => {
   
   return (
-    <h1>Hard work mode</h1>
+    <h1 className='bg-red-900'>Hard work mode</h1>
   );
 };
 
