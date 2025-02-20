@@ -57,14 +57,13 @@ const App: FC = () => {
 
   return (
     <>
-
-      <Tabs defaultValue="account" className="w-[400px]">
-        <TabsList className=''>
+      <Tabs defaultValue="account">
+        <TabsList >
           <TabsTrigger value="Детский">Детский</TabsTrigger>
           <TabsTrigger value="Подростковый">Подростковый</TabsTrigger>
-          <TabsTrigger value="Отец и сын">Отец и сын</TabsTrigger>
-          <TabsTrigger value="Семейный">Семейный</TabsTrigger>
-          <TabsTrigger value="Молодежный">Молодежный</TabsTrigger>
+          <TabsTrigger value="Отец и сын">Отец и сын</TabsTrigger> 
+          {/* <TabsTrigger value="Семейный">Семейный</TabsTrigger> */}
+          {/* <TabsTrigger value="Молодежный">Молодежный</TabsTrigger>  */}
         </TabsList>
         <TabsContent value="Детский">
           <div>
@@ -94,25 +93,26 @@ const App: FC = () => {
                 ))}
               </TableBody>
             </Table>
+
+            <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen} >
+              <DrawerContent>
+                <DrawerHeader>
+                  <DrawerTitle>Are you absolutely sure?</DrawerTitle>
+                  <DrawerDescription>This action cannot be undone.</DrawerDescription>
+                </DrawerHeader>
+                <DrawerFooter>
+                  <Button>Submit</Button>
+                  <DrawerClose>
+                    <Button variant="outline">Cancel</Button>
+                  </DrawerClose>
+                </DrawerFooter>
+              </DrawerContent>
+            </Drawer>
           </div>
         </TabsContent>
-        <TabsContent value="password">Change your password here.</TabsContent>
       </Tabs>
 
-      <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen} >
-        <DrawerContent>
-          <DrawerHeader>
-            <DrawerTitle>Are you absolutely sure?</DrawerTitle>
-            <DrawerDescription>This action cannot be undone.</DrawerDescription>
-          </DrawerHeader>
-          <DrawerFooter>
-            <Button>Submit</Button>
-            <DrawerClose>
-              <Button variant="outline">Cancel</Button>
-            </DrawerClose>
-          </DrawerFooter>
-        </DrawerContent>
-      </Drawer>
+
 
     </>
 
