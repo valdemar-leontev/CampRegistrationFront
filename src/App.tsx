@@ -61,6 +61,9 @@ const App: FC = () => {
 
   return (
     <div className='bg-white'>
+
+      <h1 className='font-bold text-[23px] mb-5'>Учет летнего отдыха</h1>
+
       <Tabs defaultValue="Детский">
         <TabsList>
           <TabsTrigger value="Детский">Детский</TabsTrigger>
@@ -71,7 +74,7 @@ const App: FC = () => {
           <div>
             <Table className="min-w-full bg-white border rounded-lg shadow-md">
               <TableHeader>
-                <TableRow className="bg-white border-b">
+                <TableRow className="border-b bg-slate-100">
                   <TableHead className="py-3 px-4 text-left">Фамилия</TableHead>
                   <TableHead className="py-3 px-4 text-left">Имя</TableHead>
                   <TableHead className="py-3 px-4 text-left">Отчество</TableHead>
@@ -103,10 +106,10 @@ const App: FC = () => {
             <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
               <DrawerContent>
                 <motion.div
-                  initial={{ scale: 0.5, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  exit={{ scale: 0.5, opacity: 0 }}
-                  transition={{ type: 'spring', stiffness: 50 }}
+                  initial={{ y: 100, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: 100, opacity: 0 }}
+                  transition={{ type: 'spring', stiffness: 100 }}
                 >
                   <DrawerHeader>
                     <DrawerTitle>Информация о счете</DrawerTitle>
