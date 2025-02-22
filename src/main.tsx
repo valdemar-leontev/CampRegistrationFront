@@ -11,21 +11,20 @@ import { retrieveRawInitData } from '@telegram-apps/bridge';
 init()
 
 const Root = () => {
-  // const [isVisible, setIsVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
 
-  // useEffect(() => {
-  //   const timer = setTimeout(() => {
-  //     setIsVisible(true);
-  //   }, 2500);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, 2500);
 
-  //   return () => clearTimeout(timer);
-  // }, []);
+    return () => clearTimeout(timer);
+  }, []);
 
   const [user, setUser] = useState<any>()
 
 
   useEffect(() => {
-    // Запускаем таймер, чтобы подождать перед получением параметров
     const timer = setTimeout(() => {
       const queryString = retrieveRawInitData();
       console.log(queryString);
@@ -37,18 +36,17 @@ const Root = () => {
       const user = JSON.parse(decodeURIComponent(userJson as any));
 
       setUser(user);
-    }, 2500); // Таймер на 2.5 секунды
+    }, 2500);
 
-    // Очистка таймера при размонтировании компонента
     return () => clearTimeout(timer);
   }, []);
 
   return (
     <StrictMode>
       <PoweredByGod />
-      {/* {isVisible && <> */}
-      <App user={user} />
-      {/* </>} */}
+      {isVisible && <>
+        <App user={user} />
+      </>}
     </StrictMode>
   );
 };
