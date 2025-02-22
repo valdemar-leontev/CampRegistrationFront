@@ -57,12 +57,12 @@ const App: FC = () => {
     const randomIndex = Math.floor(Math.random() * drawerImages.length);
     setRandomImage(drawerImages[randomIndex]);
     setSelectedInvoice(invoice);
-    
+
     setTimeout(() => {
       setIsDrawerOpen(true);
-    }, 50); 
+    }, 50);
   };
-  
+
 
   const handlePaymentConfirmation = () => {
     if (selectedInvoice) {
@@ -150,7 +150,13 @@ const App: FC = () => {
                         </DrawerDescription>
                       )}
                     </DrawerHeader>
-                    <img src={randomImage} className="w-full h-[250px]" alt="Random" />
+                    <motion.div
+                      animate={{ opacity: 1 }}
+                      initial={{ opacity: 0 }}
+                      transition={{ delay: 0.5 }}
+                    >
+                      <img src={randomImage} className="w-full h-[250px]" alt="Random" />
+                    </motion.div>
                     <DrawerFooter>
                       <Button onClick={handlePaymentConfirmation} variant="outline" className='bg-[#e7fe55] text-black border-none'>Подтвердить оплату</Button>
                       <DrawerClose asChild>
@@ -158,8 +164,6 @@ const App: FC = () => {
                       </DrawerClose>
                     </DrawerFooter>
                   </motion.div>
-
-
                 </DrawerContent>
               </Drawer>
             </div>
