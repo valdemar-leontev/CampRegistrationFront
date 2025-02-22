@@ -74,9 +74,39 @@ const App: FC = () => {
   };
 
   useEffect(() => {
-    const a = retrieveRawLaunchParams()
+    const queryString = retrieveRawLaunchParams()
 
-    console.log(a);
+    const decodedString = decodeURIComponent(queryString);
+
+    // Разбиваем строку на параметры
+    const params = new URLSearchParams(decodedString);
+
+    // Получаем значения параметров
+    const queryId = params.get('query_id');
+    const userJson = params.get('user');
+    const authDate = params.get('auth_date');
+    const signature = params.get('signature');
+    const hash = params.get('hash');
+    const tgWebAppVersion = params.get('tgWebAppVersion');
+    const tgWebAppPlatform = params.get('tgWebAppPlatform');
+    const tgWebAppThemeParams = params.get('tgWebAppThemeParams');
+
+    // Парсим JSON для пользователя
+    const user = JSON.parse(decodeURIComponent(userJson as any));
+    const themeParams = JSON.parse(decodeURIComponent(tgWebAppThemeParams as any));
+
+    // Выводим результаты
+    console.log({
+      queryId,
+      user,
+      authDate,
+      signature,
+      hash,
+      tgWebAppVersion,
+      tgWebAppPlatform,
+      themeParams
+    });
+
 
   }, [])
 
