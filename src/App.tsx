@@ -54,6 +54,7 @@ const App: FC = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
   const [randomImage, setRandomImage] = useState<string>(drawerImages[0]);
+  const [user, setUser] = useState<any>()
 
   const handleRowClick = (invoice: Invoice) => {
     const randomIndex = Math.floor(Math.random() * drawerImages.length);
@@ -95,6 +96,8 @@ const App: FC = () => {
     const user = JSON.parse(decodeURIComponent(userJson as any));
     const themeParams = JSON.parse(decodeURIComponent(tgWebAppThemeParams as any));
 
+    setUser(user)
+
     // Выводим результаты
     console.log({
       queryId,
@@ -120,6 +123,8 @@ const App: FC = () => {
 
   return (
     <div className='bg-white'>
+
+      <h1>{(user as any).last_name} {(user as any).first_name} {(user as any).id}</h1>
       <>
         <div className='flex items-center gap-2 justify-center mb-3'>
           <h1 className='text-[22px] font-bold'>Учет летнего отдыха</h1>
