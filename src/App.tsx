@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import './App.css';
 import {
   Table,
@@ -21,6 +21,12 @@ import {
 import { Button } from './components/ui/button';
 import { motion } from 'framer-motion';
 import { NavigationPanels } from './components/appComponents/navigation-panels';
+import { GiCampingTent } from "react-icons/gi";
+import drawerImage1 from './assets/draweImage-1.svg'
+import drawerImage2 from './assets/draweImage-2.svg'
+import drawerImage3 from './assets/draweImage-3.svg'
+
+const drawerImages = [drawerImage1, drawerImage2, drawerImage3]; 
 
 interface Invoice {
   lastName: string;
@@ -44,6 +50,7 @@ const invoices: Invoice[] = [
 const App: FC = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
+  const [randomImage, setRandomImage] = useState<string>(drawerImages[0]); 
 
   const handleRowClick = (invoice: Invoice) => {
     setSelectedInvoice(invoice);
@@ -57,28 +64,42 @@ const App: FC = () => {
     }
   };
 
-  return (
-    <div className='bg-white flex flex-col justify-center'>
-      <>
-        <h1 className='font-bold text-[23px] mb-5'>Учет летнего отдыха</h1>
+  useEffect(() => {
+    if (isDrawerOpen) {
+      const randomIndex = Math.floor(Math.random() * drawerImages.length);
+      setRandomImage(drawerImages[randomIndex]);
+    }
+  }, [isDrawerOpen]); 
 
-        <Tabs defaultValue="Детский">
-          <TabsList className=''>
+  return (
+    <div className='bg-white'>
+      <>
+        <div className='flex items-center gap-2 justify-center mb-3'>
+          <h1 className='text-[22px] font-bold'>Учет летнего отдыха</h1>
+          <GiCampingTent size={30} />
+        </div>
+
+
+        <Tabs defaultValue="Детский" >
+          <TabsList className="overflow-x-auto whitespace-nowrap flex gap-2 w-full px-2 scrollbar-hide justify-start pl-2 py-8">
             <TabsTrigger value="Детский">Детский</TabsTrigger>
             <TabsTrigger value="Подростковый">Подростковый</TabsTrigger>
             <TabsTrigger value="Отец и сын">Отец и сын</TabsTrigger>
+            <TabsTrigger value="Общий">Общий</TabsTrigger>
+            <TabsTrigger value="Молодежный">Молодежный</TabsTrigger>
           </TabsList>
+
           <TabsContent value="Детский">
             <div>
-              <Table className="min-w-full bg-white border rounded-lg shadow-md mt-5">
+              <Table className=" bg-white border rounded-lg shadow-md">
                 <TableHeader>
-                  <TableRow className="border-b bg-slate-100">
-                    <TableHead className="py-3 px-4 text-left">Фамилия</TableHead>
-                    <TableHead className="py-3 px-4 text-left">Имя</TableHead>
-                    <TableHead className="py-3 px-4 text-right">Возраст</TableHead>
-                    <TableHead className="py-3 px-4 text-left">Город</TableHead>
-                    <TableHead className="py-3 px-4 text-left">Церковь</TableHead>
-                    <TableHead className="py-3 px-4 text-left">Статус оплаты</TableHead>
+                  <TableRow className="border-b bg-[#e7fe55]">
+                    <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Фамилия</TableHead>
+                    <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Имя</TableHead>
+                    <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Возраст</TableHead>
+                    <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Город</TableHead>
+                    <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Церковь</TableHead>
+                    <TableHead className="py-3 px-4 font-bold text-center text-[16px] text-nowrap">Статус оплаты</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -123,12 +144,14 @@ const App: FC = () => {
                       )}
                     </DrawerHeader>
                     <DrawerFooter>
-                      <Button onClick={handlePaymentConfirmation} variant="outline">Подтвердить оплату</Button>
+                      <Button onClick={handlePaymentConfirmation} variant="outline" className='bg-[#e7fe55] text-black border-none'>Подтвердить оплату</Button>
                       <DrawerClose asChild>
                         <Button variant="outline">Закрыть</Button>
                       </DrawerClose>
                     </DrawerFooter>
                   </motion.div>
+                  <img src={randomImage} className="w-full h-[250px] mt-4" alt="Random" /> 
+
                 </DrawerContent>
               </Drawer>
             </div>
