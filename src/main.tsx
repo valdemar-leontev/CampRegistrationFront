@@ -5,8 +5,6 @@ import App from './App.js'
 
 import { init, miniApp } from '@telegram-apps/sdk';
 
-
-
 const initializeTelegramSDK = async () => {
   try {
     await init();

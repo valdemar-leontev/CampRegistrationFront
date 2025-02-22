@@ -10,8 +10,8 @@
   			sm: 'calc(var(--radius) - 4px)'
   		},
   		colors: {
-  			background: 'hsl(var(--background))',
-  			foreground: 'hsl(var(--foreground))',
+  			background: 'black',
+  			foreground: 'white',
   			card: {
   				DEFAULT: 'hsl(var(--card))',
   				foreground: 'hsl(var(--card-foreground))'
@@ -22,7 +22,7 @@
   			},
   			primary: {
   				DEFAULT: 'hsl(var(--primary))',
-  				foreground: 'hsl(var(--primary-foreground))'
+  				foreground: 'white'
   			},
   			secondary: {
   				DEFAULT: 'hsl(var(--secondary))',
@@ -33,7 +33,7 @@
   				foreground: 'hsl(var(--muted-foreground))'
   			},
   			accent: {
-  				DEFAULT: 'hsl(var(--accent))',
+  				DEFAULT: '#e7fe55',
   				foreground: 'hsl(var(--accent-foreground))'
   			},
   			destructive: {
