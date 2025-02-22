@@ -1,4 +1,4 @@
-import { StrictMode, useState, useEffect } from "react";
+import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.js";
@@ -8,22 +8,22 @@ import { init } from '@telegram-apps/sdk-react'
 init()
 
 const Root = () => {
-  const [isVisible, setIsVisible] = useState(false);
+  // const [isVisible, setIsVisible] = useState(false);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsVisible(true);
-    }, 2500);
+  // useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     setIsVisible(true);
+  //   }, 2500);
 
-    return () => clearTimeout(timer);
-  }, []);
+  //   return () => clearTimeout(timer);
+  // }, []);
 
   return (
     <StrictMode>
       <PoweredByGod />
-      {isVisible && <>
-        <App />
-      </>}
+      {/* {isVisible && <> */}
+      <App />
+      {/* </>} */}
     </StrictMode>
   );
 };
