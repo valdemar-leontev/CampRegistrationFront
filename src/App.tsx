@@ -83,7 +83,7 @@ const App: FC<{ user: any }> = ({ user }) => {
 
 
   return (
-    <>
+    user && <>
       <div className='bg-white'>
         <h1>{user ? `${user.last_name} ${user.first_name} ${user.id}` : 'Loading user...'}</h1>
 
@@ -183,7 +183,7 @@ const App: FC<{ user: any }> = ({ user }) => {
         </>
         <motion.div
           animate={{ opacity: 1 }}
-          initial={{  opacity: 0 }}
+          initial={{ opacity: 0 }}
           transition={{ delay: 0.5 }}
         >
           <NavigationPanels />
