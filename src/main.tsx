@@ -1,39 +1,31 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.js'
+import { StrictMode, useEffect } from 'react';
+import { createRoot } from 'react-dom/client';
+import './index.css';
+import App from './App.js';
 
-// import { init, miniApp } from '@telegram-apps/sdk';
-
-import { init, miniApp } from '@telegram-apps/sdk-react';
-
-// const initializeTelegramSDK = async () => {
-//   try {
-//     await init();
-
-
-//     if (miniApp.ready.isAvailable()) {
-//       await miniApp.ready();
-//       console.log('Mini App готово');
-//       console.log(miniApp);
-//     }
-
-
-//   } catch (error) {
-//     console.error('Ошибка инициализации:', error);
-//   }
-// };
-
-
-// initializeTelegramSDK();
+import { init } from '@telegram-apps/sdk-react';
 
 init();
 
+const AppWrapper = () => {
+  // const [user] = useState<any>();
 
-miniApp.setHeaderColor('#fcb69f');
+  useEffect(() => {
+    console.log(1);
+    
+    const userData = (window as any).Telegram.WebApp.initData;
+    console.log(2);
+
+    console.log(userData);
+    console.log(3);
+    
+  }, []);
+
+  return <App />
+};
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <AppWrapper />
   </StrictMode>,
-)
+);
