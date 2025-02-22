@@ -127,7 +127,7 @@ const App: FC = () => {
                     <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Имя</TableHead>
                     <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Возраст</TableHead>
                     <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Город</TableHead>
-                    <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Церковь</TableHead>
+                    <TableHead className="py-3 px-4 font-bold text-center text-[16px] text-nowrap">Церковь</TableHead>
                     <TableHead className="py-3 px-4 font-bold text-center text-[16px] text-nowrap rounded-e-[40px]">Статус оплаты</TableHead>
                   </TableRow>
                 </TableHeader>
