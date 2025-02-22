@@ -143,6 +143,7 @@ const App: FC = () => {
                         </DrawerDescription>
                       )}
                     </DrawerHeader>
+                    <img src={randomImage} className="w-full h-[250px] mt-4" alt="Random" /> 
                     <DrawerFooter>
                       <Button onClick={handlePaymentConfirmation} variant="outline" className='bg-[#e7fe55] text-black border-none'>Подтвердить оплату</Button>
                       <DrawerClose asChild>
@@ -150,7 +151,7 @@ const App: FC = () => {
                       </DrawerClose>
                     </DrawerFooter>
                   </motion.div>
-                  <img src={randomImage} className="w-full h-[250px] mt-4" alt="Random" /> 
+                  
 
                 </DrawerContent>
               </Drawer>
