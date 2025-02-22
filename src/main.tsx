@@ -1,45 +1,52 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.js'
-
+import { StrictMode, useEffect, useState } from 'react';
+import { createRoot } from 'react-dom/client';
+import './index.css';
+import App from './App.js';
 import { init, miniApp } from '@telegram-apps/sdk';
 
-const initializeTelegramSDK = async () => {
-  try {
-    await init();
+const TelegramApp = () => {
+  const [user, setUser] = useState(null);
 
-    if (miniApp.ready.isAvailable()) {
-      await miniApp.ready();
-      console.log('Mini App готово');
-    }
+  useEffect(() => {
+    const initializeTelegramSDK = async () => {
+      try {
+        await init();
 
-    // Получаем информацию о пользователе
-    const userData = (miniApp as any).initDataUnsafe?.user;
+        if (miniApp.ready.isAvailable()) {
+          await miniApp.ready();
+          console.log('Mini App готово');
+        }
 
-    return userData;
-    if (userData) {
-      console.log('Пользователь:', userData);
-    } else {
-      console.warn('Данные о пользователе недоступны');
-    }
+        // Получаем информацию о пользователе
+        const userData = (miniApp as any).initDataUnsafe?.user;
 
-  } catch (error) {
-    console.error('Ошибка инициализации:', error);
-  }
+        if (userData) {
+          console.log('Пользователь:', userData);
+          setUser(userData); // Обновляем состояние
+        } else {
+          console.warn('Данные о пользователе недоступны');
+        }
+      } catch (error) {
+        console.error('Ошибка инициализации:', error);
+      }
+    };
+
+    initializeTelegramSDK();
+  }, []);
+
+  return (
+    <StrictMode>
+      <div>
+        <h1>Данные пользователя:</h1>
+        {user ? (
+          <pre>{JSON.stringify(user, null, 2)}</pre>
+        ) : (
+          <p>Загрузка...</p>
+        )}
+      </div>
+      <App />
+    </StrictMode>
+  );
 };
 
-
-
-const userData = await initializeTelegramSDK();
-
-// miniApp.setHeaderColor('#fcb69f');
-
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <h1>{userData.json()}</h1>
-    <h1>{userData}</h1>
-
-    <App />
-  </StrictMode>,
-)
+createRoot(document.getElementById('root')!).render(<TelegramApp />);
