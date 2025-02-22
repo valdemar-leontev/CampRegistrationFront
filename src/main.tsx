@@ -3,27 +3,35 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.js'
 
-import { init, miniApp } from '@telegram-apps/sdk';
+// import { init, miniApp } from '@telegram-apps/sdk';
 
-const initializeTelegramSDK = async () => {
-  try {
-    await init();
+import { init, backButton } from '@telegram-apps/sdk-react';
 
-
-    if (miniApp.ready.isAvailable()) {
-      await miniApp.ready();
-      console.log('Mini App готово');
-      console.log(miniApp);
-    }
+// const initializeTelegramSDK = async () => {
+//   try {
+//     await init();
 
 
-  } catch (error) {
-    console.error('Ошибка инициализации:', error);
-  }
-};
+//     if (miniApp.ready.isAvailable()) {
+//       await miniApp.ready();
+//       console.log('Mini App готово');
+//       console.log(miniApp);
+//     }
 
 
-initializeTelegramSDK();
+//   } catch (error) {
+//     console.error('Ошибка инициализации:', error);
+//   }
+// };
+
+
+// initializeTelegramSDK();
+
+init();
+
+// Mount the Back Button, so we will work with 
+// the actual component properties.
+backButton.mount();
 
 // miniApp.setHeaderColor('#fcb69f');
 

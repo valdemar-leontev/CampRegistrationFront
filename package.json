@@ -18,6 +18,7 @@
     "@tanstack/react-table": "^8.21.2",
     "@telegram-apps/bridge": "^2.3.2",
     "@telegram-apps/sdk": "^3.4.0",
+    "@telegram-apps/sdk-react": "^3.1.0",
     "@vitejs/plugin-react-swc": "^3.8.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
