@@ -25,8 +25,9 @@ import { GiCampingTent } from "react-icons/gi";
 import drawerImage1 from './assets/draweImage-1.svg'
 import drawerImage2 from './assets/draweImage-2.svg'
 import drawerImage3 from './assets/draweImage-3.svg'
+import drawerImage4 from './assets/draweImage-4.svg'
 
-const drawerImages = [drawerImage1, drawerImage2, drawerImage3]; 
+const drawerImages = [drawerImage1, drawerImage2, drawerImage3, drawerImage4];
 
 interface Invoice {
   lastName: string;
@@ -50,12 +51,18 @@ const invoices: Invoice[] = [
 const App: FC = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
-  const [randomImage, setRandomImage] = useState<string>(drawerImages[0]); 
+  const [randomImage, setRandomImage] = useState<string>(drawerImages[0]);
 
   const handleRowClick = (invoice: Invoice) => {
+    const randomIndex = Math.floor(Math.random() * drawerImages.length);
+    setRandomImage(drawerImages[randomIndex]);
     setSelectedInvoice(invoice);
-    setIsDrawerOpen(true);
+    
+    setTimeout(() => {
+      setIsDrawerOpen(true);
+    }, 50); 
   };
+  
 
   const handlePaymentConfirmation = () => {
     if (selectedInvoice) {
@@ -69,7 +76,7 @@ const App: FC = () => {
       const randomIndex = Math.floor(Math.random() * drawerImages.length);
       setRandomImage(drawerImages[randomIndex]);
     }
-  }, [isDrawerOpen]); 
+  }, [isDrawerOpen]);
 
   return (
     <div className='bg-white'>
@@ -81,7 +88,7 @@ const App: FC = () => {
 
 
         <Tabs defaultValue="Детский" >
-          <TabsList className="overflow-x-auto whitespace-nowrap flex gap-2 w-full px-2 scrollbar-hide justify-start pl-2 py-8">
+          <TabsList className="overflow-x-auto overflow-y-hidden whitespace-nowrap flex gap-2 w-full px-2 scrollbar-hide justify-start pl-2 py-8">
             <TabsTrigger value="Детский">Детский</TabsTrigger>
             <TabsTrigger value="Подростковый">Подростковый</TabsTrigger>
             <TabsTrigger value="Отец и сын">Отец и сын</TabsTrigger>
@@ -91,9 +98,9 @@ const App: FC = () => {
 
           <TabsContent value="Детский">
             <div>
-              <Table className=" bg-white border rounded-lg shadow-md">
+              <Table className="bg-white border shadow-md">
                 <TableHeader>
-                  <TableRow className="border-b bg-[#e7fe55]">
+                  <TableRow className="border-none bg-[#e7fe55]">
                     <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Фамилия</TableHead>
                     <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Имя</TableHead>
                     <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Возраст</TableHead>
@@ -143,7 +150,7 @@ const App: FC = () => {
                         </DrawerDescription>
                       )}
                     </DrawerHeader>
-                    <img src={randomImage} className="w-full h-[250px] mt-4" alt="Random" /> 
+                    <img src={randomImage} className="w-full h-[250px]" alt="Random" />
                     <DrawerFooter>
                       <Button onClick={handlePaymentConfirmation} variant="outline" className='bg-[#e7fe55] text-black border-none'>Подтвердить оплату</Button>
                       <DrawerClose asChild>
@@ -151,7 +158,7 @@ const App: FC = () => {
                       </DrawerClose>
                     </DrawerFooter>
                   </motion.div>
-                  
+
 
                 </DrawerContent>
               </Drawer>
