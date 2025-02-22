@@ -27,7 +27,6 @@ import drawerImage2 from './assets/draweImage-2.svg'
 import drawerImage3 from './assets/draweImage-3.svg'
 import drawerImage4 from './assets/draweImage-4.svg'
 
-import { retrieveRawLaunchParams } from '@telegram-apps/sdk-react';
 
 const drawerImages = [drawerImage1, drawerImage2, drawerImage3, drawerImage4];
 
@@ -50,11 +49,11 @@ const invoices: Invoice[] = [
   { lastName: 'Леонтьев', firstName: 'Владимир', age: 22, city: 'Казань', church: 'Новая Жизнь', paymentStatus: 'Скинул скрин' },
 ];
 
-const App: FC = () => {
+const App: FC<{ user: any }> = ({ user }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
   const [randomImage, setRandomImage] = useState<string>(drawerImages[0]);
-  const [user, setUser] = useState<any>()
+
 
   const handleRowClick = (invoice: Invoice) => {
     const randomIndex = Math.floor(Math.random() * drawerImages.length);
@@ -73,18 +72,6 @@ const App: FC = () => {
       setIsDrawerOpen(false);
     }
   };
-
-  useEffect(() => {
-    const queryString = retrieveRawLaunchParams()
-
-    const decodedString = decodeURIComponent(queryString);
-    const params = new URLSearchParams(decodedString);
-    const userJson = params.get('user');
-    const user = JSON.parse(decodeURIComponent(userJson as any));
-
-    setUser(user)
-  }, [])
-
 
   useEffect(() => {
     if (isDrawerOpen) {
