@@ -9,17 +9,24 @@ const initializeTelegramSDK = async () => {
   try {
     await init();
 
-
     if (miniApp.ready.isAvailable()) {
       await miniApp.ready();
       console.log('Mini App готово');
     }
 
+    // Получаем информацию о пользователе
+    const userData = (miniApp as any).initDataUnsafe?.user;
+    if (userData) {
+      console.log('Пользователь:', userData);
+    } else {
+      console.warn('Данные о пользователе недоступны');
+    }
 
   } catch (error) {
     console.error('Ошибка инициализации:', error);
   }
 };
+
 
 
 initializeTelegramSDK();
