@@ -93,108 +93,118 @@ const App: FC = () => {
     }
   }, [isDrawerOpen]);
 
+
+
   return (
-    <div className='bg-white'>
+    <>
+      <div className='bg-white'>
+        <h1>{user ? `${user.last_name} ${user.first_name} ${user.id}` : 'Loading user...'}</h1>
 
-      <h1>{user ? `${user.last_name} ${user.first_name} ${user.id}` : 'Loading user...'}</h1>
+        <>
+          <div className='flex items-center gap-2 justify-center mb-3'>
+            <h1 className='text-[22px] font-bold'>Учет летнего отдыха</h1>
+            <GiCampingTent size={30} />
+          </div>
 
-      <>
-        <div className='flex items-center gap-2 justify-center mb-3'>
-          <h1 className='text-[22px] font-bold'>Учет летнего отдыха</h1>
-          <GiCampingTent size={30} />
-        </div>
+          <Tabs defaultValue="Детский" >
+            <TabsList className="overflow-x-auto overflow-y-hidden whitespace-nowrap flex gap-2 w-full px-2 scrollbar-hide justify-start pl-2 py-8 ">
+              <TabsTrigger value="Детский">Детский</TabsTrigger>
+              <TabsTrigger value="Подростковый">Подростковый</TabsTrigger>
+              <TabsTrigger value="Отец и сын">Отец и сын</TabsTrigger>
+              <TabsTrigger value="Общий">Общий</TabsTrigger>
+              <TabsTrigger value="Молодежный">Молодежный</TabsTrigger>
+            </TabsList>
 
-        <Tabs defaultValue="Детский" >
-          <TabsList className="overflow-x-auto overflow-y-hidden whitespace-nowrap flex gap-2 w-full px-2 scrollbar-hide justify-start pl-2 py-8 ">
-            <TabsTrigger value="Детский">Детский</TabsTrigger>
-            <TabsTrigger value="Подростковый">Подростковый</TabsTrigger>
-            <TabsTrigger value="Отец и сын">Отец и сын</TabsTrigger>
-            <TabsTrigger value="Общий">Общий</TabsTrigger>
-            <TabsTrigger value="Молодежный">Молодежный</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="Детский">
-            <motion.div
-              initial={{ y: 100, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: 100, opacity: 0 }}
-              transition={{ type: 'spring', stiffness: 100 }}
-            >
-              <Table className="bg-white border shadow-md border-transparent">
-                <TableHeader>
-                  <TableRow className="bg-[#e7fe55] !border-none">
-                    <TableHead className="py-3 px-4 font-bold text-center text-[16px] rounded-s-[40px]">Фамилия</TableHead>
-                    <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Имя</TableHead>
-                    <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Возраст</TableHead>
-                    <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Город</TableHead>
-                    <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Церковь</TableHead>
-                    <TableHead className="py-3 px-4 font-bold text-center text-[16px] text-nowrap rounded-e-[40px]">Статус оплаты</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {invoices.map((invoice, index) => (
-                    <TableRow
-                      key={index}
-                      className="border-b hover:bg-gray-50 transition-colors duration-200 cursor-pointer"
-                      onClick={() => handleRowClick(invoice)}
-                    >
-                      <TableCell className="py-2 px-4">{invoice.lastName}</TableCell>
-                      <TableCell className="py-2 px-4">{invoice.firstName}</TableCell>
-                      <TableCell className="py-2 px-4">{invoice.age}</TableCell>
-                      <TableCell className="py-2 px-4">{invoice.city}</TableCell>
-                      <TableCell className="py-2 px-4 text-nowrap">{invoice.church}</TableCell>
-                      <TableCell className="py-2 px-4">{invoice.paymentStatus}</TableCell>
+            <TabsContent value="Детский">
+              <motion.div
+                initial={{ y: 100, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: 100, opacity: 0 }}
+                transition={{ type: 'spring', stiffness: 100 }}
+              >
+                <Table className="bg-white border shadow-md border-transparent">
+                  <TableHeader>
+                    <TableRow className="bg-[#e7fe55] !border-none">
+                      <TableHead className="py-3 px-4 font-bold text-center text-[16px] rounded-s-[40px]">Фамилия</TableHead>
+                      <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Имя</TableHead>
+                      <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Возраст</TableHead>
+                      <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Город</TableHead>
+                      <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Церковь</TableHead>
+                      <TableHead className="py-3 px-4 font-bold text-center text-[16px] text-nowrap rounded-e-[40px]">Статус оплаты</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {invoices.map((invoice, index) => (
+                      <TableRow
+                        key={index}
+                        className="border-b hover:bg-gray-50 transition-colors duration-200 cursor-pointer"
+                        onClick={() => handleRowClick(invoice)}
+                      >
+                        <TableCell className="py-2 px-4">{invoice.lastName}</TableCell>
+                        <TableCell className="py-2 px-4">{invoice.firstName}</TableCell>
+                        <TableCell className="py-2 px-4">{invoice.age}</TableCell>
+                        <TableCell className="py-2 px-4">{invoice.city}</TableCell>
+                        <TableCell className="py-2 px-4 text-nowrap">{invoice.church}</TableCell>
+                        <TableCell className="py-2 px-4">{invoice.paymentStatus}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
 
-              <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
-                <DrawerContent>
-                  <motion.div
-                    initial={{ y: 100, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    exit={{ y: 100, opacity: 0 }}
-                    transition={{ type: 'spring', stiffness: 100 }}
-                  >
-                    <DrawerHeader>
-                      <DrawerTitle>Информация о счете</DrawerTitle>
-                      {selectedInvoice && (
-                        <DrawerDescription className='pt-6'>
-                          <div className='text-left'>
-                            <p><strong>Фамилия:</strong> {selectedInvoice.lastName}</p>
-                            <p><strong>Имя:</strong> {selectedInvoice.firstName}</p>
-                            <p><strong>Возраст:</strong> {selectedInvoice.age}</p>
-                            <p><strong>Город:</strong> {selectedInvoice.city}</p>
-                            <p><strong>Церковь:</strong> {selectedInvoice.church}</p>
-                            <p><strong>Статус оплаты:</strong> {selectedInvoice.paymentStatus}</p>
-                          </div>
-                        </DrawerDescription>
-                      )}
-                    </DrawerHeader>
+                <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+                  <DrawerContent>
                     <motion.div
-                      animate={{ opacity: 1 }}
-                      initial={{ opacity: 0 }}
-                      transition={{ delay: 0.5 }}
+                      initial={{ y: 100, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      exit={{ y: 100, opacity: 0 }}
+                      transition={{ type: 'spring', stiffness: 100 }}
                     >
-                      <img src={randomImage} className="w-full h-[250px]" alt="Random" />
+                      <DrawerHeader>
+                        <DrawerTitle>Информация о счете</DrawerTitle>
+                        {selectedInvoice && (
+                          <DrawerDescription className='pt-6'>
+                            <div className='text-left'>
+                              <p><strong>Фамилия:</strong> {selectedInvoice.lastName}</p>
+                              <p><strong>Имя:</strong> {selectedInvoice.firstName}</p>
+                              <p><strong>Возраст:</strong> {selectedInvoice.age}</p>
+                              <p><strong>Город:</strong> {selectedInvoice.city}</p>
+                              <p><strong>Церковь:</strong> {selectedInvoice.church}</p>
+                              <p><strong>Статус оплаты:</strong> {selectedInvoice.paymentStatus}</p>
+                            </div>
+                          </DrawerDescription>
+                        )}
+                      </DrawerHeader>
+                      <motion.div
+                        animate={{ opacity: 1 }}
+                        initial={{ opacity: 0 }}
+                        transition={{ delay: 0.5 }}
+                      >
+                        <img src={randomImage} className="w-full h-[250px]" alt="Random" />
+                      </motion.div>
+                      <DrawerFooter>
+                        <Button onClick={handlePaymentConfirmation} variant="outline" className='bg-[#e7fe55] text-black border-none'>Подтвердить оплату</Button>
+                        <DrawerClose asChild>
+                          <Button variant="outline">Закрыть</Button>
+                        </DrawerClose>
+                      </DrawerFooter>
                     </motion.div>
-                    <DrawerFooter>
-                      <Button onClick={handlePaymentConfirmation} variant="outline" className='bg-[#e7fe55] text-black border-none'>Подтвердить оплату</Button>
-                      <DrawerClose asChild>
-                        <Button variant="outline">Закрыть</Button>
-                      </DrawerClose>
-                    </DrawerFooter>
-                  </motion.div>
-                </DrawerContent>
-              </Drawer>
-            </motion.div>
-          </TabsContent>
-        </Tabs>
-      </>
+                  </DrawerContent>
+                </Drawer>
+              </motion.div>
+            </TabsContent>
+          </Tabs>
+        </>
+        <motion.div
+          animate={{ opacity: 1 }}
+          initial={{  opacity: 0 }}
+          transition={{ delay: 0.5 }}
+        >
+          <NavigationPanels />
+        </motion.div>
 
-      <NavigationPanels />
-    </div>
+      </div>
+
+    </>
   );
 };
 
