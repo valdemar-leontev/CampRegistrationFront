@@ -4,7 +4,8 @@ import "./index.css";
 import App from "./App.js";
 import PoweredByGod from './components/appComponents/PoweredByGod.js';
 import { init } from '@telegram-apps/sdk-react'
-import { retrieveRawLaunchParams } from '@telegram-apps/sdk-react';
+// import { retrieveRawLaunchParams } from '@telegram-apps/sdk-react';
+import { retrieveRawInitData } from '@telegram-apps/bridge';
 
 
 init()
@@ -26,8 +27,11 @@ const Root = () => {
   useEffect(() => {
     // Запускаем таймер, чтобы подождать перед получением параметров
     const timer = setTimeout(() => {
-      const queryString = retrieveRawLaunchParams();
-      const decodedString = decodeURIComponent(queryString);
+      const queryString = retrieveRawInitData();
+      console.log(queryString);
+
+
+      const decodedString = decodeURIComponent(queryString!);
       const params = new URLSearchParams(decodedString);
       const userJson = params.get('user');
       const user = JSON.parse(decodeURIComponent(userJson as any));
