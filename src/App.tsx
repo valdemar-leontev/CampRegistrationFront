@@ -97,7 +97,12 @@ const App: FC = () => {
           </TabsList>
 
           <TabsContent value="Детский">
-            <div>
+            <motion.div
+              initial={{ y: 100, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 100, opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 100 }}
+            >
               <Table className="bg-white border shadow-md">
                 <TableHeader>
                   <TableRow className="border-none bg-[#e7fe55]">
@@ -166,7 +171,7 @@ const App: FC = () => {
                   </motion.div>
                 </DrawerContent>
               </Drawer>
-            </div>
+            </motion.div>
           </TabsContent>
         </Tabs>
       </>
