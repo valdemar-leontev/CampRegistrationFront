@@ -79,10 +79,8 @@ const App: FC = () => {
 
     const decodedString = decodeURIComponent(queryString);
 
-    // Разбиваем строку на параметры
     const params = new URLSearchParams(decodedString);
 
-    // Получаем значения параметров
     const queryId = params.get('query_id');
     const userJson = params.get('user');
     const authDate = params.get('auth_date');
@@ -92,13 +90,11 @@ const App: FC = () => {
     const tgWebAppPlatform = params.get('tgWebAppPlatform');
     const tgWebAppThemeParams = params.get('tgWebAppThemeParams');
 
-    // Парсим JSON для пользователя
     const user = JSON.parse(decodeURIComponent(userJson as any));
     const themeParams = JSON.parse(decodeURIComponent(tgWebAppThemeParams as any));
 
     setUser(user)
 
-    // Выводим результаты
     console.log({
       queryId,
       user,
@@ -109,8 +105,6 @@ const App: FC = () => {
       tgWebAppPlatform,
       themeParams
     });
-
-
   }, [])
 
 
@@ -124,7 +118,8 @@ const App: FC = () => {
   return (
     <div className='bg-white'>
 
-      <h1>{(user as any).last_name} {(user as any).first_name} {(user as any).id}</h1>
+      <h1>{user ? `${user.last_name} ${user.first_name} ${user.id}` : 'Loading...'}</h1>
+
       <>
         <div className='flex items-center gap-2 justify-center mb-3'>
           <h1 className='text-[22px] font-bold'>Учет летнего отдыха</h1>
