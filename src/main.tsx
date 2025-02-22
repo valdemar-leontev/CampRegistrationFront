@@ -16,6 +16,8 @@ const initializeTelegramSDK = async () => {
 
     // Получаем информацию о пользователе
     const userData = (miniApp as any).initDataUnsafe?.user;
+
+    return userData;
     if (userData) {
       console.log('Пользователь:', userData);
     } else {
@@ -29,12 +31,15 @@ const initializeTelegramSDK = async () => {
 
 
 
-initializeTelegramSDK();
+const userData = await initializeTelegramSDK();
 
 // miniApp.setHeaderColor('#fcb69f');
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
+    <h1>{userData.json()}</h1>
+    <h1>{userData}</h1>
+
     <App />
   </StrictMode>,
 )
