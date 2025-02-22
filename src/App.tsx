@@ -27,6 +27,8 @@ import drawerImage2 from './assets/draweImage-2.svg'
 import drawerImage3 from './assets/draweImage-3.svg'
 import drawerImage4 from './assets/draweImage-4.svg'
 
+import { retrieveRawLaunchParams } from '@telegram-apps/sdk-react';
+
 const drawerImages = [drawerImage1, drawerImage2, drawerImage3, drawerImage4];
 
 interface Invoice {
@@ -70,6 +72,14 @@ const App: FC = () => {
       setIsDrawerOpen(false);
     }
   };
+
+  useEffect(() => {
+    const a = retrieveRawLaunchParams()
+
+    console.log(a);
+
+  }, [])
+
 
   useEffect(() => {
     if (isDrawerOpen) {
