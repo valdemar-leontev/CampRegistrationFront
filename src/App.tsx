@@ -63,7 +63,7 @@ const App: FC = () => {
         <h1 className='font-bold text-[23px] mb-5'>Учет летнего отдыха</h1>
 
         <Tabs defaultValue="Детский">
-          <TabsList className='flex gap-1 h-full px-6 rounded-full'>
+          <TabsList className=''>
             <TabsTrigger value="Детский">Детский</TabsTrigger>
             <TabsTrigger value="Подростковый">Подростковый</TabsTrigger>
             <TabsTrigger value="Отец и сын">Отец и сын</TabsTrigger>
@@ -90,7 +90,7 @@ const App: FC = () => {
                     >
                       <TableCell className="py-2 px-4">{invoice.lastName}</TableCell>
                       <TableCell className="py-2 px-4">{invoice.firstName}</TableCell>
-                      <TableCell className="py-2 px-4 text-right">{invoice.age}</TableCell>
+                      <TableCell className="py-2 px-4">{invoice.age}</TableCell>
                       <TableCell className="py-2 px-4">{invoice.city}</TableCell>
                       <TableCell className="py-2 px-4">{invoice.church}</TableCell>
                       <TableCell className="py-2 px-4">{invoice.paymentStatus}</TableCell>
