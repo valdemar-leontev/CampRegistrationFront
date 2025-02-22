@@ -78,33 +78,11 @@ const App: FC = () => {
     const queryString = retrieveRawLaunchParams()
 
     const decodedString = decodeURIComponent(queryString);
-
     const params = new URLSearchParams(decodedString);
-
-    const queryId = params.get('query_id');
     const userJson = params.get('user');
-    const authDate = params.get('auth_date');
-    const signature = params.get('signature');
-    const hash = params.get('hash');
-    const tgWebAppVersion = params.get('tgWebAppVersion');
-    const tgWebAppPlatform = params.get('tgWebAppPlatform');
-    const tgWebAppThemeParams = params.get('tgWebAppThemeParams');
-
     const user = JSON.parse(decodeURIComponent(userJson as any));
-    const themeParams = JSON.parse(decodeURIComponent(tgWebAppThemeParams as any));
 
     setUser(user)
-
-    console.log({
-      queryId,
-      user,
-      authDate,
-      signature,
-      hash,
-      tgWebAppVersion,
-      tgWebAppPlatform,
-      themeParams
-    });
   }, [])
 
 
@@ -118,7 +96,7 @@ const App: FC = () => {
   return (
     <div className='bg-white'>
 
-      <h1>{user ? `${user.last_name} ${user.first_name} ${user.id}` : 'Loading...'}</h1>
+      <h1>{user ? `${user.last_name} ${user.first_name} ${user.id}` : 'Loading user...'}</h1>
 
       <>
         <div className='flex items-center gap-2 justify-center mb-3'>
@@ -126,9 +104,8 @@ const App: FC = () => {
           <GiCampingTent size={30} />
         </div>
 
-
         <Tabs defaultValue="Детский" >
-          <TabsList className="overflow-x-auto overflow-y-hidden whitespace-nowrap flex gap-2 w-full px-2 scrollbar-hide justify-start pl-2 py-8">
+          <TabsList className="overflow-x-auto overflow-y-hidden whitespace-nowrap flex gap-2 w-full px-2 scrollbar-hide justify-start pl-2 py-8 ">
             <TabsTrigger value="Детский">Детский</TabsTrigger>
             <TabsTrigger value="Подростковый">Подростковый</TabsTrigger>
             <TabsTrigger value="Отец и сын">Отец и сын</TabsTrigger>
@@ -143,15 +120,15 @@ const App: FC = () => {
               exit={{ y: 100, opacity: 0 }}
               transition={{ type: 'spring', stiffness: 100 }}
             >
-              <Table className="bg-white border shadow-md">
+              <Table className="bg-white border shadow-md border-transparent">
                 <TableHeader>
-                  <TableRow className="border-none bg-[#e7fe55]">
-                    <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Фамилия</TableHead>
+                  <TableRow className="bg-[#e7fe55] !border-none">
+                    <TableHead className="py-3 px-4 font-bold text-center text-[16px] rounded-s-[40px]">Фамилия</TableHead>
                     <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Имя</TableHead>
                     <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Возраст</TableHead>
                     <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Город</TableHead>
                     <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Церковь</TableHead>
-                    <TableHead className="py-3 px-4 font-bold text-center text-[16px] text-nowrap">Статус оплаты</TableHead>
+                    <TableHead className="py-3 px-4 font-bold text-center text-[16px] text-nowrap rounded-e-[40px]">Статус оплаты</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
