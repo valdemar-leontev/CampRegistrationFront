@@ -24,15 +24,20 @@ const Root = () => {
 
 
   useEffect(() => {
-    const queryString = retrieveRawLaunchParams()
+    // Запускаем таймер, чтобы подождать перед получением параметров
+    const timer = setTimeout(() => {
+      const queryString = retrieveRawLaunchParams();
+      const decodedString = decodeURIComponent(queryString);
+      const params = new URLSearchParams(decodedString);
+      const userJson = params.get('user');
+      const user = JSON.parse(decodeURIComponent(userJson as any));
 
-    const decodedString = decodeURIComponent(queryString);
-    const params = new URLSearchParams(decodedString);
-    const userJson = params.get('user');
-    const user = JSON.parse(decodeURIComponent(userJson as any));
+      setUser(user);
+    }, 2500); // Таймер на 2.5 секунды
 
-    setUser(user)
-  }, [])
+    // Очистка таймера при размонтировании компонента
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <StrictMode>
