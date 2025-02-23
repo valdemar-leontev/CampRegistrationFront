@@ -92,7 +92,7 @@ const App: FC<{ user: any }> = ({ user }) => {
     <div className='bg-white'>
       <div className='flex items-center gap-4 mb-10 justify-between'>
         <div className='flex items-center gap-4'>
-          {user.photo_url ? <Skeleton className="relative flex h-14 w-14 shrink-0 overflow-hidden rounded-2xl" /> :
+          {!user.photo_url ? <Skeleton className="relative flex h-14 w-14 shrink-0 overflow-hidden rounded-2xl" /> :
             <Avatar>
               <AvatarImage src={user.photo_url} />
               <AvatarFallback>Avatar</AvatarFallback>
