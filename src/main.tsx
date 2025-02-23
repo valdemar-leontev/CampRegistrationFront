@@ -8,7 +8,7 @@ import { init } from '@telegram-apps/sdk-react'
 import { retrieveRawInitData } from '@telegram-apps/bridge';
 
 
-// init()
+init()
 
 const Root = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -24,22 +24,22 @@ const Root = () => {
   const [user, setUser] = useState<any>()
 
 
-  // useEffect(() => {
-  //   const timer = setTimeout(() => {
-  //     const queryString = retrieveRawInitData();
-  //     console.log(queryString);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const queryString = retrieveRawInitData();
+      console.log(queryString);
 
 
-  //     const decodedString = decodeURIComponent(queryString!);
-  //     const params = new URLSearchParams(decodedString);
-  //     const userJson = params.get('user');
-  //     const user = JSON.parse(decodeURIComponent(userJson as any));
+      const decodedString = decodeURIComponent(queryString!);
+      const params = new URLSearchParams(decodedString);
+      const userJson = params.get('user');
+      const user = JSON.parse(decodeURIComponent(userJson as any));
 
-  //     setUser(user);
-  //   }, 2500);
+      setUser(user);
+    }, 2500);
 
-  //   return () => clearTimeout(timer);
-  // }, []);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <StrictMode>
