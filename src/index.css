@@ -5,12 +5,7 @@
 body {
   background-color: white;
 }
-/* 
+
 ::-webkit-scrollbar {
   display: none;
-} */
-
-.magic-font {
-  font-family: "Sofia Sans Semi Condensed", serif;
-  font-optical-sizing: auto;
 }

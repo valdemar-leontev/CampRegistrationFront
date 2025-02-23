@@ -6,6 +6,11 @@ import PoweredByGod from './components/appComponents/PoweredByGod.js';
 import { init } from '@telegram-apps/sdk-react'
 // import { retrieveRawLaunchParams } from '@telegram-apps/sdk-react';
 import { retrieveRawInitData } from '@telegram-apps/bridge';
+import { motion } from 'framer-motion';
+import { NavigationPanels } from './components/appComponents/navigation-panels.js';
+import { useTabStore } from './stores/TabStore.js';
+import FAQ from './components/appComponents/faq.js';
+import { ProfileBar } from './components/appComponents/profile-bar.js';
 
 
 init()
@@ -22,7 +27,6 @@ const Root = () => {
   }, []);
 
   const [user, setUser] = useState<any>()
-
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -41,11 +45,27 @@ const Root = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  const { activeTab } = useTabStore();
+
   return (
     <StrictMode>
       <PoweredByGod />
+
       {isVisible && <>
+        <ProfileBar user={user} />
         <App user={user} />
+        <motion.div
+          animate={{ opacity: 1 }}
+          initial={{ opacity: 0 }}
+          transition={{ delay: 0.5 }}
+        >
+          {activeTab === "Отец и сын" && (
+            <div className="">
+              <FAQ />
+            </div>
+          )}
+          <NavigationPanels />
+        </motion.div>
       </>}
     </StrictMode>
   );

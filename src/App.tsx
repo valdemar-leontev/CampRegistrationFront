@@ -20,15 +20,11 @@ import {
 } from "@/components/ui/drawer";
 import { Button } from './components/ui/button';
 import { motion } from 'framer-motion';
-import { NavigationPanels } from './components/appComponents/navigation-panels';
 import { GiCampingTent } from "react-icons/gi";
 import drawerImage1 from './assets/draweImage-1.svg'
 import drawerImage2 from './assets/draweImage-2.svg'
 import drawerImage3 from './assets/draweImage-3.svg'
 import drawerImage4 from './assets/draweImage-4.svg'
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { CiBellOn } from "react-icons/ci";
-import { Skeleton } from './components/ui/skeleton';
 import { useTabStore } from './stores/TabStore';
 
 
@@ -93,32 +89,9 @@ const App: FC<{ user: any }> = ({ user }) => {
 
   return (
     <div className='bg-white'>
-      <div className='flex items-center gap-4 mb-10 justify-between'>
-        <div className='flex items-center gap-4'>
-          {(!user || !user.photo_url) ? <Skeleton className="relative flex h-14 w-14 shrink-0 overflow-hidden rounded-2xl" /> :
-            <Avatar>
-              <AvatarImage src={user.photo_url} />
-              <AvatarFallback>Avatar</AvatarFallback>
-            </Avatar>}
-          <div className='flex flex-col text-left'>
-            <h1 className='text-[18px] font-bold'>{user ? `${user.last_name} ${user.first_name}` : 'Test user'}</h1>
-            <h1 className='text-[#c448a4] font-bold text-[16px]'>Администратор</h1>
-          </div>
-        </div>
-
-        <motion.div
-          className="w-14 h-14 rounded-full shadow flex justify-center items-center cursor-pointer"
-          whileTap={{ scale: 0.8, opacity: 0.7 }}
-          whileHover={{ scale: 1.1 }}
-          transition={{ type: "spring", stiffness: 300, damping: 10 }}
-        >
-          <CiBellOn size={30} />
-        </motion.div>
-      </div>
-
       {activeTab == 'Детский' && <>
         <div className='flex items-center gap-2 justify-center mb-3'>
-          <h1 className='text-[22px] font-bold magic-font'>УЧЕТ ЛЕТНЕГО ОТДЫХА</h1>
+          <h1 className='text-3xl font-bold text-center'>Учет летнего отдыха</h1>
           <GiCampingTent size={30} />
         </div>
 
@@ -210,13 +183,7 @@ const App: FC<{ user: any }> = ({ user }) => {
           </TabsContent>
         </Tabs>
       </>}
-      <motion.div
-        animate={{ opacity: 1 }}
-        initial={{ opacity: 0 }}
-        transition={{ delay: 0.5 }}
-      >
-        <NavigationPanels />
-      </motion.div>
+
 
     </div >
 
