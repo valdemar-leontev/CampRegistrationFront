@@ -28,6 +28,7 @@ import drawerImage3 from './assets/draweImage-3.svg'
 import drawerImage4 from './assets/draweImage-4.svg'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { CiBellOn } from "react-icons/ci";
+import { Skeleton } from './components/ui/skeleton';
 
 
 const drawerImages = [drawerImage1, drawerImage2, drawerImage3, drawerImage4];
@@ -91,10 +92,11 @@ const App: FC<{ user: any }> = ({ user }) => {
     <div className='bg-white'>
       <div className='flex items-center gap-4 mb-10 justify-between'>
         <div className='flex items-center gap-4'>
-          <Avatar>
-            <AvatarImage src={user.photo_url} />
-            <AvatarFallback>Avatar</AvatarFallback>
-          </Avatar>
+          {user.photo_url ? <Skeleton className="relative flex h-14 w-14 shrink-0 overflow-hidden rounded-2xl" /> :
+            <Avatar>
+              <AvatarImage src={user.photo_url} />
+              <AvatarFallback>Avatar</AvatarFallback>
+            </Avatar>}
           <div className='flex flex-col text-left'>
             <h1 className='text-[18px] font-bold'>{user ? `${user.last_name} ${user.first_name}` : 'Test user'}</h1>
             <h1 className='text-[#c448a4] font-bold text-[16px]'>Администратор</h1>
