@@ -92,11 +92,11 @@ const App: FC<{ user: any }> = ({ user }) => {
       <div className='flex items-center gap-4 mb-10 justify-between'>
         <div className='flex items-center gap-4'>
           <Avatar>
-            <AvatarImage src="https://github.com/shadcn.png" />
+            <AvatarImage src={user.photo_url} />
             <AvatarFallback>Avatar</AvatarFallback>
           </Avatar>
           <div className='flex flex-col text-left'>
-            <h1 className='text-[22px] font-bold'>{user ? `${user.last_name} ${user.first_name} ${user.id}` : 'Test user'}</h1>
+            <h1 className='text-[18px] font-bold'>{user ? `${user.last_name} ${user.first_name}` : 'Test user'}</h1>
             <h1 className='text-[#c448a4] font-bold text-[16px]'>Администратор</h1>
           </div>
         </div>
