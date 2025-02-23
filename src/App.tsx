@@ -29,6 +29,7 @@ import drawerImage4 from './assets/draweImage-4.svg'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { CiBellOn } from "react-icons/ci";
 import { Skeleton } from './components/ui/skeleton';
+import { useTabStore } from './stores/TabStore';
 
 
 const drawerImages = [drawerImage1, drawerImage2, drawerImage3, drawerImage4];
@@ -56,6 +57,8 @@ const App: FC<{ user: any }> = ({ user }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
   const [randomImage, setRandomImage] = useState<string>(drawerImages[0]);
+
+  const { activeTab } = useTabStore();
 
 
   const handleRowClick = (invoice: Invoice) => {
@@ -92,7 +95,7 @@ const App: FC<{ user: any }> = ({ user }) => {
     <div className='bg-white'>
       <div className='flex items-center gap-4 mb-10 justify-between'>
         <div className='flex items-center gap-4'>
-          {!user.photo_url ? <Skeleton className="relative flex h-14 w-14 shrink-0 overflow-hidden rounded-2xl" /> :
+          {(!user || !user.photo_url) ? <Skeleton className="relative flex h-14 w-14 shrink-0 overflow-hidden rounded-2xl" /> :
             <Avatar>
               <AvatarImage src={user.photo_url} />
               <AvatarFallback>Avatar</AvatarFallback>
@@ -113,7 +116,7 @@ const App: FC<{ user: any }> = ({ user }) => {
         </motion.div>
       </div>
 
-      <>
+      {activeTab == 'Детский' && <>
         <div className='flex items-center gap-2 justify-center mb-3'>
           <h1 className='text-[22px] font-bold magic-font'>УЧЕТ ЛЕТНЕГО ОТДЫХА</h1>
           <GiCampingTent size={30} />
@@ -206,7 +209,7 @@ const App: FC<{ user: any }> = ({ user }) => {
             </motion.div>
           </TabsContent>
         </Tabs>
-      </>
+      </>}
       <motion.div
         animate={{ opacity: 1 }}
         initial={{ opacity: 0 }}
