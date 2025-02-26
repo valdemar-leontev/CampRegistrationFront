@@ -59,7 +59,7 @@ export function RegistrationForm() {
   useEffect(() => {
     // Функция для отслеживания фокуса на полях ввода
     const handleFocus = () => {
-      setDrawerHeight("100vh"); // Увеличиваем высоту до 100% при фокусе
+      setDrawerHeight("90vh"); // Увеличиваем высоту до 100% при фокусе
     };
     const handleBlur = () => {
       setDrawerHeight("80vh"); // Восстанавливаем стандартную высоту, когда фокус уходит
