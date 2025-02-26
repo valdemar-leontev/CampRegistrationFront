@@ -97,7 +97,7 @@ export function DrawerRegistration() {
       </Button>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="h-[calc(100vh-10px)] overflow-auto transition-all">
+        <DialogContent className="h-[calc(100vh-10px)] overflow-auto transition-all duration-1000">
 
           <DialogHeader>
             <DialogTitle className="text-xl font-semibold">{steps[step]}</DialogTitle>
