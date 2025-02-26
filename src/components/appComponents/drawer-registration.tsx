@@ -1,5 +1,5 @@
 import { useForm, SubmitHandler } from "react-hook-form"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -82,6 +82,31 @@ export function DrawerRegistration() {
     }
   }
 
+  useEffect(() => {
+    const handleFocus = () => {
+      document.body.style.position = "fixed";
+      document.body.style.width = "100%";
+    };
+    const handleBlur = () => {
+      document.body.style.position = "";
+      document.body.style.width = "";
+    };
+
+    window.addEventListener("focusin", handleFocus);
+    window.addEventListener("focusout", handleBlur);
+
+    return () => {
+      window.removeEventListener("focusin", handleFocus);
+      window.removeEventListener("focusout", handleBlur);
+    };
+  }, []);
+
+  const handleFocus = (event: React.FocusEvent<HTMLInputElement>) => {
+    event.target.scrollIntoView({ behavior: "smooth", block: "center" })
+  }
+  
+
+
   return (
     <>
       <motion.div
@@ -101,7 +126,8 @@ export function DrawerRegistration() {
       </motion.div>
 
       <Drawer open={isOpen} onOpenChange={setIsOpen}>
-        <DrawerContent className="h-[100%] min-h-[100vh]">
+        <DrawerContent className="h-[calc(100vh-10px)] overflow-auto">
+
           <AnimatedBubbles />
           <DrawerHeader>
             <DrawerTitle className="text-xl font-semibold">{steps[step]}</DrawerTitle>
@@ -122,6 +148,7 @@ export function DrawerRegistration() {
                   {...form.register("firstName", { required: "Это поле обязательно для заполнения" })}
                   placeholder="Введите ваше имя"
                   className={form.formState.errors.firstName ? "border-red-500" : ""}
+                  onFocus={handleFocus}
                 />
                 <AnimatePresence>
                   {form.formState.errors.firstName && (
@@ -142,6 +169,7 @@ export function DrawerRegistration() {
                   {...form.register("lastName", { required: "Это поле обязательно для заполнения" })}
                   placeholder="Введите вашу фамилию"
                   className={form.formState.errors.lastName ? "border-red-500" : ""}
+                  onFocus={handleFocus}
                 />
                 <AnimatePresence>
                   {form.formState.errors.lastName && (
@@ -163,6 +191,7 @@ export function DrawerRegistration() {
                   {...form.register("age", { required: "Это поле обязательно для заполнения" })}
                   placeholder="Введите ваш возраст"
                   className={form.formState.errors.age ? "border-red-500" : ""}
+                  onFocus={handleFocus}
                 />
                 <AnimatePresence>
                   {form.formState.errors.age && (
@@ -183,6 +212,7 @@ export function DrawerRegistration() {
                   {...form.register("phone", { required: "Это поле обязательно для заполнения" })}
                   placeholder="Введите ваш номер телефона"
                   className={form.formState.errors.phone ? "border-red-500" : ""}
+                  onFocus={handleFocus}
                 />
                 <AnimatePresence>
                   {form.formState.errors.phone && (
@@ -207,6 +237,7 @@ export function DrawerRegistration() {
                   {...form.register("city", { required: "Это поле обязательно для заполнения" })}
                   placeholder="Введите ваш город"
                   className={form.formState.errors.city ? "border-red-500" : ""}
+                  onFocus={handleFocus}
                 />
                 <AnimatePresence>
                   {form.formState.errors.city && (
@@ -268,6 +299,7 @@ export function DrawerRegistration() {
                         {...form.register("church", { required: "Это поле обязательно для заполнения" })}
                         placeholder="Введите название вашей церкви"
                         className={form.formState.errors.church ? "border-red-500" : ""}
+                        onFocus={handleFocus}
                       />
                     </motion.div>
                   )}
