@@ -13,20 +13,15 @@ const Root = () => {
   const [user, setUser] = useState<any>()
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      const queryString = retrieveRawInitData();
-      console.log(queryString);
+    const queryString = retrieveRawInitData();
+    console.log(queryString);
 
+    const decodedString = decodeURIComponent(queryString!);
+    const params = new URLSearchParams(decodedString);
+    const userJson = params.get('user');
+    const user = JSON.parse(decodeURIComponent(userJson as any));
 
-      const decodedString = decodeURIComponent(queryString!);
-      const params = new URLSearchParams(decodedString);
-      const userJson = params.get('user');
-      const user = JSON.parse(decodeURIComponent(userJson as any));
-
-      setUser(user);
-    }, 2500);
-
-    return () => clearTimeout(timer);
+    setUser(user);
   }, []);
 
 
@@ -35,7 +30,7 @@ const Root = () => {
       <PoweredByGod />
 
       <App user={user} />
-     
+
     </StrictMode>
   );
 };
