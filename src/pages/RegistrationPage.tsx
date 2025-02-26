@@ -90,7 +90,7 @@ export const RegistrationPage: FC<IRegistrationPageProps> = ({ username }) => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2, duration: 0.6 }}
       >
-        Привет, {username}!
+        Привет, {username}! 
       </motion.div>
 
       <motion.div

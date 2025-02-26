@@ -12,6 +12,7 @@ import {
   DrawerFooter,
 } from "@/components/ui/drawer"
 import { motion, AnimatePresence } from "framer-motion"
+import { AnimatedBubbles } from './animated-bubbles'
 
 interface FormValues {
   firstName: string
@@ -63,7 +64,11 @@ export function DrawerRegistration() {
 
   const onSubmit: SubmitHandler<FormValues> = (values) => {
     console.log({ ...values, selectedCamps })
-    setIsOpen(false)
+    onClose();
+  }
+
+  const onClose = () => {
+    setIsOpen(false);
   }
 
   const totalPrice = selectedCamps.reduce((sum, camp) => sum + camp.price, 0)
@@ -82,12 +87,12 @@ export function DrawerRegistration() {
       <motion.div
         animate={{
           scale: [1, 1.05, 1],
-          opacity: [1, 0.8, 1], 
+          opacity: [1, 0.8, 1],
         }}
         transition={{
           duration: 1.5,
           repeat: Infinity,
-          repeatType: 'loop', 
+          repeatType: 'loop',
         }}
       >
         <Button onClick={() => setIsOpen(true)} variant={'ghost'} className='p-10 !py-6'>
@@ -97,6 +102,7 @@ export function DrawerRegistration() {
 
       <Drawer open={isOpen} onOpenChange={setIsOpen}>
         <DrawerContent className="h-[100%] min-h-[100vh]">
+          <AnimatedBubbles />
           <DrawerHeader>
             <DrawerTitle className="text-xl font-semibold">{steps[step]}</DrawerTitle>
           </DrawerHeader>
@@ -316,7 +322,15 @@ export function DrawerRegistration() {
           </motion.div>
 
           <DrawerFooter className="flex justify-between p-6">
-            {step > 0 && <Button onClick={() => setStep(step - 1)} variant={'outline'}>Назад</Button>}
+            {step > 0 ? (
+              <Button onClick={() => setStep(step - 1)} variant="outline">
+                Назад
+              </Button>
+            ) : (
+              <Button onClick={onClose} variant="outline">
+                Закрыть
+              </Button>
+            )}
             {step < steps.length - 1 ? (
               <Button onClick={handleNext} variant={'ghost'}>Далее</Button>
             ) : (

@@ -37,7 +37,7 @@ const App: FC<{ user: any }> = ({ user }) => {
         >
           {activeTab === "home" && (
             <div>
-              <RegistrationPage username={`${user.username}`} />
+              <RegistrationPage username={`${user ? user.username : 'Друг'}`} />
             </div>
           )}
 
