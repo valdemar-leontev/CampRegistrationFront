@@ -109,7 +109,7 @@ export function DrawerRegistration() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -150 }}
             transition={{ type: "spring", stiffness: 100, duration: 0.5 }}
-            className="p-2 space-y-4 h-[70vh] overflow-auto relative"
+            className="p-2 space-y-4 h-[60vh] overflow-auto relative"
           >
             {step === 0 && (
               <>
