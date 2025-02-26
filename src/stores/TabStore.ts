@@ -6,6 +6,6 @@ interface TabStore {
 }
 
 export const useTabStore = create<TabStore>((set) => ({
-  activeTab: "Детский",
+  activeTab: "home",
   setActiveTab: (tab) => set({ activeTab: tab }),
 }));
