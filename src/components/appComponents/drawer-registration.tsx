@@ -1,5 +1,5 @@
 import { useForm, SubmitHandler } from "react-hook-form"
-import { useEffect, useRef, useState } from "react"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -81,28 +81,6 @@ export function DrawerRegistration() {
     }
   }
 
-  const descRef = useRef<HTMLInputElement>(null);
-
-  // useEffect(() => {
-  //   if (isOpen) {
-  //     // Устанавливаем фокус на кнопку "Закрыть" через небольшую задержку
-  //     setTimeout(() => {
-  //       closeButtonRef.current?.focus();
-  //     }, 100); // задержка в 100мс
-  //   }
-  // }, [isOpen]);
-
-  const onEscape = () => {
-    if (isOpen) {
-      descRef.current!.blur();
-    }
-  };
-
-  useEffect(() => {
-    onEscape()
-  }, [])
-
-
   return (
     <>
       <Button onClick={() => setIsOpen(true)} variant={'ghost'} className='p-10 !py-6'>
@@ -110,7 +88,7 @@ export function DrawerRegistration() {
       </Button>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="h-[calc(100vh-10px)] overflow-auto transition-all duration-1000">
+        <DialogContent className="h-[calc(100vh-10px)] overflow-auto transition-all duration-1000 fixed ">
 
           <DialogHeader>
             <DialogTitle className="text-xl font-semibold">{steps[step]}</DialogTitle>
@@ -131,7 +109,6 @@ export function DrawerRegistration() {
                   {...form.register("firstName", { required: "Это поле обязательно для заполнения" })}
                   placeholder="Введите ваше имя"
                   className={form.formState.errors.firstName ? "border-red-500" : ""}
-                  ref={descRef}
                 />
                 <AnimatePresence>
                   {form.formState.errors.firstName && (
