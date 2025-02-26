@@ -38,27 +38,6 @@ const camps: Camp[] = [
   { name: "Семейный", date: "5-10 сентября", price: 300 },
 ]
 
-const formContainerRef = useRef<HTMLDivElement | null>(null);
-
-useEffect(() => {
-  const handleResize = () => {
-    if (formContainerRef.current) {
-      formContainerRef.current.style.setProperty('bottom', `env(safe-area-inset-bottom)`);
-    }
-  };
-
-  if (window.visualViewport) {
-    window.visualViewport.addEventListener("resize", handleResize);
-    handleResize(); // Initial call in case the keyboard is already open
-  }
-
-  return () => {
-    if (window.visualViewport) {
-      window.visualViewport.removeEventListener("resize", handleResize);
-    }
-  };
-}, []);
-
 
 export function DrawerRegistration() {
   const [step, setStep] = useState(0)
@@ -102,6 +81,30 @@ export function DrawerRegistration() {
       form.trigger()
     }
   }
+
+
+  const formContainerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      const handleResize = () => {
+        if (formContainerRef.current) {
+          formContainerRef.current.style.setProperty('bottom', `env(safe-area-inset-bottom)`);
+        }
+      };
+
+      if (window.visualViewport) {
+        window.visualViewport.addEventListener("resize", handleResize);
+        handleResize(); // Initial call in case the keyboard is already open
+      }
+
+      return () => {
+        if (window.visualViewport) {
+          window.visualViewport.removeEventListener("resize", handleResize);
+        }
+      };
+    }
+  }, []);
 
   return (
     <>
