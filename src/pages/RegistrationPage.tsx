@@ -14,15 +14,18 @@ export const RegistrationPage: FC<IRegistrationPageProps> = ({ username }) => {
       animate={{ opacity: 1 }}
       transition={{ duration: 1 }}
     >
-
       <motion.div
-        className="absolute top-6 left-1/2 transform -translate-x-1/2 text-xl font-semibold text-gray-700"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2, duration: 0.6 }}
-      >
-        Привет, {username}! 
-      </motion.div>
+        className="absolute top-0 left-0 w-32 h-32 border-t-4 border-l-4 border-gray-300 opacity-30"
+        initial={{ opacity: 0, x: -20, y: -20 }}
+        animate={{ opacity: 1, x: 0, y: 0 }}
+        transition={{ duration: 1 }}
+      />
+      <motion.div
+        className="absolute bottom-0 right-0 w-32 h-32 border-b-4 border-r-4 border-gray-300 opacity-30"
+        initial={{ opacity: 0, x: 20, y: 20 }}
+        animate={{ opacity: 1, x: 0, y: 0 }}
+        transition={{ duration: 1 }}
+      />
 
       <motion.div
         className="relative z-10 text-center"
@@ -30,6 +33,14 @@ export const RegistrationPage: FC<IRegistrationPageProps> = ({ username }) => {
         animate={{ opacity: 1 }}
         transition={{ duration: 1 }}
       >
+        <motion.div
+          className="text-xl font-semibold text-gray-700 mb-10"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.6 }}
+        >
+          Привет, {username}!
+        </motion.div>
         <motion.h1
           className="text-4xl font-extrabold text-gray-800 mb-6"
           initial={{ opacity: 0, y: -50 }}

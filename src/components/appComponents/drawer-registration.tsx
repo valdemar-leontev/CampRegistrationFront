@@ -1,18 +1,17 @@
 import { useForm, SubmitHandler } from "react-hook-form"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
 import {
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerFooter,
-} from "@/components/ui/drawer"
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog"
 import { motion, AnimatePresence } from "framer-motion"
-import { AnimatedBubbles } from './animated-bubbles'
 
 interface FormValues {
   firstName: string
@@ -82,56 +81,18 @@ export function DrawerRegistration() {
     }
   }
 
-  useEffect(() => {
-    const handleFocus = () => {
-      document.body.style.position = "fixed";
-      document.body.style.width = "100%";
-    };
-    const handleBlur = () => {
-      document.body.style.position = "";
-      document.body.style.width = "";
-    };
-
-    window.addEventListener("focusin", handleFocus);
-    window.addEventListener("focusout", handleBlur);
-
-    return () => {
-      window.removeEventListener("focusin", handleFocus);
-      window.removeEventListener("focusout", handleBlur);
-    };
-  }, []);
-
-  const handleFocus = (event: React.FocusEvent<HTMLInputElement>) => {
-    event.target.scrollIntoView({ behavior: "smooth", block: "center" })
-  }
-  
-
-
   return (
     <>
-      <motion.div
-        animate={{
-          scale: [1, 1.05, 1],
-          opacity: [1, 0.8, 1],
-        }}
-        transition={{
-          duration: 1.5,
-          repeat: Infinity,
-          repeatType: 'loop',
-        }}
-      >
-        <Button onClick={() => setIsOpen(true)} variant={'ghost'} className='p-10 !py-6'>
-          Открыть регистрацию
-        </Button>
-      </motion.div>
+      <Button onClick={() => setIsOpen(true)} variant={'ghost'} className='p-10 !py-6'>
+        Начать регистрацию
+      </Button>
 
-      <Drawer open={isOpen} onOpenChange={setIsOpen}>
-        <DrawerContent className="h-[calc(100vh-10px)] overflow-auto">
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent className="h-[calc(100vh-10px)] overflow-auto">
 
-          <AnimatedBubbles />
-          <DrawerHeader>
-            <DrawerTitle className="text-xl font-semibold">{steps[step]}</DrawerTitle>
-          </DrawerHeader>
+          <DialogHeader>
+            <DialogTitle className="text-xl font-semibold">{steps[step]}</DialogTitle>
+          </DialogHeader>
 
           <motion.div
             key={step}
@@ -139,7 +100,7 @@ export function DrawerRegistration() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -150 }}
             transition={{ type: "spring", stiffness: 100, duration: 0.5 }}
-            className="p-6 space-y-4 h-full overflow-auto"
+            className="p-6 space-y-4 h-[70vh] overflow-auto relative"
           >
             {step === 0 && (
               <>
@@ -148,7 +109,6 @@ export function DrawerRegistration() {
                   {...form.register("firstName", { required: "Это поле обязательно для заполнения" })}
                   placeholder="Введите ваше имя"
                   className={form.formState.errors.firstName ? "border-red-500" : ""}
-                  onFocus={handleFocus}
                 />
                 <AnimatePresence>
                   {form.formState.errors.firstName && (
@@ -169,7 +129,6 @@ export function DrawerRegistration() {
                   {...form.register("lastName", { required: "Это поле обязательно для заполнения" })}
                   placeholder="Введите вашу фамилию"
                   className={form.formState.errors.lastName ? "border-red-500" : ""}
-                  onFocus={handleFocus}
                 />
                 <AnimatePresence>
                   {form.formState.errors.lastName && (
@@ -191,7 +150,6 @@ export function DrawerRegistration() {
                   {...form.register("age", { required: "Это поле обязательно для заполнения" })}
                   placeholder="Введите ваш возраст"
                   className={form.formState.errors.age ? "border-red-500" : ""}
-                  onFocus={handleFocus}
                 />
                 <AnimatePresence>
                   {form.formState.errors.age && (
@@ -212,7 +170,6 @@ export function DrawerRegistration() {
                   {...form.register("phone", { required: "Это поле обязательно для заполнения" })}
                   placeholder="Введите ваш номер телефона"
                   className={form.formState.errors.phone ? "border-red-500" : ""}
-                  onFocus={handleFocus}
                 />
                 <AnimatePresence>
                   {form.formState.errors.phone && (
@@ -237,7 +194,6 @@ export function DrawerRegistration() {
                   {...form.register("city", { required: "Это поле обязательно для заполнения" })}
                   placeholder="Введите ваш город"
                   className={form.formState.errors.city ? "border-red-500" : ""}
-                  onFocus={handleFocus}
                 />
                 <AnimatePresence>
                   {form.formState.errors.city && (
@@ -299,7 +255,6 @@ export function DrawerRegistration() {
                         {...form.register("church", { required: "Это поле обязательно для заполнения" })}
                         placeholder="Введите название вашей церкви"
                         className={form.formState.errors.church ? "border-red-500" : ""}
-                        onFocus={handleFocus}
                       />
                     </motion.div>
                   )}
@@ -314,7 +269,7 @@ export function DrawerRegistration() {
                   {camps.map((camp) => (
                     <label
                       key={camp.name}
-                      className="flex items-center gap-4 p-4 bg-gray-100 rounded-lg shadow-md hover:bg-gray-200 cursor-pointer"
+                      className="flex items-center gap-4 p-4 bg-gray-100 rounded-lg shadow-md hover:bg-gray-200 cursor-pointer -z-10000"
                       onClick={() => toggleCamp(camp)}
                     >
                       <Checkbox
@@ -353,7 +308,7 @@ export function DrawerRegistration() {
             )}
           </motion.div>
 
-          <DrawerFooter className="flex justify-between p-6">
+          <DialogFooter className="flex justify-between p-6 gap-5">
             {step > 0 ? (
               <Button onClick={() => setStep(step - 1)} variant="outline">
                 Назад
@@ -368,9 +323,9 @@ export function DrawerRegistration() {
             ) : (
               <Button onClick={form.handleSubmit(onSubmit)} variant={'ghost'}>Отправить</Button>
             )}
-          </DrawerFooter>
-        </DrawerContent>
-      </Drawer>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   )
 }
