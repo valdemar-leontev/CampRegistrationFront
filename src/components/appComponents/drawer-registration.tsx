@@ -81,6 +81,13 @@ export function DrawerRegistration() {
     }
   }
 
+  const handleFocus = (element: HTMLElement) => {
+    element.scrollIntoView({
+      behavior: "smooth",
+      block: "start",  // Прокрутка в начало
+    })
+  }
+
   return (
     <>
       <Button onClick={() => setIsOpen(true)} variant={'ghost'} className='p-10 !py-6'>
@@ -109,6 +116,7 @@ export function DrawerRegistration() {
                   {...form.register("firstName", { required: "Это поле обязательно для заполнения" })}
                   placeholder="Введите ваше имя"
                   className={form.formState.errors.firstName ? "border-red-500" : ""}
+                  onFocus={(e) => handleFocus(e.target)}
                 />
                 <AnimatePresence>
                   {form.formState.errors.firstName && (
@@ -129,6 +137,7 @@ export function DrawerRegistration() {
                   {...form.register("lastName", { required: "Это поле обязательно для заполнения" })}
                   placeholder="Введите вашу фамилию"
                   className={form.formState.errors.lastName ? "border-red-500" : ""}
+                  onFocus={(e) => handleFocus(e.target)}
                 />
                 <AnimatePresence>
                   {form.formState.errors.lastName && (
@@ -150,6 +159,7 @@ export function DrawerRegistration() {
                   {...form.register("age", { required: "Это поле обязательно для заполнения" })}
                   placeholder="Введите ваш возраст"
                   className={form.formState.errors.age ? "border-red-500" : ""}
+                  onFocus={(e) => handleFocus(e.target)}
                 />
                 <AnimatePresence>
                   {form.formState.errors.age && (
@@ -170,6 +180,7 @@ export function DrawerRegistration() {
                   {...form.register("phone", { required: "Это поле обязательно для заполнения" })}
                   placeholder="Введите ваш номер телефона"
                   className={form.formState.errors.phone ? "border-red-500" : ""}
+                  onFocus={(e) => handleFocus(e.target)}
                 />
                 <AnimatePresence>
                   {form.formState.errors.phone && (
@@ -194,6 +205,7 @@ export function DrawerRegistration() {
                   {...form.register("city", { required: "Это поле обязательно для заполнения" })}
                   placeholder="Введите ваш город"
                   className={form.formState.errors.city ? "border-red-500" : ""}
+                  onFocus={(e) => handleFocus(e.target)}
                 />
                 <AnimatePresence>
                   {form.formState.errors.city && (
@@ -255,6 +267,7 @@ export function DrawerRegistration() {
                         {...form.register("church", { required: "Это поле обязательно для заполнения" })}
                         placeholder="Введите название вашей церкви"
                         className={form.formState.errors.church ? "border-red-500" : ""}
+                        onFocus={(e) => handleFocus(e.target)}
                       />
                     </motion.div>
                   )}
