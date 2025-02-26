@@ -1,5 +1,5 @@
 import { useForm, SubmitHandler } from "react-hook-form"
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -81,6 +81,15 @@ export function DrawerRegistration() {
     }
   }
 
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      // Когда окно открывается, устанавливаем фокус на кнопку "Закрыть"
+      closeButtonRef.current?.focus();
+    }
+  }, [isOpen]);
+
   return (
     <>
       <Button onClick={() => setIsOpen(true)} variant={'ghost'} className='p-10 !py-6'>
@@ -100,7 +109,7 @@ export function DrawerRegistration() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -150 }}
             transition={{ type: "spring", stiffness: 100, duration: 0.5 }}
-            className="p-6 space-y-4 h-[70vh] overflow-auto relative"
+            className="p-2 space-y-4 h-[70vh] overflow-auto relative"
           >
             {step === 0 && (
               <>
@@ -314,7 +323,7 @@ export function DrawerRegistration() {
                 Назад
               </Button>
             ) : (
-              <Button onClick={onClose} variant="outline">
+              <Button onClick={onClose} variant="outline" ref={closeButtonRef}>
                 Закрыть
               </Button>
             )}
