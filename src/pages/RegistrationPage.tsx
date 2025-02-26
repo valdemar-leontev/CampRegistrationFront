@@ -309,7 +309,7 @@ export function RegistrationForm() {
             {step < steps.length - 1 ? (
               <Button onClick={handleNext} variant={'ghost'}>Далее</Button>
             ) : (
-              <Button onClick={form.handleSubmit(onSubmit)}>Отправить</Button>
+              <Button onClick={form.handleSubmit(onSubmit)} variant={'ghost'}>Отправить</Button>
             )}
           </DrawerFooter>
         </DrawerContent>
