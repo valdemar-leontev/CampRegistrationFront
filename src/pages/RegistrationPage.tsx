@@ -85,7 +85,7 @@ export function RegistrationForm() {
       <Button onClick={() => setIsOpen(true)}>Открыть регистрацию</Button>
 
       <Drawer open={isOpen} onOpenChange={setIsOpen}>
-        <DrawerContent className="min-h-[95vh]">
+        <DrawerContent className="h-[97%] min-h-[97vh]">
           <DrawerHeader>
             <DrawerTitle className="text-xl font-semibold">{steps[step]}</DrawerTitle>
           </DrawerHeader>
