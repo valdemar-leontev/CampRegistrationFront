@@ -8,7 +8,7 @@ const PoweredByGod: FC = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsVisible(false);
-    }, 2000); 
+    }, 1000); 
 
     return () => clearTimeout(timer);
   }, []);
