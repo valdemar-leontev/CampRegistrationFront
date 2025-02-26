@@ -2,7 +2,7 @@ import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.js";
-import PoweredByGod from './components/appComponents/PoweredByGod.js';
+import PoweredByGod from './components/appComponents/powered-by-God.js';
 import { init } from '@telegram-apps/sdk-react'
 import { retrieveRawInitData } from '@telegram-apps/bridge';
 
@@ -23,7 +23,6 @@ const Root = () => {
 
     setUser(user);
   }, []);
-
 
   return (
     <StrictMode>

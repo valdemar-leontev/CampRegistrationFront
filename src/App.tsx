@@ -6,7 +6,7 @@ import { useTabStore } from './stores/TabStore';
 import { motion } from 'framer-motion';
 import FAQ from './components/appComponents/faq';
 import { ProfileBar } from './components/appComponents/profile-bar';
-import { RegistrationForm } from './pages/RegistrationPage';
+import { RegistrationPage } from './pages/RegistrationPage';
 
 
 
@@ -37,7 +37,7 @@ const App: FC<{ user: any }> = ({ user }) => {
         >
           {activeTab === "home" && (
             <div>
-              <RegistrationForm />
+              <RegistrationPage username={`${user.firstName} ${user.lastName}`} />
             </div>
           )}
 
