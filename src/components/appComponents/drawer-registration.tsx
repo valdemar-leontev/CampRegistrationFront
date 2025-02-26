@@ -81,16 +81,25 @@ export function DrawerRegistration() {
     }
   }
 
-  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const descRef = useRef<HTMLInputElement>(null);
+
+  // useEffect(() => {
+  //   if (isOpen) {
+  //     // Устанавливаем фокус на кнопку "Закрыть" через небольшую задержку
+  //     setTimeout(() => {
+  //       closeButtonRef.current?.focus();
+  //     }, 100); // задержка в 100мс
+  //   }
+  // }, [isOpen]);
+
+  const onEscape = () => {
+    descRef.current!.blur();
+  };
 
   useEffect(() => {
-    if (isOpen) {
-      // Устанавливаем фокус на кнопку "Закрыть" через небольшую задержку
-      setTimeout(() => {
-        closeButtonRef.current?.focus();
-      }, 100); // задержка в 100мс
-    }
-  }, [isOpen]);
+    onEscape()
+  }, [])
+
 
   return (
     <>
@@ -120,6 +129,7 @@ export function DrawerRegistration() {
                   {...form.register("firstName", { required: "Это поле обязательно для заполнения" })}
                   placeholder="Введите ваше имя"
                   className={form.formState.errors.firstName ? "border-red-500" : ""}
+                  ref={descRef}
                 />
                 <AnimatePresence>
                   {form.formState.errors.firstName && (
@@ -325,7 +335,7 @@ export function DrawerRegistration() {
                 Назад
               </Button>
             ) : (
-              <Button onClick={onClose} variant="outline" ref={closeButtonRef}>
+              <Button onClick={onClose} variant="outline" >
                 Закрыть
               </Button>
             )}
