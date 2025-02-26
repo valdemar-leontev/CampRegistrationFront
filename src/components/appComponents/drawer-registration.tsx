@@ -85,8 +85,10 @@ export function DrawerRegistration() {
 
   useEffect(() => {
     if (isOpen) {
-      // Когда окно открывается, устанавливаем фокус на кнопку "Закрыть"
-      closeButtonRef.current?.focus();
+      // Устанавливаем фокус на кнопку "Закрыть" через небольшую задержку
+      setTimeout(() => {
+        closeButtonRef.current?.focus();
+      }, 100); // задержка в 100мс
     }
   }, [isOpen]);
 
