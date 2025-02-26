@@ -1,5 +1,5 @@
 import { useForm, SubmitHandler } from "react-hook-form"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -38,12 +38,12 @@ const camps: Camp[] = [
   { name: "Молодежный", date: "5-10 сентября", price: 300 },
   { name: "Семейный", date: "5-10 сентября", price: 300 },
 ]
-
 export function RegistrationForm() {
-  const [step, setStep] = useState(0)
-  const [isOpen, setIsOpen] = useState(false)
-  const [selectedChurch, setSelectedChurch] = useState<string>("")
-  const [selectedCamps, setSelectedCamps] = useState<Camp[]>([])
+  const [step, setStep] = useState(0);
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedChurch, setSelectedChurch] = useState<string>("");
+  const [selectedCamps, setSelectedCamps] = useState<Camp[]>([]);
+  const [drawerHeight, setDrawerHeight] = useState("80vh"); // Устанавливаем начальную высоту Drawer
   const form = useForm<FormValues>({
     defaultValues: {
       firstName: "",
@@ -54,38 +54,59 @@ export function RegistrationForm() {
       church: "",
     },
     mode: "onBlur", // Включение валидации по событию blur
-  })
+  });
+
+  useEffect(() => {
+    // Функция для отслеживания фокуса на полях ввода
+    const handleFocus = () => {
+      setDrawerHeight("100vh"); // Увеличиваем высоту до 100% при фокусе
+    };
+    const handleBlur = () => {
+      setDrawerHeight("80vh"); // Восстанавливаем стандартную высоту, когда фокус уходит
+    };
+
+    // Получаем все поля ввода и добавляем слушатели событий
+    const inputs = document.querySelectorAll("input");
+    inputs.forEach(input => {
+      input.addEventListener("focus", handleFocus);
+      input.addEventListener("blur", handleBlur);
+    });
+
+    // Очистка слушателей при размонтировании компонента
+    return () => {
+      inputs.forEach(input => {
+        input.removeEventListener("focus", handleFocus);
+        input.removeEventListener("blur", handleBlur);
+      });
+    };
+  }, []);
 
   function toggleCamp(camp: Camp) {
     setSelectedCamps((prev) =>
       prev.includes(camp) ? prev.filter((c) => c !== camp) : [...prev, camp]
-    )
+    );
   }
 
   const onSubmit: SubmitHandler<FormValues> = (values) => {
-    console.log({ ...values, selectedCamps })
-    setIsOpen(false)
-  }
+    console.log({ ...values, selectedCamps });
+    setIsOpen(false);
+  };
 
-  const totalPrice = selectedCamps.reduce((sum, camp) => sum + camp.price, 0)
+  const totalPrice = selectedCamps.reduce((sum, camp) => sum + camp.price, 0);
 
   // Handle 'Next' step button click: prevent if current step is invalid
   const handleNext = () => {
-    const isStepValid = form.formState.isValid
+    const isStepValid = form.formState.isValid;
     if (isStepValid || step === 3) {
-      setStep((prev) => prev + 1)
-    } else {
-      // Trigger validation to highlight invalid fields
-      form.trigger()
+      setStep((prev) => prev + 1);
     }
-  }
-
+  };
   return (
     <>
       <Button onClick={() => setIsOpen(true)}>Открыть регистрацию</Button>
 
       <Drawer open={isOpen} onOpenChange={setIsOpen}>
-        <DrawerContent className="h-[80%] min-h-[80vh]">
+        <DrawerContent className={`h-[${drawerHeight}]`}>
           <DrawerHeader>
             <DrawerTitle className="text-xl font-semibold">{steps[step]}</DrawerTitle>
           </DrawerHeader>
