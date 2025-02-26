@@ -5,12 +5,12 @@ import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog"
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerFooter,
+} from "@/components/ui/drawer"
 import { motion, AnimatePresence } from "framer-motion"
 
 interface FormValues {
@@ -87,12 +87,12 @@ export function DrawerRegistration() {
         Начать регистрацию
       </Button>
 
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="h-[calc(100vh-10px)] overflow-auto transition-all duration-1000 fixed ">
+      <Drawer open={isOpen} onOpenChange={setIsOpen}>
+        <DrawerContent className="h-[calc(100vh-10px)] overflow-auto transition-all duration-1000 fixed ">
 
-          <DialogHeader>
-            <DialogTitle className="text-xl font-semibold">{steps[step]}</DialogTitle>
-          </DialogHeader>
+          <DrawerHeader>
+            <DrawerTitle className="text-xl font-semibold">{steps[step]}</DrawerTitle>
+          </DrawerHeader>
 
           <motion.div
             key={step}
@@ -308,7 +308,7 @@ export function DrawerRegistration() {
             )}
           </motion.div>
 
-          <DialogFooter className="flex justify-between p-6 gap-5">
+          <DrawerFooter className="flex justify-between p-6 gap-5">
             {step > 0 ? (
               <Button onClick={() => setStep(step - 1)} variant="outline">
                 Назад
@@ -323,9 +323,9 @@ export function DrawerRegistration() {
             ) : (
               <Button onClick={form.handleSubmit(onSubmit)} variant={'ghost'}>Отправить</Button>
             )}
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
     </>
   )
 }
