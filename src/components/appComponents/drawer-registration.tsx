@@ -1,5 +1,5 @@
 import { useForm, SubmitHandler } from "react-hook-form"
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -37,6 +37,28 @@ const camps: Camp[] = [
   { name: "Молодежный", date: "5-10 сентября", price: 300 },
   { name: "Семейный", date: "5-10 сентября", price: 300 },
 ]
+
+const formContainerRef = useRef<HTMLDivElement | null>(null);
+
+useEffect(() => {
+  const handleResize = () => {
+    if (formContainerRef.current) {
+      formContainerRef.current.style.setProperty('bottom', `env(safe-area-inset-bottom)`);
+    }
+  };
+
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener("resize", handleResize);
+    handleResize(); // Initial call in case the keyboard is already open
+  }
+
+  return () => {
+    if (window.visualViewport) {
+      window.visualViewport.removeEventListener("resize", handleResize);
+    }
+  };
+}, []);
+
 
 export function DrawerRegistration() {
   const [step, setStep] = useState(0)
@@ -81,13 +103,6 @@ export function DrawerRegistration() {
     }
   }
 
-  const handleFocus = (element: HTMLElement) => {
-    element.scrollIntoView({
-      behavior: "smooth",
-      block: "start",  // Прокрутка в начало
-    })
-  }
-
   return (
     <>
       <Button onClick={() => setIsOpen(true)} variant={'ghost'} className='p-10 !py-6'>
@@ -95,7 +110,7 @@ export function DrawerRegistration() {
       </Button>
 
       <Drawer open={isOpen} onOpenChange={setIsOpen}>
-        <DrawerContent className="h-[calc(100vh-10px)] min-h-[100vh] overflow-auto transition-all duration-1000 fixed ">
+        <DrawerContent ref={formContainerRef} className="h-[calc(100vh-10px)] overflow-auto transition-all duration-1000 fixed ">
 
           <DrawerHeader>
             <DrawerTitle className="text-xl font-semibold">{steps[step]}</DrawerTitle>
@@ -116,7 +131,6 @@ export function DrawerRegistration() {
                   {...form.register("firstName", { required: "Это поле обязательно для заполнения" })}
                   placeholder="Введите ваше имя"
                   className={form.formState.errors.firstName ? "border-red-500" : ""}
-                  onFocus={(e) => handleFocus(e.target)}
                 />
                 <AnimatePresence>
                   {form.formState.errors.firstName && (
@@ -137,7 +151,6 @@ export function DrawerRegistration() {
                   {...form.register("lastName", { required: "Это поле обязательно для заполнения" })}
                   placeholder="Введите вашу фамилию"
                   className={form.formState.errors.lastName ? "border-red-500" : ""}
-                  onFocus={(e) => handleFocus(e.target)}
                 />
                 <AnimatePresence>
                   {form.formState.errors.lastName && (
@@ -159,7 +172,6 @@ export function DrawerRegistration() {
                   {...form.register("age", { required: "Это поле обязательно для заполнения" })}
                   placeholder="Введите ваш возраст"
                   className={form.formState.errors.age ? "border-red-500" : ""}
-                  onFocus={(e) => handleFocus(e.target)}
                 />
                 <AnimatePresence>
                   {form.formState.errors.age && (
@@ -180,7 +192,6 @@ export function DrawerRegistration() {
                   {...form.register("phone", { required: "Это поле обязательно для заполнения" })}
                   placeholder="Введите ваш номер телефона"
                   className={form.formState.errors.phone ? "border-red-500" : ""}
-                  onFocus={(e) => handleFocus(e.target)}
                 />
                 <AnimatePresence>
                   {form.formState.errors.phone && (
@@ -205,7 +216,6 @@ export function DrawerRegistration() {
                   {...form.register("city", { required: "Это поле обязательно для заполнения" })}
                   placeholder="Введите ваш город"
                   className={form.formState.errors.city ? "border-red-500" : ""}
-                  onFocus={(e) => handleFocus(e.target)}
                 />
                 <AnimatePresence>
                   {form.formState.errors.city && (
@@ -267,7 +277,6 @@ export function DrawerRegistration() {
                         {...form.register("church", { required: "Это поле обязательно для заполнения" })}
                         placeholder="Введите название вашей церкви"
                         className={form.formState.errors.church ? "border-red-500" : ""}
-                        onFocus={(e) => handleFocus(e.target)}
                       />
                     </motion.div>
                   )}
