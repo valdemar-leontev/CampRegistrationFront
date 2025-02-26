@@ -93,7 +93,9 @@ export function DrawerRegistration() {
   // }, [isOpen]);
 
   const onEscape = () => {
-    descRef.current!.blur();
+    if (isOpen) {
+      descRef.current!.blur();
+    }
   };
 
   useEffect(() => {
