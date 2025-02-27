@@ -113,7 +113,7 @@ export function DrawerRegistration() {
       </Button>
 
       <Drawer open={isOpen} onOpenChange={setIsOpen}>
-        <DrawerContent ref={formContainerRef} className="h-[100vh] min-h-[100vh] overflow-auto transition-all duration-1000 fixed ">
+        <DrawerContent ref={formContainerRef} className="h-[100vh] min-h-[100vh] overflow-auto transition-all duration-1000 fixed p-5">
 
           <DrawerHeader>
             <DrawerTitle className="text-xl font-semibold">{steps[step]}</DrawerTitle>
