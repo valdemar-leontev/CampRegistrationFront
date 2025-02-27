@@ -68,7 +68,7 @@ export const CampInfoPage = () => {
 
   return (
     <div className="container mx-auto p-6">
-      <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">Информация о лагерях</h1>
+      <h1 className="text-3xl font-bold text-center mb-8 text-[#1e1e1e]">Информация о лагерях</h1>
       <Swiper
         effect={'cards'}
         grabCursor={true}
@@ -77,13 +77,13 @@ export const CampInfoPage = () => {
       >
         {camps.map((camp, index) => (
           <SwiperSlide key={index}>
-            <div className="bg-accent hover:shadow-lg transition-shadow duration-300 p-6 flex flex-col items-center rounded-2xl">
-              <h2 className="text-2xl font-semibold mb-2 text-gray-800">{camp.name}</h2>
-              <p className="text-gray-600"><strong>Код лагеря:</strong> {camp.code}</p>
-              <p className="text-gray-600"><strong>Дата начала:</strong> {camp.startDate}</p>
-              <p className="text-gray-600"><strong>Дата конца:</strong> {camp.endDate}</p>
+            <div className="bg-[#1e1e1e] hover:shadow-lg transition-shadow duration-300 p-6 flex flex-col items-center rounded-2xl">
+              <h2 className="text-2xl font-semibold mb-2 text-white">{camp.name}</h2>
+              <p className="text-white"><strong>Код лагеря:</strong> {camp.code}</p>
+              <p className="text-white"><strong>Дата начала:</strong> {camp.startDate}</p>
+              <p className="text-white"><strong>Дата конца:</strong> {camp.endDate}</p>
               <h3 className="text-lg font-semibold mt-4 text-gray-800">Цены:</h3>
-              <ul className="list-disc list-inside text-gray-600">
+              <ul className="list-disc list-inside text-white">
                 <li>Апрель: <span className="font-bold">{camp.prices.April} руб.</span></li>
                 <li>Май: <span className="font-bold">{camp.prices.May} руб.</span></li>
                 <li>Июнь: <span className="font-bold">{camp.prices.June} руб.</span></li>

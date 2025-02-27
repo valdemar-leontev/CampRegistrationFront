@@ -88,7 +88,7 @@ export const AccountingPage = () => {
           >
             <Table className="bg-white border shadow-md border-transparent">
               <TableHeader>
-                <TableRow className="bg-[#e7fe55] !border-none">
+                <TableRow className="bg-[#fa704c] !border-none">
                   <TableHead className="py-3 px-4 font-bold text-center text-[16px] rounded-s-[40px]">Фамилия</TableHead>
                   <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Имя</TableHead>
                   <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Возраст</TableHead>
@@ -146,7 +146,7 @@ export const AccountingPage = () => {
                     <img src={randomImage} className="w-full h-[250px]" alt="Random" />
                   </motion.div>
                   <DrawerFooter>
-                    <Button onClick={handlePaymentConfirmation} variant="outline" className='bg-[#e7fe55] text-black border-none'>Подтвердить оплату</Button>
+                    <Button onClick={handlePaymentConfirmation} variant="outline" className='bg-[#fa704c] text-black border-none'>Подтвердить оплату</Button>
                     <DrawerClose asChild>
                       <Button variant="outline">Закрыть</Button>
                     </DrawerClose>

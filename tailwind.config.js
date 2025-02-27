@@ -33,7 +33,7 @@
   				foreground: 'hsl(var(--muted-foreground))'
   			},
   			accent: {
-  				DEFAULT: '#e7fe55',
+  				DEFAULT: '#fa704c',
   				foreground: 'hsl(var(--accent-foreground))'
   			},
   			destructive: {
