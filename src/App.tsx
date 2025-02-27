@@ -7,7 +7,7 @@ import { motion } from 'framer-motion';
 import FAQ from './components/appComponents/faq';
 import { ProfileBar } from './components/appComponents/profile-bar';
 import { RegistrationPage } from './pages/RegistrationPage';
-
+import { CampInfoPage } from './pages/CampInfoPage';
 
 
 const App: FC<{ user: any }> = ({ user }) => {
@@ -46,6 +46,13 @@ const App: FC<{ user: any }> = ({ user }) => {
               <AccountingPage />
             </div>
           )}
+
+          {activeTab === "info" && (
+            <div>
+              <CampInfoPage />
+            </div>
+          )}
+
           {activeTab === "faq" && (
             <div>
               <FAQ />

@@ -16,7 +16,7 @@ export const NavigationPanels = () => {
           <TabsTrigger value="accountingPage" className="p-5 px-7 data-[state=active]:px-10">
             <CiViewTable size={22} />
           </TabsTrigger>
-          <TabsTrigger value="calendar" className="p-5 px-7 data-[state=active]:px-10">
+          <TabsTrigger value="info" className="p-5 px-7 data-[state=active]:px-10">
             <CiCalendarDate size={22} />
           </TabsTrigger>
           <TabsTrigger value="faq" className="p-5 px-7 data-[state=active]:px-10">
