@@ -1,8 +1,10 @@
+import { FC } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { EffectCards } from 'swiper/modules';
 import { DrawerRegistration } from '@/components/appComponents/drawer-registration';
+import { FaCalendarAlt } from 'react-icons/fa';
 
-export const CampInfoPage = () => {
+export const CampInfoPage: FC = () => {
   const camps = [
     {
       name: "Детский",
@@ -66,6 +68,14 @@ export const CampInfoPage = () => {
     },
   ];
 
+  const pastelColors = [
+    '#f5f1ee',
+    '#edeef7',
+    '#e0f7fa',
+    '#fff3e0',
+    '#e8f5e9',
+  ];
+
   return (
     <div className="container mx-auto p-6">
       <h1 className="text-3xl font-bold text-center mb-8 text-[#1e1e1e]">Информация о лагерях</h1>
@@ -77,13 +87,21 @@ export const CampInfoPage = () => {
       >
         {camps.map((camp, index) => (
           <SwiperSlide key={index}>
-            <div className="bg-[#1e1e1e] hover:shadow-lg transition-shadow duration-300 p-6 flex flex-col items-center rounded-2xl">
-              <h2 className="text-2xl font-semibold mb-2 text-white">{camp.name}</h2>
-              <p className="text-white"><strong>Код лагеря:</strong> {camp.code}</p>
-              <p className="text-white"><strong>Дата начала:</strong> {camp.startDate}</p>
-              <p className="text-white"><strong>Дата конца:</strong> {camp.endDate}</p>
+            <div 
+              className="hover:shadow-lg transition-shadow duration-300 p-6 flex flex-col items-center rounded-2xl"
+              style={{ backgroundColor: pastelColors[index % pastelColors.length], background: `linear-gradient(135deg, ${pastelColors[index % pastelColors.length]} 0%, rgba(255, 255, 255) 100%)` }}
+            >
+              <h2 className="text-2xl font-semibold mb-2 text-black">{camp.name}</h2>
+              <div className="flex items-center mb-2 text-black">
+                <FaCalendarAlt className="mr-2" />
+                <p><strong>Дата начала:</strong> {camp.startDate}</p>
+              </div>
+              <div className="flex items-center mb-4 text-black">
+                <FaCalendarAlt className="mr-2" />
+                <p><strong>Дата конца:</strong> {camp.endDate}</p>
+              </div>
               <h3 className="text-lg font-semibold mt-4 text-gray-800">Цены:</h3>
-              <ul className="list-disc list-inside text-white">
+              <ul className="list-disc list-inside text-black">
                 <li>Апрель: <span className="font-bold">{camp.prices.April} руб.</span></li>
                 <li>Май: <span className="font-bold">{camp.prices.May} руб.</span></li>
                 <li>Июнь: <span className="font-bold">{camp.prices.June} руб.</span></li>
@@ -99,4 +117,4 @@ export const CampInfoPage = () => {
       </Swiper>
     </div>
   );
-}
+};
