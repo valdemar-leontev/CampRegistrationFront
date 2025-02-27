@@ -9,8 +9,8 @@ export const CampInfoPage: FC = () => {
     {
       name: "Детский",
       code: "D",
-      startDate: "30.06",
-      endDate: "05.06",
+      startDate: "30 Июнь",
+      endDate: "05 Июнь",
       prices: {
         April: 500,
         May: 800,
@@ -21,8 +21,8 @@ export const CampInfoPage: FC = () => {
     {
       name: "Подростковый",
       code: "P",
-      startDate: "07.07",
-      endDate: "12.07",
+      startDate: "07 Июль",
+      endDate: "12 Июль",
       prices: {
         April: 500,
         May: 800,
@@ -33,8 +33,8 @@ export const CampInfoPage: FC = () => {
     {
       name: "Мужской",
       code: "M",
-      startDate: "14.07",
-      endDate: "15.07",
+      startDate: "14 Июль",
+      endDate: "15 Июль",
       prices: {
         April: 1000,
         May: 1500,
@@ -45,8 +45,8 @@ export const CampInfoPage: FC = () => {
     {
       name: "Общецерковный",
       code: "O",
-      startDate: "17.07",
-      endDate: "20.07",
+      startDate: "17 Июль",
+      endDate: "20 Июль",
       prices: {
         April: 500,
         May: 800,
@@ -57,8 +57,8 @@ export const CampInfoPage: FC = () => {
     {
       name: "Молодежный",
       code: "Y",
-      startDate: "21.07",
-      endDate: "26.07",
+      startDate: "21 Июль",
+      endDate: "26 Июль",
       prices: {
         April: 500,
         May: 800,
