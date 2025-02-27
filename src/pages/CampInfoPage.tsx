@@ -77,7 +77,7 @@ export const CampInfoPage = () => {
       >
         {camps.map((camp, index) => (
           <SwiperSlide key={index}>
-            <div className="bg-[#F3E5F5] shadow-md hover:shadow-lg transition-shadow duration-300 p-6 flex flex-col items-center rounded-2xl h-[350px]">
+            <div className="bg-accent hover:shadow-lg transition-shadow duration-300 p-6 flex flex-col items-center rounded-2xl">
               <h2 className="text-2xl font-semibold mb-2 text-gray-800">{camp.name}</h2>
               <p className="text-gray-600"><strong>Код лагеря:</strong> {camp.code}</p>
               <p className="text-gray-600"><strong>Дата начала:</strong> {camp.startDate}</p>
