@@ -1,7 +1,9 @@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CiViewTable, CiCalendarDate, CiHome } from "react-icons/ci";
+import { CiViewTable, CiHome } from "react-icons/ci";
 import { AiOutlineQuestion } from "react-icons/ai";
 import { useTabStore } from "../../stores/TabStore.ts";
+import { PiCards } from "react-icons/pi";
+
 
 export const NavigationPanels = () => {
   const { activeTab, setActiveTab } = useTabStore();
@@ -17,7 +19,7 @@ export const NavigationPanels = () => {
             <CiViewTable size={22} />
           </TabsTrigger>
           <TabsTrigger value="info" className="p-5 px-7 data-[state=active]:px-10">
-            <CiCalendarDate size={22} />
+            <PiCards size={22} />
           </TabsTrigger>
           <TabsTrigger value="faq" className="p-5 px-7 data-[state=active]:px-10">
             <AiOutlineQuestion size={22} />
