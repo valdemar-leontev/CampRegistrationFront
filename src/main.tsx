@@ -30,6 +30,7 @@ const Root = () => {
 
       <App user={user} />
 
+
     </StrictMode>
   );
 };
