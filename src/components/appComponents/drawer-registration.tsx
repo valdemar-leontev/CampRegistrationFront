@@ -1,340 +1,151 @@
-import { useForm, SubmitHandler } from "react-hook-form"
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog"
-import { motion, AnimatePresence } from "framer-motion"
+import { useForm, SubmitHandler } from "react-hook-form";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+// import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 
 interface FormValues {
-  firstName: string
-  lastName: string
-  age: number | string
-  phone: string
-  city: string
-  church: string
+  firstName: string;
+  lastName: string;
+  age: number | string;
+  phone: string;
+  city: string;
+  church: string;
 }
 
 interface Camp {
-  name: string
-  date: string
-  price: number
+  name: string;
+  date: string;
+  price: number;
 }
 
-const steps = ["Личная информация", "Церковь", "Лагерь", "Обзор"]
-const churches = ["Слово Истины", "Новая Жизнь", "Примирение", "Свет Евангелия", "Другая"]
+const steps = ["Личная информация", "Церковь", "Лагерь", "Обзор"];
+// const churches = ["Слово Истины", "Новая Жизнь", "Примирение", "Свет Евангелия", "Другая"];
 const camps: Camp[] = [
   { name: "Детский", date: "10-15 мая", price: 100 },
   { name: "Подростковый", date: "20-25 июня", price: 400 },
   { name: "Мужской", date: "5-10 сентября", price: 300 },
   { name: "Молодежный", date: "5-10 сентября", price: 300 },
   { name: "Семейный", date: "5-10 сентября", price: 300 },
-]
-
+];
 
 export function DrawerRegistration() {
-  const [step, setStep] = useState(0)
-  const [isOpen, setIsOpen] = useState(false)
-  const [selectedChurch, setSelectedChurch] = useState<string>("")
-  const [selectedCamps, setSelectedCamps] = useState<Camp[]>([])
+  const [step, setStep] = useState(0);
+  const [isOpen, setIsOpen] = useState(false);
+  // const [selectedChurch, setSelectedChurch] = useState<string>("");
+  const [selectedCamps, setSelectedCamps] = useState<Camp[]>([]);
   const form = useForm<FormValues>({
-    defaultValues: {
-      firstName: "",
-      lastName: "",
-      age: "",
-      phone: "",
-      city: "",
-      church: "",
-    },
+    defaultValues: { firstName: "", lastName: "", age: "", phone: "", city: "", church: "" },
     mode: "onBlur",
-  })
+  });
 
   function toggleCamp(camp: Camp) {
-    setSelectedCamps((prev) =>
-      prev.includes(camp) ? prev.filter((c) => c !== camp) : [...prev, camp]
-    )
+    setSelectedCamps((prev) => (prev.includes(camp) ? prev.filter((c) => c !== camp) : [...prev, camp]));
   }
 
   const onSubmit: SubmitHandler<FormValues> = (values) => {
-    console.log({ ...values, selectedCamps })
+    console.log({ ...values, selectedCamps });
     onClose();
-  }
+  };
 
   const onClose = () => {
     setIsOpen(false);
     form.clearErrors();
-  }
-
-  const totalPrice = selectedCamps.reduce((sum, camp) => sum + camp.price, 0)
-
-  const handleNext = () => {
-    const isStepValid = form.formState.isValid
-    if (isStepValid || step === 3) {
-      setStep((prev) => prev + 1)
-    } else {
-      form.trigger()
-    }
-  }
+  };
 
   return (
     <>
-      <Button onClick={() => setIsOpen(true)} variant={'ghost'} className='p-10 !py-6'>
+      <Button onClick={() => setIsOpen(true)} variant={"ghost"} className="p-10 !py-6">
         Начать регистрацию
       </Button>
 
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="h-[100vh] min-h-[100vh] bg-red-50 transition-all duration-1000 overflow-auto p-5 !fixed bottom-0">
-
-          <DialogHeader>
-            <DialogTitle className="text-xl font-semibold">{steps[step]}</DialogTitle>
-          </DialogHeader>
-
+      <AnimatePresence>
+        {isOpen && (
           <motion.div
-            key={step}
-            initial={{ opacity: 0, y: 150 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -150 }}
-            transition={{ type: "spring", stiffness: 100, duration: 0.5 }}
-            className="p-2 space-y-4 overflow-hidden bg-green-50"
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ type: "spring", stiffness: 100, damping: 20 }}
+            className="fixed top-0 left-0 w-full h-full bg-white shadow-xl z-50 p-6 overflow-auto"
           >
-            {step === 0 && (
-              <>
-                <label className="flex font-medium items-center gap-1">Имя
-                  <AnimatePresence>
-                    {form.formState.errors.firstName && (
-                      <motion.p
-                        className="text-red-500 text-sm"
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        ({form.formState.errors.firstName.message})
-                      </motion.p>
-                    )}
-                  </AnimatePresence>
-                </label>
-                <Input
-                  {...form.register("firstName", { required: "Обязательно для заполнения" })}
-                  placeholder="Введите ваше имя"
-                  className={form.formState.errors.firstName ? "border-red-500" : ""}
-                />
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold">{steps[step]}</h2>
+              <Button onClick={onClose} variant="outline">Закрыть</Button>
+            </div>
+            <motion.div
+              key={step}
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -50 }}
+              transition={{ type: "spring", stiffness: 100, duration: 0.5 }}
+              className="space-y-4"
+            >
+              {/* Форма по шагам */}
+              {step === 0 && (
+                <>
+                  <Input {...form.register("firstName", { required: "Введите имя" })} placeholder="Имя" />
+                  <Input {...form.register("lastName", { required: "Введите фамилию" })} placeholder="Фамилия" />
+                  <Input type="number" {...form.register("age", { required: "Введите возраст" })} placeholder="Возраст" />
+                  <Input {...form.register("phone", { required: "Введите телефон" })} placeholder="Телефон" />
+                </>
+              )}
 
+              {step === 1 && (
+                <>
+                  <Input {...form.register("city", { required: "Введите город" })} placeholder="Город" />
+                  {/* <Select onValueChange={(value) => setSelectedChurch(value)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Выберите церковь" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {churches.map((church) => (
+                        <SelectItem key={church} value={church}>{church}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select> */}
+                </>
+              )}
 
-                <label className="flex font-medium items-center gap-1">Фамилия
-                  <AnimatePresence>
-                    {form.formState.errors.lastName && (
-                      <motion.p
-                        className="text-red-500 text-sm"
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        ({form.formState.errors.lastName.message})
-                      </motion.p>
-                    )}
-                  </AnimatePresence>
-                </label>
-                <Input
-                  {...form.register("lastName", { required: "Обязательно для заполнения" })}
-                  placeholder="Введите вашу фамилию"
-                  className={form.formState.errors.lastName ? "border-red-500" : ""}
-                />
-                <label className="flex font-medium items-center gap-1">Возраст
-                  <AnimatePresence>
-                    {form.formState.errors.age && (
-                      <motion.p
-                        className="text-red-500 text-sm"
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        ({form.formState.errors.age.message})
-                      </motion.p>
-                    )}
-                  </AnimatePresence>
-                </label>
-                <Input
-                  type="number"
-                  {...form.register("age", { required: "Обязательно для заполнения" })}
-                  placeholder="Введите ваш возраст"
-                  className={form.formState.errors.age ? "border-red-500" : ""}
-                />
-
-                <label className="flex font-medium items-center gap-1">Телефон
-                  <AnimatePresence>
-                    {form.formState.errors.phone && (
-                      <motion.p
-                        className="text-red-500 text-sm"
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        ({form.formState.errors.phone.message})
-                      </motion.p>
-                    )}
-                  </AnimatePresence>
-                </label>
-                <Input
-                  {...form.register("phone", { required: "Обязательно для заполнения" })}
-                  placeholder="Введите ваш номер телефона"
-                  className={form.formState.errors.phone ? "border-red-500" : ""}
-                />
-              </>
-            )}
-
-            {step === 1 && (
-              <>
-                <label className="flex font-medium items-center gap-1">Город
-                  <AnimatePresence>
-                    {form.formState.errors.city && (
-                      <motion.p
-                        className="text-red-500 text-sm"
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        ({form.formState.errors.city.message})
-                      </motion.p>
-                    )}
-                  </AnimatePresence>
-                </label>
-                <Input
-                  {...form.register("city", { required: "Обязательно для заполнения" })}
-                  placeholder="Введите ваш город"
-                  className={form.formState.errors.city ? "border-red-500" : ""}
-                />
-                <label className="flex font-medium items-center gap-1">Выберите церковь</label>
-                <Select
-                  onValueChange={(value) => {
-                    setSelectedChurch(value)
-                    form.setValue("church", value)
-                  }}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Выберите церковь" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {churches.map((church) => (
-                      <SelectItem key={church} value={church}>
-                        {church}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-
-                <AnimatePresence>
-                  {selectedChurch === "Другая" && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.3 }}
-                      className="mt-3"
-                    >
-                      <label className="block font-medium">Введите название церкви
-                        <AnimatePresence>
-                          {form.formState.errors.church && (
-                            <motion.p
-                              className="text-red-500 text-sm"
-                              initial={{ opacity: 0, y: -10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0, y: -10 }}
-                              transition={{ duration: 0.3 }}
-                            >
-                              ({form.formState.errors.church.message})
-                            </motion.p>
-                          )}
-                        </AnimatePresence>
-                      </label>
-                      <Input
-                        {...form.register("church", { required: "Обязательно для заполнения" })}
-                        placeholder="Введите название вашей церкви"
-                        className={form.formState.errors.church ? "border-red-500" : ""}
-                      />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </>
-            )}
-
-            {step === 2 && (
-              <div className="space-y-4">
-                <label className="block text-xl font-semibold text-gray-800">Выберите лагерь</label>
-                <div className="space-y-2">
+              {step === 2 && (
+                <div>
                   {camps.map((camp) => (
-                    <label
-                      key={camp.name}
-                      className="flex items-center gap-4 p-4 bg-gray-100 rounded-lg shadow-md hover:bg-gray-200 cursor-pointer -z-10000"
-                      onClick={() => toggleCamp(camp)}
-                    >
-                      <Checkbox
-                        checked={selectedCamps.includes(camp)}
-                        onCheckedChange={() => toggleCamp(camp)}
-                        className="cursor-pointer"
-                      />
-                      <div className="flex-1">
-                        <span className="font-medium text-gray-700">{camp.name}</span>
-                        <div className="text-sm text-gray-500">{camp.date} - {camp.price} рублей</div>
-                      </div>
+                    <label key={camp.name} className="flex items-center gap-4 p-2 bg-gray-100 rounded-lg">
+                      <Checkbox checked={selectedCamps.includes(camp)} onCheckedChange={() => toggleCamp(camp)} />
+                      <span>{camp.name} - {camp.date} - {camp.price}₽</span>
                     </label>
                   ))}
                 </div>
-              </div>
-            )}
-
-            {step === 3 && (
-              <>
-                <h2 className="text-lg font-semibold">Обзор</h2>
-                <p>Имя: {form.getValues("firstName")}</p>
-                <p>Фамилия: {form.getValues("lastName")}</p>
-                <p>Возраст: {form.getValues("age")}</p>
-                <p>Телефон: {form.getValues("phone")}</p>
-                <p>Город: {form.getValues("city")}</p>
-                <p>Церковь: {form.getValues("church")}</p>
-
-                <h3 className="mt-4 text-lg font-semibold">Выбранные лагеря:</h3>
-                {selectedCamps.map((camp) => (
-                  <p key={camp.name}>
-                    {camp.name} ({camp.date}) - {camp.price} рублей
-                  </p>
-                ))}
-                <p className="mt-3 font-bold">ИТОГО: {totalPrice} рублей</p>
-              </>
-            )}
-
-            <DialogFooter className="flex justify-between p-6 gap-5">
-              {step > 0 ? (
-                <Button onClick={() => setStep(step - 1)} variant="outline">
-                  Назад
-                </Button>
-              ) : (
-                <Button onClick={onClose} variant="outline" >
-                  Закрыть
-                </Button>
               )}
+
+              {step === 3 && (
+                <>
+                  <p>Имя: {form.getValues("firstName")}</p>
+                  <p>Фамилия: {form.getValues("lastName")}</p>
+                  <p>Возраст: {form.getValues("age")}</p>
+                  <p>Телефон: {form.getValues("phone")}</p>
+                  <p>Город: {form.getValues("city")}</p>
+                  <p>Церковь: {form.getValues("church")}</p>
+                  <h3 className="mt-4">Выбранные лагеря:</h3>
+                  {selectedCamps.map((camp) => (
+                    <p key={camp.name}>{camp.name} ({camp.date}) - {camp.price}₽</p>
+                  ))}
+                </>
+              )}
+            </motion.div>
+
+            <div className="flex justify-between mt-6">
+              {step > 0 ? <Button onClick={() => setStep(step - 1)}>Назад</Button> : null}
               {step < steps.length - 1 ? (
-                <Button onClick={handleNext} variant={'ghost'}>Далее</Button>
+                <Button onClick={() => setStep(step + 1)}>Далее</Button>
               ) : (
-                <Button onClick={form.handleSubmit(onSubmit)} variant={'ghost'}>Отправить</Button>
+                <Button onClick={form.handleSubmit(onSubmit)}>Отправить</Button>
               )}
-            </DialogFooter>
+            </div>
           </motion.div>
-
-
-        </DialogContent>
-      </Dialog>
+        )}
+      </AnimatePresence>
     </>
-  )
+  );
 }
