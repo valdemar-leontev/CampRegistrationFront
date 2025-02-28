@@ -7,7 +7,6 @@ import FAQ from './components/appComponents/faq';
 import { RegistrationPage } from './pages/RegistrationPage';
 import { CampInfoPage } from './pages/CampInfoPage';
 
-
 const App: FC<{ user: any }> = ({ user }) => {
 
   const { activeTab } = useTabStore();
@@ -42,8 +41,7 @@ const App: FC<{ user: any }> = ({ user }) => {
           <FAQ />
         </div>
       )}
-
-    </motion.div>
+    </motion.div >
   );
 };
 
