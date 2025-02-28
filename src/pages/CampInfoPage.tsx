@@ -57,7 +57,7 @@ export const CampInfoPage: FC = () => {
             {camps.map((camp, index) => (
               <SwiperSlide key={index}>
                 <div
-                  className="hover:shadow-lg transition-shadow duration-300 p-6 flex flex-col items-center rounded-2xl"
+                  className="hover:shadow-lg transition-shadow duration-300 p-8 flex flex-col items-center rounded-2xl"
                   style={{
                     backgroundColor: pastelColors[index % pastelColors.length],
                     background: `linear-gradient(135deg, ${pastelColors[index % pastelColors.length]} 0%, rgba(255, 255, 255) 100%)`,
