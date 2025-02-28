@@ -313,24 +313,26 @@ export function DrawerRegistration() {
                 <p className="mt-3 font-bold">ИТОГО: {totalPrice} рублей</p>
               </>
             )}
+
+            <DrawerFooter className="flex justify-between p-6 gap-5">
+              {step > 0 ? (
+                <Button onClick={() => setStep(step - 1)} variant="outline">
+                  Назад
+                </Button>
+              ) : (
+                <Button onClick={onClose} variant="outline" >
+                  Закрыть
+                </Button>
+              )}
+              {step < steps.length - 1 ? (
+                <Button onClick={handleNext} variant={'ghost'}>Далее</Button>
+              ) : (
+                <Button onClick={form.handleSubmit(onSubmit)} variant={'ghost'}>Отправить</Button>
+              )}
+            </DrawerFooter>
           </motion.div>
 
-          <DrawerFooter className="flex justify-between p-6 gap-5">
-            {step > 0 ? (
-              <Button onClick={() => setStep(step - 1)} variant="outline">
-                Назад
-              </Button>
-            ) : (
-              <Button onClick={onClose} variant="outline" >
-                Закрыть
-              </Button>
-            )}
-            {step < steps.length - 1 ? (
-              <Button onClick={handleNext} variant={'ghost'}>Далее</Button>
-            ) : (
-              <Button onClick={form.handleSubmit(onSubmit)} variant={'ghost'}>Отправить</Button>
-            )}
-          </DrawerFooter>
+
         </DrawerContent>
       </Drawer>
     </>
