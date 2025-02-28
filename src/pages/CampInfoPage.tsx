@@ -46,12 +46,12 @@ export const CampInfoPage: FC = () => {
   const pastelColors = ['#f5f1ee', '#edeef7', '#e0f7fa', '#fff3e0', '#e8f5e9'];
 
   return (
-    <div className="flex flex-col items-center">
-      <h1 className="text-3xl font-bold text-center my-6 text-[#1e1e1e] relative">
+    <div className="flex flex-col items-center bg-red-100">
+      <h1 className="text-3xl font-bold text-center my-6 text-[#1e1e1e] bg-red-50 min-w-full">
         Информация о лагерях
       </h1>
 
-      <div className="fixed top-[40%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[80%] max-w-md">
+      <div className="fixed top-[45%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90%]">
         <Swiper effect={'cards'} grabCursor={true} modules={[EffectCards]}>
           {camps.map((camp, index) => (
             <SwiperSlide key={index}>
@@ -88,8 +88,7 @@ export const CampInfoPage: FC = () => {
         </Swiper>
       </div>
 
-      <div className="fixed bottom-20 mb-9 z-[1000000]">
-
+      <div className="fixed bottom-24 mb-9 z-[1000000] left-1/2 transform -translate-x-1/2 -translate-y-1/2 ">
         <DrawerRegistration />
       </div>
     </div>
