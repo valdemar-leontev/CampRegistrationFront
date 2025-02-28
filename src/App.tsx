@@ -25,7 +25,7 @@ const App: FC<{ user: any }> = ({ user }) => {
   }, []);
 
   return (
-    <div className='bg-white'>
+    <div className='bg-white fixed'>
       {isVisible && <>
         <ProfileBar user={user} />
 
@@ -59,8 +59,8 @@ const App: FC<{ user: any }> = ({ user }) => {
             </div>
           )}
 
-          <NavigationPanels />
         </motion.div>
+        <NavigationPanels />
       </>}
     </div >
   );

@@ -1,5 +1,5 @@
 import { useForm, SubmitHandler } from "react-hook-form"
-import { useEffect, useRef, useState } from "react"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -82,30 +82,6 @@ export function DrawerRegistration() {
     }
   }
 
-
-  const formContainerRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    if (isOpen) {
-      const handleResize = () => {
-        if (formContainerRef.current) {
-          formContainerRef.current.style.setProperty('bottom', `env(safe-area-inset-bottom)`);
-        }
-      };
-
-      if (window.visualViewport) {
-        window.visualViewport.addEventListener("resize", handleResize);
-        handleResize(); // Initial call in case the keyboard is already open
-      }
-
-      return () => {
-        if (window.visualViewport) {
-          window.visualViewport.removeEventListener("resize", handleResize);
-        }
-      };
-    }
-  }, []);
-
   return (
     <>
       <Button onClick={() => setIsOpen(true)} variant={'ghost'} className='p-10 !py-6'>
@@ -113,7 +89,7 @@ export function DrawerRegistration() {
       </Button>
 
       <Drawer open={isOpen} onOpenChange={setIsOpen}>
-        <DrawerContent ref={formContainerRef} className="h-[100vh] min-h-[100vh] overflow-auto transition-all duration-1000 fixed p-5">
+        <DrawerContent className="h-[100vh] min-h-[100vh] transition-all duration-1000 fixed p-5">
 
           <DrawerHeader>
             <DrawerTitle className="text-xl font-semibold">{steps[step]}</DrawerTitle>
