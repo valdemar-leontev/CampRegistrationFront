@@ -5,12 +5,12 @@ import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
 import {
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerFooter,
-} from "@/components/ui/drawer"
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog"
 import { motion, AnimatePresence } from "framer-motion"
 
 interface FormValues {
@@ -89,12 +89,12 @@ export function DrawerRegistration() {
         Начать регистрацию
       </Button>
 
-      <Drawer open={isOpen} onOpenChange={setIsOpen}>
-        <DrawerContent className="h-[90vh] min-h-[90vh] bg-red-50 transition-all duration-1000 overflow-auto p-5 !fixed bottom-0">
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent className="h-[100vh] min-h-[100vh] bg-red-50 transition-all duration-1000 overflow-auto p-5 !fixed bottom-0">
 
-          <DrawerHeader>
-            <DrawerTitle className="text-xl font-semibold">{steps[step]}</DrawerTitle>
-          </DrawerHeader>
+          <DialogHeader>
+            <DialogTitle className="text-xl font-semibold">{steps[step]}</DialogTitle>
+          </DialogHeader>
 
           <motion.div
             key={step}
@@ -314,7 +314,7 @@ export function DrawerRegistration() {
               </>
             )}
 
-            <DrawerFooter className="flex justify-between p-6 gap-5">
+            <DialogFooter className="flex justify-between p-6 gap-5">
               {step > 0 ? (
                 <Button onClick={() => setStep(step - 1)} variant="outline">
                   Назад
@@ -329,12 +329,12 @@ export function DrawerRegistration() {
               ) : (
                 <Button onClick={form.handleSubmit(onSubmit)} variant={'ghost'}>Отправить</Button>
               )}
-            </DrawerFooter>
+            </DialogFooter>
           </motion.div>
 
 
-        </DrawerContent>
-      </Drawer>
+        </DialogContent>
+      </Dialog>
     </>
   )
 }
