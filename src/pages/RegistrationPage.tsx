@@ -9,7 +9,7 @@ interface IRegistrationPageProps {
 export const RegistrationPage: FC<IRegistrationPageProps> = ({ username }) => {
   return (
     <motion.div
-      className="min-h-[70vh] bg-white relative flex items-center justify-center overflow-hidden"
+      className="!min-h-[100%] bg-red-100 relative flex items-center justify-center "
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 1 }}
@@ -21,7 +21,7 @@ export const RegistrationPage: FC<IRegistrationPageProps> = ({ username }) => {
         transition={{ duration: 1 }}
       />
       <motion.div
-        className="absolute bottom-0 right-0 w-32 h-32 border-b-4 border-r-4 border-gray-300 opacity-30"
+        className="absolute bottom-0 right-4 w-32 h-32 border-b-4 border-r-4 border-gray-300 opacity-30"
         initial={{ opacity: 0, x: 20, y: 20 }}
         animate={{ opacity: 1, x: 0, y: 0 }}
         transition={{ duration: 1 }}

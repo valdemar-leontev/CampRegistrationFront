@@ -6,7 +6,7 @@ import { Skeleton } from '../ui/skeleton';
 
 export const ProfileBar: FC<{ user: any }> = ({ user }) => {
   return (
-    <div className='sticky top-1 z-50 bg-white p-1 flex items-center gap-4 mb-10 justify-between'>
+    <div className='sticky top-1 z-50 bg-red-100 p-1 flex items-center gap-4 mb-10 justify-between'>
       <div className='flex items-center gap-4'>
         {(!user || !user.photo_url) ? (
           <Skeleton className="relative flex h-14 w-14 shrink-0 overflow-hidden rounded-2xl" />
