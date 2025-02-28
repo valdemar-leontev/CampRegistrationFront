@@ -69,6 +69,7 @@ export function DrawerRegistration() {
 
   const onClose = () => {
     setIsOpen(false);
+    form.clearErrors();
   }
 
   const totalPrice = selectedCamps.reduce((sum, camp) => sum + camp.price, 0)
