@@ -52,7 +52,7 @@ export const CampInfoPage: FC = () => {
       </h1>
 
       <div className='w-full min-w-full h-[60vh] relative flex pb-20 justify-center items-end'>
-        <div className="fixed top-[45%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90%]">
+        <div className="fixed top-[48%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90%]">
           <Swiper effect={'cards'} grabCursor={true} modules={[EffectCards]}>
             {camps.map((camp, index) => (
               <SwiperSlide key={index}>
