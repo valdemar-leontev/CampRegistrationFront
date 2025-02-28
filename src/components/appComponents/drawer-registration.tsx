@@ -4,7 +4,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-// import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { IoChevronBack } from "react-icons/io5";
+
 
 interface FormValues {
   firstName: string;
@@ -22,7 +24,7 @@ interface Camp {
 }
 
 const steps = ["Личная информация", "Церковь", "Лагерь", "Обзор"];
-// const churches = ["Слово Истины", "Новая Жизнь", "Примирение", "Свет Евангелия", "Другая"];
+const churches = ["Слово Истины", "Новая Жизнь", "Примирение", "Свет Евангелия", "Другая"];
 const camps: Camp[] = [
   { name: "Детский", date: "10-15 мая", price: 100 },
   { name: "Подростковый", date: "20-25 июня", price: 400 },
@@ -34,7 +36,7 @@ const camps: Camp[] = [
 export function DrawerRegistration() {
   const [step, setStep] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
-  // const [selectedChurch, setSelectedChurch] = useState<string>("");
+  const [_, setSelectedChurch] = useState<string>("");
   const [selectedCamps, setSelectedCamps] = useState<Camp[]>([]);
   const form = useForm<FormValues>({
     defaultValues: { firstName: "", lastName: "", age: "", phone: "", city: "", church: "" },
@@ -70,9 +72,9 @@ export function DrawerRegistration() {
             transition={{ type: "spring", stiffness: 100, damping: 20 }}
             className="fixed top-0 left-0 w-full h-full bg-white shadow-xl z-50 p-6 overflow-auto"
           >
-            <div className="flex justify-between items-center mb-4">
+            <div className="flex justify-between items-center mb-4 p-1">
+              <Button onClick={onClose} variant="outline" className='rounded-full w-12 h-12'><IoChevronBack /></Button>
               <h2 className="text-xl font-semibold">{steps[step]}</h2>
-              <Button onClick={onClose} variant="outline">Закрыть</Button>
             </div>
             <motion.div
               key={step}
@@ -82,7 +84,6 @@ export function DrawerRegistration() {
               transition={{ type: "spring", stiffness: 100, duration: 0.5 }}
               className="space-y-4"
             >
-              {/* Форма по шагам */}
               {step === 0 && (
                 <>
                   <Input {...form.register("firstName", { required: "Введите имя" })} placeholder="Имя" />
@@ -95,7 +96,7 @@ export function DrawerRegistration() {
               {step === 1 && (
                 <>
                   <Input {...form.register("city", { required: "Введите город" })} placeholder="Город" />
-                  {/* <Select onValueChange={(value) => setSelectedChurch(value)}>
+                  <Select onValueChange={(value) => setSelectedChurch(value)}>
                     <SelectTrigger>
                       <SelectValue placeholder="Выберите церковь" />
                     </SelectTrigger>
@@ -104,20 +105,30 @@ export function DrawerRegistration() {
                         <SelectItem key={church} value={church}>{church}</SelectItem>
                       ))}
                     </SelectContent>
-                  </Select> */}
+                  </Select>
                 </>
               )}
 
               {step === 2 && (
-                <div>
+                <div className="space-y-2">
                   {camps.map((camp) => (
-                    <label key={camp.name} className="flex items-center gap-4 p-2 bg-gray-100 rounded-lg">
+                    <label
+                      key={camp.name}
+                      className={`flex items-center gap-4 p-3 rounded-lg transition-all border-2 border-dashed 
+                        ${selectedCamps.includes(camp) ? "bg-accent  !text-white !rounded-3xl" : "bg-gray-50 hover:bg-gray-100"}`}
+                    >
                       <Checkbox checked={selectedCamps.includes(camp)} onCheckedChange={() => toggleCamp(camp)} />
-                      <span>{camp.name} - {camp.date} - {camp.price}₽</span>
+                      <div className='flex flex-col items-start'>
+                        <p className={`text-accent font-bold ${selectedCamps.includes(camp) && '!text-white'}`}>{camp.name}</p>
+                        <p className="font-medium">Дата - {camp.date} </p>
+                        <p className="font-medium">Цена - {camp.price}₽</p>
+                      </div>
+
                     </label>
                   ))}
                 </div>
               )}
+
 
               {step === 3 && (
                 <>
@@ -138,7 +149,7 @@ export function DrawerRegistration() {
             <div className="flex justify-between mt-6">
               {step > 0 ? <Button onClick={() => setStep(step - 1)}>Назад</Button> : null}
               {step < steps.length - 1 ? (
-                <Button onClick={() => setStep(step + 1)}>Далее</Button>
+                <Button onClick={() => setStep(step + 1)} variant={'ghost'}>Далее</Button>
               ) : (
                 <Button onClick={form.handleSubmit(onSubmit)}>Отправить</Button>
               )}
