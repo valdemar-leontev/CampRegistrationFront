@@ -90,7 +90,7 @@ export function DrawerRegistration() {
       </Button>
 
       <Drawer open={isOpen} onOpenChange={setIsOpen}>
-        <DrawerContent className=" h-[90vh] min-h-[90vh] bg-red-50 transition-all duration-1000 overflow-hidden p-5 fixed bottom-0">
+        <DrawerContent className="h-[90vh] min-h-[90vh] bg-red-50 transition-all duration-1000 overflow-auto p-5 !fixed bottom-0">
 
           <DrawerHeader>
             <DrawerTitle className="text-xl font-semibold">{steps[step]}</DrawerTitle>
@@ -102,116 +102,120 @@ export function DrawerRegistration() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -150 }}
             transition={{ type: "spring", stiffness: 100, duration: 0.5 }}
-            className="p-2 space-y-4 h-[60vh] overflow-auto relative bg-green-50"
+            className="p-2 space-y-4 overflow-hidden bg-green-50"
           >
             {step === 0 && (
               <>
-                <label className="block font-medium">Имя</label>
+                <label className="flex font-medium items-center gap-1">Имя
+                  <AnimatePresence>
+                    {form.formState.errors.firstName && (
+                      <motion.p
+                        className="text-red-500 text-sm"
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        ({form.formState.errors.firstName.message})
+                      </motion.p>
+                    )}
+                  </AnimatePresence>
+                </label>
                 <Input
-                  {...form.register("firstName", { required: "Это поле обязательно для заполнения" })}
+                  {...form.register("firstName", { required: "Обязательно для заполнения" })}
                   placeholder="Введите ваше имя"
                   className={form.formState.errors.firstName ? "border-red-500" : ""}
                 />
-                <AnimatePresence>
-                  {form.formState.errors.firstName && (
-                    <motion.p
-                      className="text-red-500 text-sm"
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      {form.formState.errors.firstName.message}
-                    </motion.p>
-                  )}
-                </AnimatePresence>
 
-                <label className="block font-medium mt-3">Фамилия</label>
+
+                <label className="flex font-medium items-center gap-1">Фамилия
+                  <AnimatePresence>
+                    {form.formState.errors.lastName && (
+                      <motion.p
+                        className="text-red-500 text-sm"
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        ({form.formState.errors.lastName.message})
+                      </motion.p>
+                    )}
+                  </AnimatePresence>
+                </label>
                 <Input
-                  {...form.register("lastName", { required: "Это поле обязательно для заполнения" })}
+                  {...form.register("lastName", { required: "Обязательно для заполнения" })}
                   placeholder="Введите вашу фамилию"
                   className={form.formState.errors.lastName ? "border-red-500" : ""}
                 />
-                <AnimatePresence>
-                  {form.formState.errors.lastName && (
-                    <motion.p
-                      className="text-red-500 text-sm"
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      {form.formState.errors.lastName.message}
-                    </motion.p>
-                  )}
-                </AnimatePresence>
-
-                <label className="block font-medium mt-3">Возраст</label>
+                <label className="flex font-medium items-center gap-1">Возраст
+                  <AnimatePresence>
+                    {form.formState.errors.age && (
+                      <motion.p
+                        className="text-red-500 text-sm"
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        ({form.formState.errors.age.message})
+                      </motion.p>
+                    )}
+                  </AnimatePresence>
+                </label>
                 <Input
                   type="number"
-                  {...form.register("age", { required: "Это поле обязательно для заполнения" })}
+                  {...form.register("age", { required: "Обязательно для заполнения" })}
                   placeholder="Введите ваш возраст"
                   className={form.formState.errors.age ? "border-red-500" : ""}
                 />
-                <AnimatePresence>
-                  {form.formState.errors.age && (
-                    <motion.p
-                      className="text-red-500 text-sm"
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      {form.formState.errors.age.message}
-                    </motion.p>
-                  )}
-                </AnimatePresence>
 
-                <label className="block font-medium">Телефон</label>
+                <label className="flex font-medium items-center gap-1">Телефон
+                  <AnimatePresence>
+                    {form.formState.errors.phone && (
+                      <motion.p
+                        className="text-red-500 text-sm"
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        ({form.formState.errors.phone.message})
+                      </motion.p>
+                    )}
+                  </AnimatePresence>
+                </label>
                 <Input
-                  {...form.register("phone", { required: "Это поле обязательно для заполнения" })}
+                  {...form.register("phone", { required: "Обязательно для заполнения" })}
                   placeholder="Введите ваш номер телефона"
                   className={form.formState.errors.phone ? "border-red-500" : ""}
                 />
-                <AnimatePresence>
-                  {form.formState.errors.phone && (
-                    <motion.p
-                      className="text-red-500 text-sm"
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      {form.formState.errors.phone.message}
-                    </motion.p>
-                  )}
-                </AnimatePresence>
               </>
             )}
 
             {step === 1 && (
               <>
-                <label className="block font-medium mt-3">Город</label>
+                <label className="flex font-medium items-center gap-1">Город
+                  <AnimatePresence>
+                    {form.formState.errors.city && (
+                      <motion.p
+                        className="text-red-500 text-sm"
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        ({form.formState.errors.city.message})
+                      </motion.p>
+                    )}
+                  </AnimatePresence>
+                </label>
                 <Input
-                  {...form.register("city", { required: "Это поле обязательно для заполнения" })}
+                  {...form.register("city", { required: "Обязательно для заполнения" })}
                   placeholder="Введите ваш город"
                   className={form.formState.errors.city ? "border-red-500" : ""}
                 />
-                <AnimatePresence>
-                  {form.formState.errors.city && (
-                    <motion.p
-                      className="text-red-500 text-sm"
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      {form.formState.errors.city.message}
-                    </motion.p>
-                  )}
-                </AnimatePresence>
-
-                <label className="block font-medium mt-3">Выберите церковь</label>
+                <label className="flex font-medium items-center gap-1">Выберите церковь</label>
                 <Select
                   onValueChange={(value) => {
                     setSelectedChurch(value)
@@ -229,19 +233,6 @@ export function DrawerRegistration() {
                     ))}
                   </SelectContent>
                 </Select>
-                <AnimatePresence>
-                  {form.formState.errors.church && (
-                    <motion.p
-                      className="text-red-500 text-sm"
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      {form.formState.errors.church.message}
-                    </motion.p>
-                  )}
-                </AnimatePresence>
 
                 <AnimatePresence>
                   {selectedChurch === "Другая" && (
@@ -252,9 +243,23 @@ export function DrawerRegistration() {
                       transition={{ duration: 0.3 }}
                       className="mt-3"
                     >
-                      <label className="block font-medium">Введите название церкви</label>
+                      <label className="block font-medium">Введите название церкви
+                        <AnimatePresence>
+                          {form.formState.errors.church && (
+                            <motion.p
+                              className="text-red-500 text-sm"
+                              initial={{ opacity: 0, y: -10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: -10 }}
+                              transition={{ duration: 0.3 }}
+                            >
+                              ({form.formState.errors.church.message})
+                            </motion.p>
+                          )}
+                        </AnimatePresence>
+                      </label>
                       <Input
-                        {...form.register("church", { required: "Это поле обязательно для заполнения" })}
+                        {...form.register("church", { required: "Обязательно для заполнения" })}
                         placeholder="Введите название вашей церкви"
                         className={form.formState.errors.church ? "border-red-500" : ""}
                       />
