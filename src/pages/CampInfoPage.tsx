@@ -88,7 +88,9 @@ export const CampInfoPage: FC = () => {
             ))}
           </Swiper>
         </div>
-        <DrawerRegistration />
+        <div className='ml-[3%]'>
+          <DrawerRegistration />
+        </div>
       </div>
 
     </div>
