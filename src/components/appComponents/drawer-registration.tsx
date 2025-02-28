@@ -90,7 +90,7 @@ export function DrawerRegistration() {
       </Button>
 
       <Drawer open={isOpen} onOpenChange={setIsOpen}>
-        <DrawerContent className=" h-[70vh] min-h-[70vh] bg-red-50 transition-all duration-1000 overflow-hidden p-5">
+        <DrawerContent className=" h-[90vh] min-h-[90vh] bg-red-50 transition-all duration-1000 overflow-hidden p-5 fixed bottom-0">
 
           <DrawerHeader>
             <DrawerTitle className="text-xl font-semibold">{steps[step]}</DrawerTitle>
