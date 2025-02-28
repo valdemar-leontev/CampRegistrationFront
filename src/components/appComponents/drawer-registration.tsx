@@ -90,7 +90,7 @@ export function DrawerRegistration() {
       </Button>
 
       <Drawer open={isOpen} onOpenChange={setIsOpen}>
-        <DrawerContent className="min-h-[70vh] transition-all duration-1000 fixed p-5">
+        <DrawerContent className="min-h-[70vh] bg-red-50 transition-all duration-1000 overflow-hidden p-5">
 
           <DrawerHeader>
             <DrawerTitle className="text-xl font-semibold">{steps[step]}</DrawerTitle>
@@ -102,7 +102,7 @@ export function DrawerRegistration() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -150 }}
             transition={{ type: "spring", stiffness: 100, duration: 0.5 }}
-            className="p-2 space-y-4 h-[60vh] overflow-auto relative"
+            className="p-2 space-y-4 h-[60vh] overflow-auto relative bg-green-50"
           >
             {step === 0 && (
               <>

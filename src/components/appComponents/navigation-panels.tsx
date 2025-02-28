@@ -9,23 +9,21 @@ export const NavigationPanels = () => {
   const { activeTab, setActiveTab } = useTabStore();
 
   return (
-    <div className=" bg-red-100">
-      <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="w-full px-2 fixed bottom-3 left-1/2 -translate-x-1/2 mb-2 h-20">
-        <TabsList className="bg-[#fa704c] flex gap-1 h-full  rounded-full shadow-xl ">
-          <TabsTrigger value="home" className="p-5 data-[state=active]:px-8">
-            <CiHome size={22} />
-          </TabsTrigger>
-          <TabsTrigger value="accountingPage" className="p-5 px-7 data-[state=active]:px-10">
-            <CiViewTable size={22} />
-          </TabsTrigger>
-          <TabsTrigger value="info" className="p-5 px-7 data-[state=active]:px-10">
-            <PiCards size={22} />
-          </TabsTrigger>
-          <TabsTrigger value="faq" className="p-5 px-7 data-[state=active]:px-10">
-            <AiOutlineQuestion size={22} />
-          </TabsTrigger>
-        </TabsList>
-      </Tabs>
-    </div>
+    <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="fixed bottom-5 w-full px-2 mb-2 h-20">
+      <TabsList className="bg-[#fa704c] flex gap-1 h-full  rounded-full shadow-xl ">
+        <TabsTrigger value="home" className="p-5 ">
+          <CiHome size={22} />
+        </TabsTrigger>
+        <TabsTrigger value="accountingPage" className="p-5 px-7 ">
+          <CiViewTable size={22} />
+        </TabsTrigger>
+        <TabsTrigger value="info" className="p-5 px-7 ">
+          <PiCards size={22} />
+        </TabsTrigger>
+        <TabsTrigger value="faq" className="p-5 px-7 ">
+          <AiOutlineQuestion size={22} />
+        </TabsTrigger>
+      </TabsList>
+    </Tabs>
   );
 };

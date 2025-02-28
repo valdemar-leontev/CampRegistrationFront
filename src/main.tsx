@@ -29,12 +29,13 @@ const Root = () => {
   return (
     <StrictMode>
       {/* <PoweredByGod /> */}
+      <div className='flex flex-col h-[95vh] overflow-hidden'>
+        <ProfileBar user={user} />
 
-      <ProfileBar user={user} />
+        <App user={user} />
 
-      <App user={user} />
-
-      <NavigationPanels />
+        <NavigationPanels />
+      </div>
 
     </StrictMode>
   );
