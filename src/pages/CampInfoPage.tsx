@@ -47,7 +47,7 @@ export const CampInfoPage: FC = () => {
 
   return (
     <div className="flex flex-col items-center min-w-full pl-[2%]">
-      <h1 className="text-3xl font-bold text-center my-6 text-[#1e1e1e] min-w-full ">
+      <h1 className="text-3xl font-bold text-center my-6 text-[#1e1e1e] min-w-full ml-[3%]">
         Информация о лагерях
       </h1>
 
