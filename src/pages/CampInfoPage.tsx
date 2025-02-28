@@ -51,7 +51,7 @@ export const CampInfoPage: FC = () => {
         Информация о лагерях
       </h1>
 
-      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[80%] max-w-md">
+      <div className="fixed top-[40%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[80%] max-w-md">
         <Swiper effect={'cards'} grabCursor={true} modules={[EffectCards]}>
           {camps.map((camp, index) => (
             <SwiperSlide key={index}>
@@ -88,7 +88,7 @@ export const CampInfoPage: FC = () => {
         </Swiper>
       </div>
 
-      <div className="fixed bottom-40 mb-9 z-[1000000]">
+      <div className="fixed bottom-20 mb-9 z-[1000000]">
 
         <DrawerRegistration />
       </div>
