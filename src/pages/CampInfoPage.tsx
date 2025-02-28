@@ -51,7 +51,7 @@ export const CampInfoPage: FC = () => {
         Информация о лагерях
       </h1>
 
-      <div className="w-[70%] fixed mt-28">
+      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[80%] max-w-md">
         <Swiper effect={'cards'} grabCursor={true} modules={[EffectCards]}>
           {camps.map((camp, index) => (
             <SwiperSlide key={index}>
