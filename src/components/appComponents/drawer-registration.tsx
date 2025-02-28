@@ -70,7 +70,7 @@ export function DrawerRegistration() {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", stiffness: 100, damping: 20 }}
-            className="fixed top-0 left-0 w-full h-full bg-white shadow-xl z-50 p-6 overflow-auto"
+            className="fixed top-0 left-0 w-full h-full bg-white shadow-xl z-[100000] p-6 overflow-auto"
           >
             <div className="flex justify-between items-center mb-4 p-1">
               <Button onClick={onClose} variant="outline" className='rounded-full w-12 h-12'><IoChevronBack /></Button>
