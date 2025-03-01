@@ -4,8 +4,8 @@ import { AccountingPage } from './pages/AccountingPage';
 import { useTabStore } from './stores/TabStore';
 import { motion } from 'framer-motion';
 import FAQ from './components/appComponents/faq';
-import { RegistrationPage } from './pages/RegistrationPage';
 import { CampInfoPage } from './pages/CampInfoPage';
+import { RegistrationPage } from './pages/RegistrationPage';
 
 const App: FC<{ user: any }> = ({ user }) => {
 

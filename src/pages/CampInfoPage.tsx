@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { EffectCards } from 'swiper/modules';
-import { DrawerRegistration } from '@/components/appComponents/drawer-registration';
+import { RegistrationForm } from '@/components/appComponents/drawer-registration';
 import { FaCalendarAlt } from 'react-icons/fa';
 
 export const CampInfoPage: FC = () => {
@@ -89,7 +89,7 @@ export const CampInfoPage: FC = () => {
           </Swiper>
         </div>
         <div className='ml-[3%]'>
-          <DrawerRegistration />
+          <RegistrationForm />
         </div>
       </div>
 

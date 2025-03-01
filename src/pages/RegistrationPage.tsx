@@ -1,5 +1,5 @@
+import { RegistrationForm } from '@/components/appComponents/drawer-registration';
 import { motion } from "framer-motion";
-import { DrawerRegistration } from '@/components/appComponents/drawer-registration';
 import { FC } from 'react';
 
 interface IRegistrationPageProps {
@@ -59,7 +59,7 @@ export const RegistrationPage: FC<IRegistrationPageProps> = ({ username }) => {
           Присоединяйтесь к нашему лагерю! Пожалуйста, заполните форму ниже, чтобы зарегистрироваться.
         </motion.p>
 
-        <DrawerRegistration />
+        <RegistrationForm />
       </motion.div>
     </motion.div>
   );
