@@ -9,6 +9,45 @@ import { NavigationPanels } from './components/appComponents/navigation-panels.j
 import { ProfileBar } from './components/appComponents/profile-bar.js';
 
 
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+
+const theme = createTheme({
+  palette: {
+    // primary: {
+    //   main: "blue-100", // Основной цвет
+    // },
+    secondary: {
+      main: "#4caf50", // Вторичный цвет
+    },
+  },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: "100px",
+          textTransform: "none",
+          fontSize: "1rem",
+          fontWeight: 500,
+          boxShadow: "none",
+        },
+      },
+    },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          borderRadius: "100px",
+          textTransform: "none",
+          fontSize: "1rem",
+          fontWeight: 500,
+          boxShadow: "none",
+        },
+      }
+    },
+  }
+});
+
+export default theme;
+
 init()
 
 const Root = () => {
@@ -28,14 +67,17 @@ const Root = () => {
 
   return (
     <StrictMode>
-      {/* <PoweredByGod /> */}
-      <div className='flex flex-col h-[95vh] overflow-hidden'>
-        <ProfileBar user={user} />
+      <ThemeProvider theme={theme}>
+        {/* <PoweredByGod /> */}
+        <div className='flex flex-col h-[95vh] overflow-hidden'>
+          <ProfileBar user={user} />
 
-        <App user={user} />
+          <App user={user} />
 
-        <NavigationPanels />
-      </div>
+          <NavigationPanels />
+        </div>
+
+      </ThemeProvider>
 
     </StrictMode>
   );

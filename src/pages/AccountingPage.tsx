@@ -88,7 +88,7 @@ export const AccountingPage = () => {
           >
             <Table className="bg-white border shadow-md border-transparent">
               <TableHeader>
-                <TableRow className="bg-[#fa704c] !border-none">
+                <TableRow className="bg-blue-100 !border-none">
                   <TableHead className="py-3 px-4 font-bold text-center text-[16px] rounded-s-[40px]">Фамилия</TableHead>
                   <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Имя</TableHead>
                   <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Возраст</TableHead>
@@ -156,7 +156,7 @@ export const AccountingPage = () => {
             </Drawer>
           </motion.div>
         </TabsContent>
-      </Tabs>
+      </Tabs >
     </>
   )
 }
