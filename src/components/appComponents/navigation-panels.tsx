@@ -9,18 +9,18 @@ export const NavigationPanels = () => {
   const { activeTab, setActiveTab } = useTabStore();
 
   return (
-    <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="fixed bottom-5 w-full px-2 mb-2 h-20 -z-">
-      <TabsList className="bg-white flex gap-1 h-full  rounded-full shadow-xl ">
-        <TabsTrigger value="home" className="p-5 ">
+    <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="fixed bottom-5 w-full px-2 mb-2 h-20">
+      <TabsList className="bg-white flex gap-1 h-full rounded-full shadow-xl ">
+        <TabsTrigger value="home" className="p-5 px-5">
           <CiHome size={22} />
         </TabsTrigger>
-        <TabsTrigger value="accountingPage" className="p-5 px-7 ">
+        <TabsTrigger value="accountingPage" className="p-5 px-5">
           <CiViewTable size={22} />
         </TabsTrigger>
-        <TabsTrigger value="info" className="p-5 px-7 ">
+        <TabsTrigger value="info" className="p-5 px-5">
           <PiCards size={22} />
         </TabsTrigger>
-        <TabsTrigger value="faq" className="p-5 px-7 ">
+        <TabsTrigger value="faq" className="p-5 px-5">
           <AiOutlineQuestion size={22} />
         </TabsTrigger>
       </TabsList>

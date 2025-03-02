@@ -43,7 +43,14 @@ export const CampInfoPage: FC = () => {
     },
   ];
 
-  const pastelColors = ['#f5f1ee', '#edeef7', '#e0f7fa', '#fff3e0', '#e8f5e9'];
+  // Градиенты для карточек
+  const cardGradients = [
+    'linear-gradient(135deg, #6a11cb, #2575fc)', // Фиолетово-синий
+    'linear-gradient(135deg, #ff9a9e, #fad0c4)', // Розово-персиковый
+    'linear-gradient(135deg, #a18cd1, #fbc2eb)', // Лавандово-розовый
+    'linear-gradient(135deg, #fbc2eb, #a6c1ee)', // Розово-голубой
+    'linear-gradient(135deg, #84fab0, #8fd3f4)', // Зелено-голубой
+  ];
 
   return (
     <div className="flex flex-col items-center min-w-full pl-[2%]">
@@ -57,27 +64,27 @@ export const CampInfoPage: FC = () => {
             {camps.map((camp, index) => (
               <SwiperSlide key={index}>
                 <div
-                  className="hover:shadow-lg transition-shadow duration-300 p-8 flex flex-col items-center rounded-2xl"
+                  className="hover:shadow-lg transition-shadow duration-300 p-8 flex flex-col items-center rounded-2xl shadow-md"
                   style={{
-                    backgroundColor: pastelColors[index % pastelColors.length],
-                    background: `linear-gradient(135deg, ${pastelColors[index % pastelColors.length]} 0%, rgba(255, 255, 255) 100%)`,
+                    background: cardGradients[index % cardGradients.length],
+                    color: 'white', // Белый текст для контраста
                   }}
                 >
-                  <h2 className="text-2xl font-semibold mb-2 text-black">{camp.name}</h2>
-                  <div className="flex items-center mb-2 text-black">
+                  <h2 className="text-2xl font-semibold mb-2">{camp.name}</h2>
+                  <div className="flex items-center mb-2">
                     <FaCalendarAlt className="mr-2" />
                     <p>
                       <strong>Дата начала:</strong> {camp.startDate}
                     </p>
                   </div>
-                  <div className="flex items-center mb-4 text-black">
+                  <div className="flex items-center mb-4">
                     <FaCalendarAlt className="mr-2" />
                     <p>
                       <strong>Дата конца:</strong> {camp.endDate}
                     </p>
                   </div>
-                  <h3 className="text-lg font-semibold mt-4 text-gray-800">Цены:</h3>
-                  <ul className="list-disc list-inside text-black">
+                  <h3 className="text-lg font-semibold mt-4">Цены:</h3>
+                  <ul className="list-disc list-inside">
                     <li>Апрель: <span className="font-bold">{camp.prices.April} руб.</span></li>
                     <li>Май: <span className="font-bold">{camp.prices.May} руб.</span></li>
                     <li>Июнь: <span className="font-bold">{camp.prices.June} руб.</span></li>
@@ -92,7 +99,6 @@ export const CampInfoPage: FC = () => {
           <RegistrationForm />
         </div>
       </div>
-
     </div>
   );
 };

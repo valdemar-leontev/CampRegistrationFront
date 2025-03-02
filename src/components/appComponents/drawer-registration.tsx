@@ -48,10 +48,9 @@ const schema = z.object({
   phone: phoneSchema,
   city: z.string().min(1, "Город обязателен"),
   church: z.string().min(1, "Церковь обязательна"),
-  otherChurchName: z.string().optional(), // По умолчанию необязательное поле
-  otherChurchAddress: z.string().optional(), // По умолчанию необязательное поле
+  otherChurchName: z.string().optional(),
+  otherChurchAddress: z.string().optional(),
 }).superRefine((data, ctx) => {
-  // Если выбрана церковь "Другая", проверяем, что поля заполнены
   if (data.church === "Другая") {
     if (!data.otherChurchName) {
       ctx.addIssue({
@@ -94,10 +93,11 @@ export function RegistrationForm() {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedChurch, setSelectedChurch] = useState<string>("");
   const [selectedCamps, setSelectedCamps] = useState<Camp[]>([]);
-  const [ageError, setAgeError] = useState<string | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<"cash" | "card">("cash");
   const [isCopied, setIsCopied] = useState(false);
   const [file, setFile] = useState<File | null>(null);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -157,7 +157,11 @@ export function RegistrationForm() {
         break;
     }
 
-    setAgeError(errorMessage);
+    if (errorMessage) {
+      setSnackbarMessage(errorMessage);
+      setSnackbarOpen(true);
+    }
+
     return isValid;
   };
 
@@ -169,10 +173,10 @@ export function RegistrationForm() {
   };
 
   const handleCopyCardNumber = () => {
-    const cardNumber = "1234 5678 9012 3456"; // Пример номера карты
+    const cardNumber = "1234 5678 9012 3456";
     navigator.clipboard.writeText(cardNumber).then(() => {
       setIsCopied(true);
-      setTimeout(() => setIsCopied(false), 2000); // Скрыть уведомление через 2 секунды
+      setTimeout(() => setIsCopied(false), 2000);
     });
   };
 
@@ -202,27 +206,20 @@ export function RegistrationForm() {
     let isValid = false;
 
     if (step === 0) {
-      // Шаг 1: Личная информация
       isValid = await form.trigger(["firstName", "lastName", "dateOfBirth", "phone"]);
     } else if (step === 1) {
-      // Шаг 2: Церковь
       isValid = await form.trigger(["church"]);
       if (selectedChurch === "Другая") {
         isValid = isValid && (await form.trigger(["otherChurchName", "otherChurchAddress"]));
       }
     } else if (step === 2) {
-      // Шаг 3: Лагерь
       isValid = selectedCamps.length > 0;
     } else if (step === 3) {
-      // Шаг 4: Обзор (нет валидации, просто переход к оплате)
       isValid = true;
     } else if (step === 4) {
-      // Шаг 5: Оплата
       if (paymentMethod === "card") {
-        // Если выбран способ "Карта", проверяем, загружен ли файл
         isValid = !!file;
       } else {
-        // Если выбран способ "Наличные", валидация не требуется
         isValid = true;
       }
     }
@@ -361,7 +358,7 @@ export function RegistrationForm() {
               )}
 
               {step === 2 && (
-                <div className="space-y-4">
+                <div className="space-y-4 overflow-auto max-h-[65vh]">
                   {camps.map((camp) => {
                     const isSelected = selectedCamps.includes(camp);
 
@@ -397,7 +394,6 @@ export function RegistrationForm() {
                       </div>
                     );
                   })}
-                  {ageError && <p className="text-red-500 text-sm">{ageError}</p>}
                 </div>
               )}
 
@@ -459,7 +455,6 @@ export function RegistrationForm() {
                       <Typography variant="body1">
                         Пожалуйста, переведите сумму <strong>{selectedCamps.reduce((acc, camp) => acc + camp.price, 0)}₽</strong> по данному номеру карты:
                       </Typography>
-                      {/* Блок с номером карты */}
                       <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
                         <Typography variant="body1" className="font-mono">
                           <strong>1234 5678 9012 3456</strong>
@@ -471,6 +466,12 @@ export function RegistrationForm() {
                         >
                           <IoCopyOutline />
                         </Button>
+                      </div>
+
+                      <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                        <Typography variant="body1" className="font-mono">
+                          <strong>Получатель</strong> - Иванов И.И.
+                        </Typography>
                       </div>
 
                       <Typography variant="body1" className="mt-4">
@@ -531,6 +532,17 @@ export function RegistrationForm() {
             >
               <Alert severity="success" onClose={() => setIsCopied(false)}>
                 Номер карты скопирован!
+              </Alert>
+            </Snackbar>
+
+            <Snackbar
+              open={snackbarOpen}
+              autoHideDuration={6000}
+              onClose={() => setSnackbarOpen(false)}
+              anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+            >
+              <Alert onClose={() => setSnackbarOpen(false)} severity="error">
+                {snackbarMessage}
               </Alert>
             </Snackbar>
           </motion.div>
