@@ -332,6 +332,7 @@ export function RegistrationForm() {
                         setSelectedChurch(e.target.value);
                         form.setValue("church", e.target.value);
                       }}
+                      className='text-left'
                     >
                       {churches.map((church) => (
                         <MenuItem key={church} value={church}>
@@ -455,6 +456,9 @@ export function RegistrationForm() {
 
                   {paymentMethod === "card" ? (
                     <div className="space-y-4">
+                      <Typography variant="body1">
+                        Пожалуйста, переведите сумму <strong>{selectedCamps.reduce((acc, camp) => acc + camp.price, 0)}₽</strong> по данному номеру карты:
+                      </Typography>
                       {/* Блок с номером карты */}
                       <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
                         <Typography variant="body1" className="font-mono">
@@ -469,7 +473,6 @@ export function RegistrationForm() {
                         </Button>
                       </div>
 
-                      {/* Загрузка скриншота */}
                       <Typography variant="body1" className="mt-4">
                         Загрузите скриншот оплаты:
                       </Typography>
@@ -487,7 +490,6 @@ export function RegistrationForm() {
                     </div>
                   ) : (
                     <div className="space-y-4">
-                      {/* Информация для оплаты наличными */}
                       <Typography variant="body1">
                         Пожалуйста, передайте сумму <strong>{selectedCamps.reduce((acc, camp) => acc + camp.price, 0)}₽</strong> следующему человеку:
                       </Typography>
