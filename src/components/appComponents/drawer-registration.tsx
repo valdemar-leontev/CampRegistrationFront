@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -16,6 +16,11 @@ import {
   Tooltip,
   IconButton,
   ClickAwayListener,
+  Alert,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
+  Snackbar,
 } from "@mui/material";
 import { IoChevronBack } from "react-icons/io5";
 import { CiCircleInfo } from "react-icons/ci";
@@ -24,8 +29,9 @@ import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import { useState } from "react";
+import { IoCopyOutline } from "react-icons/io5";
 
-// Схема валидации
+
 const phoneSchema = z.string()
   .min(1, 'Телефон обязателен')
   .refine((value) => {
@@ -42,8 +48,26 @@ const schema = z.object({
   phone: phoneSchema,
   city: z.string().min(1, "Город обязателен"),
   church: z.string().min(1, "Церковь обязательна"),
-  otherChurchName: z.string().optional(),
-  otherChurchAddress: z.string().optional(),
+  otherChurchName: z.string().optional(), // По умолчанию необязательное поле
+  otherChurchAddress: z.string().optional(), // По умолчанию необязательное поле
+}).superRefine((data, ctx) => {
+  // Если выбрана церковь "Другая", проверяем, что поля заполнены
+  if (data.church === "Другая") {
+    if (!data.otherChurchName) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Название церкви обязательно",
+        path: ["otherChurchName"],
+      });
+    }
+    if (!data.otherChurchAddress) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Адрес церкви обязателен",
+        path: ["otherChurchAddress"],
+      });
+    }
+  }
 });
 
 type FormValues = z.infer<typeof schema>;
@@ -54,7 +78,8 @@ interface Camp {
   price: number;
 }
 
-const steps = ["Личная информация", "Церковь", "Лагерь", "Обзор"];
+
+const steps = ["Личная информация", "Церковь", "Лагерь", "Обзор", "Оплата"];
 const churches = ["Слово Истины", "Новая Жизнь", "Примирение", "Свет Евангелия", "Другая"];
 const camps: Camp[] = [
   { name: "Детский", date: "30.06 - 05.07", price: 500 },
@@ -70,6 +95,9 @@ export function RegistrationForm() {
   const [selectedChurch, setSelectedChurch] = useState<string>("");
   const [selectedCamps, setSelectedCamps] = useState<Camp[]>([]);
   const [ageError, setAgeError] = useState<string | null>(null);
+  const [paymentMethod, setPaymentMethod] = useState<"cash" | "card">("cash");
+  const [isCopied, setIsCopied] = useState(false);
+  const [file, setFile] = useState<File | null>(null);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -140,10 +168,31 @@ export function RegistrationForm() {
     }
   };
 
-  const onSubmit: SubmitHandler<FormValues> = (values) => {
-    console.log({ ...values, selectedCamps });
+  const handleCopyCardNumber = () => {
+    const cardNumber = "1234 5678 9012 3456"; // Пример номера карты
+    navigator.clipboard.writeText(cardNumber).then(() => {
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000); // Скрыть уведомление через 2 секунды
+    });
+  };
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const uploadedFile = event.target.files?.[0];
+    if (uploadedFile) {
+      setFile(uploadedFile);
+    }
+  };
+
+  const onSubmit = () => {
+    console.log({ ...form.getValues(), selectedCamps, paymentMethod, file });
+
+    form.reset();
+    form.clearErrors();
+    setSelectedCamps([]);
+    setStep(0);
     onClose();
   };
+
 
   const onClose = () => {
     setIsOpen(false);
@@ -153,18 +202,35 @@ export function RegistrationForm() {
     let isValid = false;
 
     if (step === 0) {
+      // Шаг 1: Личная информация
       isValid = await form.trigger(["firstName", "lastName", "dateOfBirth", "phone"]);
     } else if (step === 1) {
+      // Шаг 2: Церковь
       isValid = await form.trigger(["church"]);
       if (selectedChurch === "Другая") {
         isValid = isValid && (await form.trigger(["otherChurchName", "otherChurchAddress"]));
       }
     } else if (step === 2) {
+      // Шаг 3: Лагерь
       isValid = selectedCamps.length > 0;
+    } else if (step === 3) {
+      // Шаг 4: Обзор (нет валидации, просто переход к оплате)
+      isValid = true;
+    } else if (step === 4) {
+      // Шаг 5: Оплата
+      if (paymentMethod === "card") {
+        // Если выбран способ "Карта", проверяем, загружен ли файл
+        isValid = !!file;
+      } else {
+        // Если выбран способ "Наличные", валидация не требуется
+        isValid = true;
+      }
     }
 
     if (isValid) {
       setStep((prev) => prev + 1);
+    } else {
+      console.log("Ошибки валидации:", form.formState.errors);
     }
   };
 
@@ -191,7 +257,6 @@ export function RegistrationForm() {
                 <Typography variant="h6">{steps[step]}</Typography>
                 <ClickAwayListener onClickAway={handleTooltipClose}>
                   <Tooltip
-
                     onClick={handleTooltipOpen}
                     onClose={handleTooltipClose}
                     open={open}
@@ -213,7 +278,7 @@ export function RegistrationForm() {
             </Box>
 
 
-            <Box component="form" onSubmit={form.handleSubmit(onSubmit)} sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-5 mt-5">
               {step === 0 && (
                 <>
                   <TextField
@@ -232,7 +297,13 @@ export function RegistrationForm() {
                     <DatePicker
                       label="Дата рождения"
                       value={form.watch("dateOfBirth") ? dayjs(form.watch("dateOfBirth")) : null}
-                      onChange={(date) => form.setValue("dateOfBirth", date!.toDate())}
+                      onChange={(date) => {
+                        if (date) {
+                          form.setValue("dateOfBirth", date.toDate());
+                        } else {
+                          form.setValue("dateOfBirth", new Date());
+                        }
+                      }}
                       slotProps={{
                         textField: {
                           error: !!form.formState.errors.dateOfBirth,
@@ -240,7 +311,6 @@ export function RegistrationForm() {
                         },
                       }}
                     />
-
                   </LocalizationProvider>
                   <TextField
                     label="Телефон"
@@ -257,7 +327,7 @@ export function RegistrationForm() {
                     <InputLabel>Церковь</InputLabel>
                     <Select
                       label="Церковь"
-                      value={form.watch("church")}
+                      value={form.watch("church") || ""}
                       onChange={(e) => {
                         setSelectedChurch(e.target.value);
                         form.setValue("church", e.target.value);
@@ -275,10 +345,14 @@ export function RegistrationForm() {
                       <TextField
                         label="Название церкви"
                         {...form.register("otherChurchName")}
+                        error={!!form.formState.errors.otherChurchName}
+                        helperText={form.formState.errors.otherChurchName?.message}
                       />
                       <TextField
                         label="Адрес церкви"
                         {...form.register("otherChurchAddress")}
+                        error={!!form.formState.errors.otherChurchAddress}
+                        helperText={form.formState.errors.otherChurchAddress?.message}
                       />
                     </>
                   )}
@@ -295,7 +369,7 @@ export function RegistrationForm() {
                         key={camp.name}
                         onClick={() => toggleCamp(camp)}
                         className={`px-5 py-3 text-left rounded-2xl border transition cursor-pointer flex items-center gap-4 
-                          ${isSelected
+              ${isSelected
                             ? "bg-blue-100 border-blue-500 shadow-md"
                             : "bg-white border-gray-200 shadow-lg hover:shadow-xl"
                           }`}
@@ -303,7 +377,14 @@ export function RegistrationForm() {
                         <input
                           type="checkbox"
                           checked={isSelected}
-                          onChange={() => toggleCamp(camp)}
+                          onChange={(e) => {
+                            const isChecked = e.target.checked;
+                            if (isChecked) {
+                              setSelectedCamps((prev) => [...prev, camp]);
+                            } else {
+                              setSelectedCamps((prev) => prev.filter((c) => c !== camp));
+                            }
+                          }}
                           className="w-6 h-6 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
                           onClick={(e) => e.stopPropagation()}
                         />
@@ -321,7 +402,6 @@ export function RegistrationForm() {
 
               {step === 3 && (
                 <div className="text-left bg-white p-6 rounded-2xl shadow-lg border border-gray-200">
-                  {/* Личная информация */}
                   <h2 className="text-xl font-semibold text-gray-900 mb-3">Личная информация</h2>
                   <div className="space-y-1 text-gray-700">
                     <p><span className="font-medium">Имя:</span> {form.watch("firstName")}</p>
@@ -330,7 +410,6 @@ export function RegistrationForm() {
                     <p><span className="font-medium">Телефон:</span> {form.watch("phone")}</p>
                   </div>
 
-                  {/* Церковь */}
                   <h2 className="text-xl font-semibold text-gray-900 mt-6 mb-3">Церковь</h2>
                   <div className="space-y-1 text-gray-700">
                     <p><span className="font-medium">Церковь:</span> {form.watch("church")}</p>
@@ -342,7 +421,6 @@ export function RegistrationForm() {
                     )}
                   </div>
 
-                  {/* Выбранные лагеря */}
                   <h2 className="text-xl font-semibold text-gray-900 mt-6 mb-3">Выбранные лагеря</h2>
                   <div className="space-y-1 text-gray-700">
                     {selectedCamps.map((camp) => (
@@ -352,16 +430,82 @@ export function RegistrationForm() {
                     ))}
                   </div>
 
-                  {/* Итоговая сумма */}
                   <h2 className="text-xl font-semibold text-gray-900 mt-6">
                     ИТОГО: <span className="text-blue-600">{selectedCamps.reduce((acc, camp) => acc + camp.price, 0)}₽</span>
                   </h2>
                 </div>
               )}
 
+              {step === 4 && (
+                <div className="text-left bg-white p-6 rounded-2xl shadow-lg border border-gray-200">
+                  <h2 className="text-xl font-semibold text-gray-900 mb-3">Оплата</h2>
+                  <Typography variant="body1" className="mb-4">
+                    Ваша заявка оформлена! Осталось только оплатить. После оплаты оператор подтвердит вашу заявку в течении 5 дней.
+                  </Typography>
+
+                  <FormControl component="fieldset" className="mb-4">
+                    <RadioGroup
+                      value={paymentMethod}
+                      onChange={(e) => setPaymentMethod(e.target.value as "cash" | "card")}
+                    >
+                      <FormControlLabel value="cash" control={<Radio />} label="Наличные" />
+                      <FormControlLabel value="card" control={<Radio />} label="Карта" />
+                    </RadioGroup>
+                  </FormControl>
+
+                  {paymentMethod === "card" ? (
+                    <div className="space-y-4">
+                      {/* Блок с номером карты */}
+                      <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                        <Typography variant="body1" className="font-mono">
+                          <strong>1234 5678 9012 3456</strong>
+                        </Typography>
+                        <Button
+                          variant="outlined"
+                          onClick={handleCopyCardNumber}
+                          className="!bg-blue-500 !text-white w-10 h-10 rounded-full"
+                        >
+                          <IoCopyOutline />
+                        </Button>
+                      </div>
+
+                      {/* Загрузка скриншота */}
+                      <Typography variant="body1" className="mt-4">
+                        Загрузите скриншот оплаты:
+                      </Typography>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileUpload}
+                        className="mt-2"
+                      />
+                      {file && (
+                        <Typography variant="body2" className="mt-2">
+                          Файл загружен: {file.name}
+                        </Typography>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {/* Информация для оплаты наличными */}
+                      <Typography variant="body1">
+                        Пожалуйста, передайте сумму <strong>{selectedCamps.reduce((acc, camp) => acc + camp.price, 0)}₽</strong> следующему человеку:
+                      </Typography>
+                      <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                        <Typography variant="body1">
+                          <strong>Имя:</strong> Иванов Иван
+                        </Typography>
+                        <Typography variant="body1">
+                          <strong>Церковь:</strong> Слово Истины
+                        </Typography>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
 
               <Box display="flex" justifyContent="space-between" mt={4}>
-                {step > 0 && (
+                {step > 0 && step !== 4 && (
                   <Button onClick={() => setStep(step - 1)} variant="outlined">
                     Назад
                   </Button>
@@ -376,7 +520,17 @@ export function RegistrationForm() {
                   </Button>
                 )}
               </Box>
-            </Box>
+            </form>
+
+            <Snackbar
+              open={isCopied}
+              autoHideDuration={2000}
+              onClose={() => setIsCopied(false)}
+            >
+              <Alert severity="success" onClose={() => setIsCopied(false)}>
+                Номер карты скопирован!
+              </Alert>
+            </Snackbar>
           </motion.div>
         )}
       </AnimatePresence>
