@@ -30,14 +30,9 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import { useState } from "react";
 import { IoCopyOutline } from "react-icons/io5";
+// @ts-ignore
+import { MuiTelInput, matchIsValidTel } from 'mui-tel-input';
 
-
-const phoneSchema = z.string()
-  .min(1, 'Телефон обязателен')
-  .refine((value) => {
-    const cleanedValue = value.replace(/\D/g, "");
-    return cleanedValue.length === 11 && cleanedValue.startsWith("7");
-  }, "Телефон должен начинаться с 7 и содержать 11 цифр");
 
 const schema = z.object({
   firstName: z.string().min(1, "Имя обязательно"),
@@ -45,7 +40,7 @@ const schema = z.object({
   dateOfBirth: z.date({
     required_error: "Дата рождения обязательна",
   }),
-  phone: phoneSchema,
+  phone: z.string().optional(),
   city: z.string().min(1, "Город обязателен"),
   church: z.string().min(1, "Церковь обязательна"),
   otherChurchName: z.string().optional(),
@@ -309,12 +304,33 @@ export function RegistrationForm() {
                       }}
                     />
                   </LocalizationProvider>
-                  <TextField
-                    label="Телефон"
-                    {...form.register("phone")}
-                    error={!!form.formState.errors.phone}
-                    helperText={form.formState.errors.phone?.message}
-                  />
+
+                  <div className='flex flex-col'>
+                    <MuiTelInput
+                      forceCallingCode
+                      onlyCountries={['RU']}
+                      defaultCountry="RU"
+                      value={form.watch('phone')}
+                      error={!!form.formState.errors.phone}
+                      onChange={(value: string) => {
+                        const isValid = matchIsValidTel(value, {
+                          onlyCountries: ['RU']
+                        })
+
+                        if (!isValid) {
+                          console.log(form.formState.errors.phone);
+
+                          form.setError('phone', { type: "custom", message: "Неверный формат" });
+                        } else {
+                          form.clearErrors('phone')
+                        }
+                        form.setValue('phone', value)
+                      }} />
+                    <div className='!text-[0.75rem] text-left ml-4 text-[#d3302f]'>
+                      {form.formState.errors.phone ? form.formState.errors.phone!.message : ''}
+                    </div>
+                  </div>
+
                 </>
               )}
 
