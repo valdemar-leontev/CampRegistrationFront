@@ -53,12 +53,12 @@ export const CampInfoPage: FC = () => {
   ];
 
   return (
-    <div className="flex flex-col items-center min-w-full pl-[2%]">
+    <div className="flex flex-col items-center min-w-full">
       <h1 className="text-3xl font-bold text-center my-6 text-[#1e1e1e] min-w-full ml-[3%]">
         Информация о лагерях
       </h1>
 
-      <div className='w-full min-w-full h-[60vh] relative flex pb-20 justify-center items-end'>
+      <div className='w-full min-w-full h-[65vh] relative flex pb-20 justify-center items-end'>
         <div className="fixed top-[48%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90%]">
           <Swiper effect={'cards'} grabCursor={true} modules={[EffectCards]}>
             {camps.map((camp, index) => (
@@ -67,7 +67,7 @@ export const CampInfoPage: FC = () => {
                   className="hover:shadow-lg transition-shadow duration-300 p-8 flex flex-col items-center rounded-2xl shadow-md"
                   style={{
                     background: cardGradients[index % cardGradients.length],
-                    color: 'white', // Белый текст для контраста
+                    color: 'white',
                   }}
                 >
                   <h2 className="text-2xl font-semibold mb-2">{camp.name}</h2>
@@ -95,7 +95,7 @@ export const CampInfoPage: FC = () => {
             ))}
           </Swiper>
         </div>
-        <div className='ml-[3%]'>
+        <div className='!mt-10'>
           <RegistrationForm />
         </div>
       </div>

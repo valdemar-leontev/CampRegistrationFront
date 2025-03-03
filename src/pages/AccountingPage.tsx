@@ -25,13 +25,10 @@ import drawerImage3 from '../assets/draweImage-3.svg'
 import drawerImage4 from '../assets/draweImage-4.svg'
 import { useEffect, useState } from 'react';
 import { Invoice } from '@/types';
-import { useTabStore } from '@/stores/TabStore';
-import { GiCampingTent } from "react-icons/gi";
 
 const drawerImages = [drawerImage1, drawerImage2, drawerImage3, drawerImage4];
 
 export const AccountingPage = () => {
-  const { activeTab } = useTabStore();
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
   const [randomImage, setRandomImage] = useState<string>(drawerImages[0]);
@@ -63,15 +60,8 @@ export const AccountingPage = () => {
 
   return (
     <>
-      {activeTab == 'Детский' && <>
-        <div className='flex items-center gap-2 justify-center mb-3'>
-          <h1 className='text-3xl font-bold text-center'>Учет летнего отдыха</h1>
-          <GiCampingTent size={30} />
-        </div>
-      </>}
-
-      <Tabs defaultValue="Детский" >
-        <TabsList className="overflow-x-auto overflow-y-hidden whitespace-nowrap flex gap-2 w-full px-2 scrollbar-hide justify-start pl-2 py-8 ">
+      <Tabs defaultValue="Детский">
+        <TabsList className="overflow-x-auto overflow-y-hidden whitespace-nowrap flex gap-2 w-full px-2 scrollbar-hide justify-start pl-2 py-8">
           <TabsTrigger value="Детский">Детский</TabsTrigger>
           <TabsTrigger value="Подростковый">Подростковый</TabsTrigger>
           <TabsTrigger value="Отец и сын">Отец и сын</TabsTrigger>
@@ -156,7 +146,7 @@ export const AccountingPage = () => {
             </Drawer>
           </motion.div>
         </TabsContent>
-      </Tabs >
+      </Tabs>
     </>
   )
 }
