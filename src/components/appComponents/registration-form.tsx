@@ -21,6 +21,7 @@ import {
   Radio,
   RadioGroup,
   Snackbar,
+  FormHelperText,
 } from "@mui/material";
 import { IoChevronBack } from "react-icons/io5";
 import { CiCircleInfo } from "react-icons/ci";
@@ -32,6 +33,9 @@ import { useState } from "react";
 import { IoCopyOutline } from "react-icons/io5";
 // @ts-ignore
 import { MuiTelInput, matchIsValidTel } from 'mui-tel-input';
+import 'dayjs/locale/ru'; 
+
+dayjs.locale('ru');
 
 
 const schema = z.object({
@@ -285,8 +289,10 @@ export function RegistrationForm() {
                     error={!!form.formState.errors.lastName}
                     helperText={form.formState.errors.lastName?.message}
                   />
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ru">
                     <DatePicker
+                      maxDate={dayjs()}
+                      minDate={dayjs().subtract(100, 'year')}
                       label="Дата рождения"
                       value={form.watch("dateOfBirth") ? dayjs(form.watch("dateOfBirth")) : null}
                       onChange={(date) => {
@@ -296,6 +302,7 @@ export function RegistrationForm() {
                           form.setValue("dateOfBirth", new Date());
                         }
                       }}
+                      format="DD MMMM YYYY"
                       slotProps={{
                         textField: {
                           error: !!form.formState.errors.dateOfBirth,
@@ -336,14 +343,16 @@ export function RegistrationForm() {
 
               {step === 1 && (
                 <>
-                  <FormControl fullWidth>
+                  <FormControl fullWidth error={!!form.formState.errors.church}>
                     <InputLabel>Церковь</InputLabel>
                     <Select
                       label="Церковь"
                       value={form.watch("church") || ""}
                       onChange={(e) => {
-                        setSelectedChurch(e.target.value);
-                        form.setValue("church", e.target.value);
+                        const value = e.target.value;
+                        setSelectedChurch(value);
+                        form.setValue("church", value);
+                        form.trigger("church"); // Запускаем валидацию поля
                       }}
                       className='text-left'
                     >
@@ -353,6 +362,11 @@ export function RegistrationForm() {
                         </MenuItem>
                       ))}
                     </Select>
+                    {form.formState.errors.church && (
+                      <FormHelperText error>
+                        {form.formState.errors.church.message}
+                      </FormHelperText>
+                    )}
                   </FormControl>
                   {selectedChurch === "Другая" && (
                     <>
@@ -382,8 +396,8 @@ export function RegistrationForm() {
                       <div
                         key={camp.name}
                         onClick={() => toggleCamp(camp)}
-                        className={`px-5 py-3 text-left rounded-2xl border transition cursor-pointer flex items-center gap-4 
-              ${isSelected
+                        className={`px-5 py-3 text-left rounded-2xl border transition cursor-pointer flex items-center gap-4
+            ${isSelected
                             ? "bg-blue-100 border-blue-500 shadow-md"
                             : "bg-white border-gray-200 shadow-lg hover:shadow-xl"
                           }`}
@@ -391,16 +405,7 @@ export function RegistrationForm() {
                         <input
                           type="checkbox"
                           checked={isSelected}
-                          onChange={(e) => {
-                            const isChecked = e.target.checked;
-                            if (isChecked) {
-                              setSelectedCamps((prev) => [...prev, camp]);
-                            } else {
-                              setSelectedCamps((prev) => prev.filter((c) => c !== camp));
-                            }
-                          }}
                           className="w-6 h-6 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
-                          onClick={(e) => e.stopPropagation()}
                         />
                         <div className="flex-1">
                           <p className="text-lg font-semibold text-gray-900">{camp.name}</p>

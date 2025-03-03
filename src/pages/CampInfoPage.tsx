@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { EffectCards } from 'swiper/modules';
-import { RegistrationForm } from '@/components/appComponents/drawer-registration';
+import { RegistrationForm } from '@/components/appComponents/registration-form';
 import { FaCalendarAlt } from 'react-icons/fa';
 
 export const CampInfoPage: FC = () => {
