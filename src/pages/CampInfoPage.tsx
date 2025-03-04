@@ -43,13 +43,12 @@ export const CampInfoPage: FC = () => {
     },
   ];
 
-  // Градиенты для карточек
   const cardGradients = [
-    'linear-gradient(135deg, #6a11cb, #2575fc)', // Фиолетово-синий
-    'linear-gradient(135deg, #ff9a9e, #fad0c4)', // Розово-персиковый
-    'linear-gradient(135deg, #a18cd1, #fbc2eb)', // Лавандово-розовый
-    'linear-gradient(135deg, #fbc2eb, #a6c1ee)', // Розово-голубой
-    'linear-gradient(135deg, #84fab0, #8fd3f4)', // Зелено-голубой
+    'linear-gradient(135deg, #6a11cb, #2575fc)',
+    'linear-gradient(135deg, #ff9a9e, #fad0c4)', 
+    'linear-gradient(135deg, #a18cd1, #fbc2eb)', 
+    'linear-gradient(135deg, #fbc2eb, #a6c1ee)', 
+    'linear-gradient(135deg, #84fab0, #8fd3f4)', 
   ];
 
   return (

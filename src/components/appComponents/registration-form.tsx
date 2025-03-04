@@ -1,5 +1,4 @@
-"use client";
-
+import axios from 'axios';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -29,11 +28,13 @@ import { CiCircleInfo } from "react-icons/ci";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IoCopyOutline } from "react-icons/io5";
 // @ts-ignore
 import { MuiTelInput, matchIsValidTel } from 'mui-tel-input';
-import 'dayjs/locale/ru'; 
+import 'dayjs/locale/ru';
+import { IChurch } from '@/models/church';
+import { apiUrl } from '../../../constants'
 
 dayjs.locale('ru');
 
@@ -78,7 +79,7 @@ interface Camp {
 
 
 const steps = ["Личная информация", "Церковь", "Лагерь", "Обзор", "Оплата"];
-const churches = ["Слово Истины", "Новая Жизнь", "Примирение", "Свет Евангелия", "Другая"];
+// const churches = ["Слово Истины", "Новая Жизнь", "Примирение", "Свет Евангелия", "Другая"];
 const camps: Camp[] = [
   { name: "Детский", date: "30.06 - 05.07", price: 500 },
   { name: "Подростковый", date: "07.07 - 12.07", price: 800 },
@@ -97,6 +98,18 @@ export function RegistrationForm() {
   const [file, setFile] = useState<File | null>(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
+
+  const [churchesList, setChurchesList] = useState<IChurch[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      var response = await axios.get(`${apiUrl}/churches`);
+      console.log(response.data);
+
+      setChurchesList(response.data as IChurch[])
+    })()
+  }, [])
+
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -352,13 +365,13 @@ export function RegistrationForm() {
                         const value = e.target.value;
                         setSelectedChurch(value);
                         form.setValue("church", value);
-                        form.trigger("church"); // Запускаем валидацию поля
+                        form.trigger("church");
                       }}
                       className='text-left'
                     >
-                      {churches.map((church) => (
-                        <MenuItem key={church} value={church}>
-                          {church}
+                      {churchesList.map((church) => (
+                        <MenuItem key={church.id} value={church.name}>
+                          {church.name}
                         </MenuItem>
                       ))}
                     </Select>
