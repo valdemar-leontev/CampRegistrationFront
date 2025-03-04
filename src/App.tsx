@@ -16,7 +16,7 @@ const App: FC<{ user: any }> = ({ user }) => {
       animate={{ opacity: 1 }}
       initial={{ opacity: 0 }}
       transition={{ delay: 0.5 }}
-      className='mt-20 mb-20 p-4'
+      className='p-4 h-full'
     >
       {activeTab === "home" && (
         <div>

@@ -9,7 +9,7 @@ export const NavigationPanels = () => {
   const { activeTab, setActiveTab } = useTabStore();
 
   return (
-    <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="fixed bottom-5 w-full px-2 mb-2 h-20">
+    <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="w-full px-2 !mb-2">
       <TabsList className="bg-white flex gap-1 h-full rounded-full shadow-xl ">
         <TabsTrigger value="home" className="p-5 px-5">
           <CiHome size={22} />
