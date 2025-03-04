@@ -9,7 +9,7 @@ interface IRegistrationPageProps {
 export const RegistrationPage: FC<IRegistrationPageProps> = ({ username }) => {
   return (
     <motion.div
-      className="!min-h-[74vh] relative flex items-center justify-center"
+      className="!min-h-[70vh] relative flex items-center justify-center"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 1 }}

@@ -19,7 +19,7 @@ const App: FC<{ user: any }> = ({ user }) => {
       className='p-4 h-full'
     >
       {activeTab === "home" && (
-        <div>
+        <div className='h-full justify-center flex items-center'>
           <RegistrationPage username={`${user ? user.username : 'Друг'}`} />
         </div>
       )}
