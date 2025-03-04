@@ -44,11 +44,10 @@ export const CampInfoPage: FC = () => {
   ];
 
   const cardGradients = [
+    'linear-gradient(135deg, #654ea3, #eaafc8)',
     'linear-gradient(135deg, #6a11cb, #2575fc)',
-    'linear-gradient(135deg, #ff9a9e, #fad0c4)', 
-    'linear-gradient(135deg, #a18cd1, #fbc2eb)', 
-    'linear-gradient(135deg, #fbc2eb, #a6c1ee)', 
-    'linear-gradient(135deg, #84fab0, #8fd3f4)', 
+    'linear-gradient(135deg, #cc2b5e, #753a88)', 
+    'linear-gradient(135deg, #4568dc, #b06ab3)',
   ];
 
   return (
@@ -57,7 +56,7 @@ export const CampInfoPage: FC = () => {
         Информация о лагерях
       </h1>
 
-      <div className='w-full min-w-full h-[65vh] relative flex pb-20 justify-center items-end'>
+      <div className='w-full min-w-full h-[65vh] relative flex pb-10 justify-center items-end'>
         <div className="fixed top-[48%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90%]">
           <Swiper effect={'cards'} grabCursor={true} modules={[EffectCards]}>
             {camps.map((camp, index) => (
@@ -94,9 +93,8 @@ export const CampInfoPage: FC = () => {
             ))}
           </Swiper>
         </div>
-        <div className='!mt-10'>
-          <RegistrationForm />
-        </div>
+
+        <RegistrationForm />
       </div>
     </div>
   );

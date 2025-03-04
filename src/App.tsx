@@ -16,7 +16,7 @@ const App: FC<{ user: any }> = ({ user }) => {
       animate={{ opacity: 1 }}
       initial={{ opacity: 0 }}
       transition={{ delay: 0.5 }}
-      className='p-4 h-full'
+      className='p-4 h-[100vh] overflow-hidden'
     >
       {activeTab === "home" && (
         <div className='h-full justify-center flex items-center'>

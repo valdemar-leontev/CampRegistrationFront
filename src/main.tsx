@@ -2,7 +2,7 @@ import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.js";
-// import PoweredByGod from './components/appComponents/powered-by-God.js';
+import PoweredByGod from './components/appComponents/powered-by-God.js';
 import { init } from '@telegram-apps/sdk-react'
 import { retrieveRawInitData } from '@telegram-apps/bridge';
 import { NavigationPanels } from './components/appComponents/navigation-panels.js';
@@ -13,9 +13,6 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 const theme = createTheme({
   palette: {
-    // primary: {
-    //   main: "blue-100", // Основной цвет
-    // },
     secondary: {
       main: "#4caf50", // Вторичный цвет
     },
@@ -52,6 +49,7 @@ try {
 
 const Root = () => {
   const [user, setUser] = useState<any>()
+  const [isVisible, setIsVisible] = useState<boolean>(false);
 
   useEffect(() => {
     try {
@@ -69,22 +67,25 @@ const Root = () => {
     }
   }, []);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <StrictMode>
       <ThemeProvider theme={theme}>
-        {/* <PoweredByGod /> */}
-        <div className='flex flex-col h-[100vh] overflow-hidden'>
+        <PoweredByGod />
+        {isVisible && <div className='flex flex-col h-[100vh] overflow-hidden'>
           <ProfileBar user={user} />
 
           <App user={user} />
 
           <NavigationPanels />
-          {/* <div className='bg-red-100 flex-[1]'></div>
-
-          <div className='bg-red-300 flex-[4]'></div>
-
-          <div className='bg-red-600 flex-[1]'></div> */}
-        </div>
+        </div>}
 
       </ThemeProvider>
 

@@ -256,7 +256,8 @@ export function RegistrationForm() {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", stiffness: 100, damping: 20 }}
-            style={{ position: "fixed", top: 0, left: 0, width: "100%", height: "100%", backgroundColor: "white", zIndex: 100000, padding: 24, overflow: "auto" }}
+            className='h-[100vh] overflow-x-auto'
+            style={{ position: "fixed", top: 0, left: 0, width: "100%", backgroundColor: "white", padding: 24 }}
           >
             <Box display="flex" justifyContent="space-between" alignItems="center" className="py-3">
               <Button onClick={onClose} variant="contained" className="!h-12 !min-w-0 rounded-full !bg-black">
@@ -287,7 +288,7 @@ export function RegistrationForm() {
             </Box>
 
 
-            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-5 mt-5">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-5 overflow-x-scroll pt-5">
               {step === 0 && (
                 <>
                   <TextField
@@ -468,10 +469,10 @@ export function RegistrationForm() {
               )}
 
               {step === 4 && (
-                <div className="text-left bg-white p-6 rounded-2xl shadow-lg border border-gray-200">
+                <div className="text-left bg-white p-6 rounded-2xl shadow-lg border border-gray-200 overflow-auto">
                   <h2 className="text-xl font-semibold text-gray-900 mb-3">Оплата</h2>
                   <Typography variant="body1" className="mb-4">
-                    Ваша заявка оформлена! Осталось только оплатить. После оплаты оператор подтвердит вашу заявку в течении 5 дней.
+                    Ваша заявка оформлена! Осталось только оплатить.
                   </Typography>
 
                   <FormControl component="fieldset" className="mb-4">
@@ -484,59 +485,78 @@ export function RegistrationForm() {
                     </RadioGroup>
                   </FormControl>
 
+
                   {paymentMethod === "card" ? (
-                    <div className="space-y-4">
-                      <Typography variant="body1">
-                        Пожалуйста, переведите сумму <strong>{selectedCamps.reduce((acc, camp) => acc + camp.price, 0)}₽</strong> по данному номеру карты:
-                      </Typography>
-                      <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
-                        <Typography variant="body1" className="font-mono">
-                          <strong>1234 5678 9012 3456</strong>
+                    <AnimatePresence mode="wait">
+                      <motion.div
+                        key="card"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.3 }}
+                        className="space-y-4"
+                      >
+                        <Typography variant="body1">
+                          Пожалуйста, переведите сумму <strong>{selectedCamps.reduce((acc, camp) => acc + camp.price, 0)}₽</strong> по данному номеру карты:
                         </Typography>
-                        <Button
-                          variant="outlined"
-                          onClick={handleCopyCardNumber}
-                          className="!bg-blue-500 !text-white w-10 h-10 rounded-full"
-                        >
-                          <IoCopyOutline />
-                        </Button>
-                      </div>
+                        <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                          <Typography variant="body1" className="font-mono">
+                            <strong>1234 5678 9012 3456</strong>
+                          </Typography>
+                          <Button
+                            variant="outlined"
+                            onClick={handleCopyCardNumber}
+                            className="!bg-blue-500 !text-white w-10 h-10 rounded-full"
+                          >
+                            <IoCopyOutline />
+                          </Button>
+                        </div>
 
-                      <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
-                        <Typography variant="body1" className="font-mono">
-                          <strong>Получатель</strong> - Иванов И.И.
-                        </Typography>
-                      </div>
+                        <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                          <Typography variant="body1" className="font-mono">
+                            <strong>Получатель</strong> - Иванов И.И.
+                          </Typography>
+                        </div>
 
-                      <Typography variant="body1" className="mt-4">
-                        Загрузите скриншот оплаты:
-                      </Typography>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleFileUpload}
-                        className="mt-2"
-                      />
-                      {file && (
-                        <Typography variant="body2" className="mt-2">
-                          Файл загружен: {file.name}
+                        <Typography variant="body1" className="mt-4">
+                          Загрузите скриншот оплаты:
                         </Typography>
-                      )}
-                    </div>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleFileUpload}
+                          className="mt-2 w-full"
+                        />
+                        {file && (
+                          <Typography variant="body2" className="mt-2">
+                            Файл загружен: {file.name}
+                          </Typography>
+                        )}
+                      </motion.div>
+                    </AnimatePresence>
                   ) : (
-                    <div className="space-y-4">
-                      <Typography variant="body1">
-                        Пожалуйста, передайте сумму <strong>{selectedCamps.reduce((acc, camp) => acc + camp.price, 0)}₽</strong> следующему человеку:
-                      </Typography>
-                      <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <AnimatePresence mode="wait">
+                      <motion.div
+                        key="cash"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.3 }}
+                        className="space-y-4"
+                      >
                         <Typography variant="body1">
-                          <strong>Имя:</strong> Иванов Иван
+                          Пожалуйста, передайте сумму <strong>{selectedCamps.reduce((acc, camp) => acc + camp.price, 0)}₽</strong> следующему человеку:
                         </Typography>
-                        <Typography variant="body1">
-                          <strong>Церковь:</strong> Слово Истины
-                        </Typography>
-                      </div>
-                    </div>
+                        <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                          <Typography variant="body1">
+                            <strong>Имя:</strong> Иванов Иван
+                          </Typography>
+                          <Typography variant="body1">
+                            <strong>Церковь:</strong> Слово Истины
+                          </Typography>
+                        </div>
+                      </motion.div>
+                    </AnimatePresence>
                   )}
                 </div>
               )}
