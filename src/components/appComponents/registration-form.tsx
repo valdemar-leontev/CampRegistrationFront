@@ -35,6 +35,10 @@ import { MuiTelInput, matchIsValidTel } from 'mui-tel-input';
 import 'dayjs/locale/ru';
 import { IChurch } from '@/models/church';
 import { apiUrl } from '../../../constants'
+import { ICamp } from '@/models/ICamp';
+import { IPrice } from '@/models/IPrice';
+import { IPaymentType } from '@/models/IPaymentType';
+import { PaymentTypeEnum } from '@/models/enums/paymentTypeEnum';
 
 dayjs.locale('ru');
 
@@ -71,45 +75,61 @@ const schema = z.object({
 
 type FormValues = z.infer<typeof schema>;
 
-interface Camp {
-  name: string;
-  date: string;
-  price: number;
-}
+// interface Camp {
+//   name: string;
+//   date: string;
+//   price: number;
+// }
 
 
 const steps = ["Личная информация", "Церковь", "Лагерь", "Обзор", "Оплата"];
 // const churches = ["Слово Истины", "Новая Жизнь", "Примирение", "Свет Евангелия", "Другая"];
-const camps: Camp[] = [
-  { name: "Детский", date: "30.06 - 05.07", price: 500 },
-  { name: "Подростковый", date: "07.07 - 12.07", price: 800 },
-  { name: "Мужской", date: "14.07 - 15.07", price: 1000 },
-  { name: "Общецерковный", date: "17.07 - 20.07", price: 500 },
-  { name: "Молодежный", date: "21.07 - 26.07", price: 800 },
-];
+// const camps: Camp[] = [
+//   { name: "Детский", date: "30.06 - 05.07", price: 500 },
+//   { name: "Подростковый", date: "07.07 - 12.07", price: 800 },
+//   { name: "Мужской", date: "14.07 - 15.07", price: 1000 },
+//   { name: "Общецерковный", date: "17.07 - 20.07", price: 500 },
+//   { name: "Молодежный", date: "21.07 - 26.07", price: 800 },
+// ];
 
 export function RegistrationForm() {
   const [step, setStep] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedChurch, setSelectedChurch] = useState<string>("");
-  const [selectedCamps, setSelectedCamps] = useState<Camp[]>([]);
-  const [paymentMethod, setPaymentMethod] = useState<"cash" | "card">("cash");
+  const [selectedCamps, setSelectedCamps] = useState<ICamp[]>([]);
+  const [paymentMethod, setPaymentMethod] = useState<number>(PaymentTypeEnum.Cash);
   const [isCopied, setIsCopied] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
 
   const [churchesList, setChurchesList] = useState<IChurch[]>([]);
+  const [campList, setCampList] = useState<ICamp[]>([]);
+  const [paymentTypes, setPaymentTypes] = useState<IPaymentType[]>([])
 
   useEffect(() => {
     (async () => {
       var response = await axios.get(`${apiUrl}/churches`);
-      console.log(response.data);
 
       setChurchesList(response.data as IChurch[])
     })()
   }, [])
 
+  useEffect(() => {
+    (async () => {
+      var response = await axios.get(`${apiUrl}/camps`);
+
+      setCampList(response.data as ICamp[])
+    })()
+  }, [])
+
+  useEffect(() => {
+    (async () => {
+      var response = await axios.get(`${apiUrl}/registrations/dictionaries/payment-types`);
+
+      setPaymentTypes(response.data as IPaymentType[])
+    })()
+  }, [])
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -127,17 +147,17 @@ export function RegistrationForm() {
     return age;
   };
 
-  const [open, setOpen] = useState(false);
+  const [isTooltipOpen, setIsTooltipOpen] = useState(false);
 
   const handleTooltipClose = () => {
-    setOpen(false);
+    setIsTooltipOpen(false);
   };
 
   const handleTooltipOpen = () => {
-    setOpen(true);
+    setIsTooltipOpen(true);
   };
 
-  const validateAgeForCamp = (camp: Camp, age: number): boolean => {
+  const validateAgeForCamp = (camp: ICamp, age: number): boolean => {
     let isValid = true;
     let errorMessage = null;
 
@@ -177,7 +197,7 @@ export function RegistrationForm() {
     return isValid;
   };
 
-  const toggleCamp = (camp: Camp) => {
+  const toggleCamp = (camp: ICamp) => {
     const age = calculateAge(form.getValues("dateOfBirth"));
     if (validateAgeForCamp(camp, age)) {
       setSelectedCamps((prev) => (prev.includes(camp) ? prev.filter((c) => c !== camp) : [...prev, camp]));
@@ -209,7 +229,6 @@ export function RegistrationForm() {
     onClose();
   };
 
-
   const onClose = () => {
     setIsOpen(false);
   };
@@ -229,7 +248,7 @@ export function RegistrationForm() {
     } else if (step === 3) {
       isValid = true;
     } else if (step === 4) {
-      if (paymentMethod === "card") {
+      if (paymentMethod === PaymentTypeEnum.Card) {
         isValid = !!file;
       } else {
         isValid = true;
@@ -242,6 +261,21 @@ export function RegistrationForm() {
       console.log("Ошибки валидации:", form.formState.errors);
     }
   };
+
+  const getCurrentPrice = (prices: IPrice[]) => {
+    const now = new Date();
+
+    for (const price of prices) {
+      const startDate = new Date(price.startDate);
+      const endDate = new Date(price.endDate);
+      if (now >= startDate && now <= endDate) {
+        return price.totalValue;
+      }
+    }
+
+    return 0;
+  };
+
 
   return (
     <>
@@ -269,7 +303,7 @@ export function RegistrationForm() {
                   <Tooltip
                     onClick={handleTooltipOpen}
                     onClose={handleTooltipClose}
-                    open={open}
+                    open={isTooltipOpen}
                     disableFocusListener
                     disableHoverListener
                     disableTouchListener
@@ -403,7 +437,7 @@ export function RegistrationForm() {
 
               {step === 2 && (
                 <div className="space-y-4 overflow-auto max-h-[65vh]">
-                  {camps.map((camp) => {
+                  {campList.map((camp) => {
                     const isSelected = selectedCamps.includes(camp);
 
                     return (
@@ -423,8 +457,8 @@ export function RegistrationForm() {
                         />
                         <div className="flex-1">
                           <p className="text-lg font-semibold text-gray-900">{camp.name}</p>
-                          <p className="text-sm text-gray-600 mt-1">📅 Дата: {camp.date}</p>
-                          <p className="text-sm text-gray-600 mt-1">💰 Цена: {camp.price}₽</p>
+                          <p className="text-sm text-gray-600 mt-1">📅 Дата: {dayjs(camp.startDate).format('D MMMM')} - {dayjs(camp.endDate).format('D MMMM')}</p>
+                          <p className="text-sm text-gray-600 mt-1">💰 Цена: {getCurrentPrice(camp.prices)}₽</p>
                         </div>
                       </div>
                     );
@@ -457,13 +491,15 @@ export function RegistrationForm() {
                   <div className="space-y-1 text-gray-700">
                     {selectedCamps.map((camp) => (
                       <p key={camp.name}>
-                        <span className="font-medium">{camp.name}</span> ({camp.date}) – {camp.price}₽
+                        <strong>{camp.name}</strong>
+                        <br />
+                        {dayjs(camp.startDate).format('D MMMM')} - {dayjs(camp.endDate).format('D MMMM')} – {getCurrentPrice(camp.prices)}₽
                       </p>
                     ))}
                   </div>
 
                   <h2 className="text-xl font-semibold text-gray-900 mt-6">
-                    ИТОГО: <span className="text-blue-600">{selectedCamps.reduce((acc, camp) => acc + camp.price, 0)}₽</span>
+                    ИТОГО: <span className="text-blue-600">{selectedCamps.reduce((acc, camp) => acc + getCurrentPrice(camp.prices), 0)}₽</span>
                   </h2>
                 </div>
               )}
@@ -478,15 +514,20 @@ export function RegistrationForm() {
                   <FormControl component="fieldset" className="mb-4">
                     <RadioGroup
                       value={paymentMethod}
-                      onChange={(e) => setPaymentMethod(e.target.value as "cash" | "card")}
+                      onChange={(e) => setPaymentMethod(Number(e.target.value))}
                     >
-                      <FormControlLabel value="cash" control={<Radio />} label="Наличные" />
-                      <FormControlLabel value="card" control={<Radio />} label="Карта" />
+                      {paymentTypes.map((paymentType) => (
+                        <FormControlLabel
+                          key={paymentType.id}
+                          value={paymentType.id}
+                          control={<Radio />}
+                          label={paymentType.name}
+                        />
+                      ))}
                     </RadioGroup>
                   </FormControl>
 
-
-                  {paymentMethod === "card" ? (
+                  {paymentMethod === PaymentTypeEnum.Card ? (
                     <AnimatePresence mode="wait">
                       <motion.div
                         key="card"
@@ -497,7 +538,7 @@ export function RegistrationForm() {
                         className="space-y-4"
                       >
                         <Typography variant="body1">
-                          Пожалуйста, переведите сумму <strong>{selectedCamps.reduce((acc, camp) => acc + camp.price, 0)}₽</strong> по данному номеру карты:
+                          Пожалуйста, переведите сумму <strong>{selectedCamps.reduce((acc, camp) => acc + getCurrentPrice(camp.prices), 0)}₽</strong> по данному номеру карты:
                         </Typography>
                         <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
                           <Typography variant="body1" className="font-mono">
@@ -545,7 +586,7 @@ export function RegistrationForm() {
                         className="space-y-4"
                       >
                         <Typography variant="body1">
-                          Пожалуйста, передайте сумму <strong>{selectedCamps.reduce((acc, camp) => acc + camp.price, 0)}₽</strong> следующему человеку:
+                          Пожалуйста, передайте сумму <strong>{selectedCamps.reduce((acc, camp) => acc + getCurrentPrice(camp.prices), 0)}₽</strong> следующему человеку:
                         </Typography>
                         <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
                           <Typography variant="body1">
