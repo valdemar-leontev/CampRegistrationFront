@@ -19,6 +19,7 @@ export const registrationSchema = z.object({
     required_error: "Дата рождения обязательна",
   }),
   phone: z.string().optional(),
+  city: z.string().min(1, "Город обязателен"),
   church: z.number().min(1, "Церковь обязательна"),
   otherChurchName: z.string().optional(),
   otherChurchAddress: z.string().optional(),

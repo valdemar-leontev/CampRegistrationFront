@@ -7,6 +7,8 @@ export interface IRegistrationForm {
 
   phone?: string | undefined;
 
+  city: string;
+
   church: number;
 
   otherChurchName?: string | undefined;

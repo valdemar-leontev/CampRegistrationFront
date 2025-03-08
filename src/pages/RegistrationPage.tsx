@@ -1,4 +1,4 @@
-import { RegistrationForm } from '@/components/appComponents/registration-form';
+import { RegistrationForm } from '@/components/appComponents/registration-form/registration-form';
 import { motion } from "framer-motion";
 import { FC } from 'react';
 

@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { EffectCards } from 'swiper/modules';
-import { RegistrationForm } from '@/components/appComponents/registration-form';
+import { RegistrationForm } from '@/components/appComponents/registration-form/registration-form';
 import { FaCalendarAlt } from 'react-icons/fa';
 
 export const CampInfoPage: FC = () => {
@@ -46,7 +46,7 @@ export const CampInfoPage: FC = () => {
   const cardGradients = [
     'linear-gradient(135deg, #654ea3, #eaafc8)',
     'linear-gradient(135deg, #6a11cb, #2575fc)',
-    'linear-gradient(135deg, #cc2b5e, #753a88)', 
+    'linear-gradient(135deg, #cc2b5e, #753a88)',
     'linear-gradient(135deg, #4568dc, #b06ab3)',
   ];
 

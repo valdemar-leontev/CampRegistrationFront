@@ -7,7 +7,7 @@ interface CampSelectionStepProps {
   campList: ICamp[];
   selectedCamps: ICamp[];
   toggleCamp: (camp: ICamp) => void;
-  getCurrentPrice: (prices: IPrice[]) => number;
+  getCurrentPrice: (prices: IPrice[]) => IPrice | null;
 }
 
 export const CampSelectionStep = ({ campList, selectedCamps, toggleCamp, getCurrentPrice }: CampSelectionStepProps) => {
@@ -37,7 +37,7 @@ export const CampSelectionStep = ({ campList, selectedCamps, toggleCamp, getCurr
                 📅 Дата: {dayjs(camp.startDate).format('D MMMM')} - {dayjs(camp.endDate).format('D MMMM')}
               </Typography>
               <Typography variant="body2" className="text-sm text-gray-600 mt-1">
-                💰 Цена: {getCurrentPrice(camp.prices)}₽
+                💰 Цена: {getCurrentPrice(camp.prices)?.totalValue}₽
               </Typography>
             </div>
           </div>

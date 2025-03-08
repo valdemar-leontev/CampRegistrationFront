@@ -5,16 +5,18 @@ import { IPaymentType } from '@/models/IPaymentType';
 import { ICamp } from '@/models/ICamp';
 import { IPrice } from '@/models/IPrice';
 import { PaymentTypeEnum } from '@/models/enums/paymentTypeEnum';
+import { IAdmin } from '@/models/IAdmin';
 
 interface PaymentStepProps {
   paymentMethod: number;
   setPaymentMethod: (value: number) => void;
   paymentTypes: IPaymentType[];
   selectedCamps: ICamp[];
-  getCurrentPrice: (prices: IPrice[]) => number;
+  getCurrentPrice: (prices: IPrice[]) => IPrice | null;
   handleCopyCardNumber: () => void;
   handleFileUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
   file: File | null;
+  admin: IAdmin;
 }
 
 export const PaymentStep = ({
@@ -26,6 +28,7 @@ export const PaymentStep = ({
   handleCopyCardNumber,
   handleFileUpload,
   file,
+  admin
 }: PaymentStepProps) => {
   return (
     <div className="text-left bg-white p-6 rounded-2xl shadow-lg border border-gray-200 overflow-auto">
@@ -61,11 +64,11 @@ export const PaymentStep = ({
             className="space-y-4"
           >
             <Typography variant="body1">
-              Пожалуйста, переведите сумму <strong>{selectedCamps.reduce((acc, camp) => acc + getCurrentPrice(camp.prices), 0)}₽</strong> по данному номеру карты:
+              Пожалуйста, переведите сумму <strong>{selectedCamps.reduce((acc, camp) => acc + getCurrentPrice(camp.prices)?.totalValue!, 0)}₽</strong> по данному номеру карты:
             </Typography>
             <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
               <Typography variant="body1" className="font-mono">
-                <strong>1234 5678 9012 3456</strong>
+                <strong>{admin.bankCardNumber}</strong>
               </Typography>
               <Button
                 variant="outlined"
@@ -78,7 +81,8 @@ export const PaymentStep = ({
 
             <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
               <Typography variant="body1" className="font-mono">
-                <strong>Получатель</strong> - Иванов И.И.
+                <strong>Получатель</strong> - ДОБАВИТЬ ИМЯ.
+                <strong>Телефон</strong> - {admin.phoneNumber}
               </Typography>
             </div>
 
@@ -109,14 +113,14 @@ export const PaymentStep = ({
             className="space-y-4"
           >
             <Typography variant="body1">
-              Пожалуйста, передайте сумму <strong>{selectedCamps.reduce((acc, camp) => acc + getCurrentPrice(camp.prices), 0)}₽</strong> следующему человеку:
+              Пожалуйста, передайте сумму <strong>{selectedCamps.reduce((acc, camp) => acc + getCurrentPrice(camp.prices)?.totalValue!, 0)}₽</strong> следующему человеку:
             </Typography>
             <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
               <Typography variant="body1">
-                <strong>Имя:</strong> Иванов Иван
+                <strong>Имя:</strong> ДОБАВИТЬ ИМЯ
               </Typography>
               <Typography variant="body1">
-                <strong>Церковь:</strong> Слово Истины
+                <strong>Церковь:</strong> ПУСТЬ ШЛЮТ ЦЕРКОВЬ
               </Typography>
             </div>
           </motion.div>

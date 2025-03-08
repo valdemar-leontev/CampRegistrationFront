@@ -9,7 +9,7 @@ interface ReviewStepProps {
   form: UseFormReturn<IRegistrationForm>;
   selectedChurch: number | null;
   selectedCamps: ICamp[];
-  getCurrentPrice: (prices: IPrice[]) => number;
+  getCurrentPrice: (prices: IPrice[]) => IPrice | null;
 }
 
 export const ReviewStep = ({ form, selectedChurch, selectedCamps, getCurrentPrice }: ReviewStepProps) => {
@@ -25,7 +25,7 @@ export const ReviewStep = ({ form, selectedChurch, selectedCamps, getCurrentPric
         <Typography variant="body1"><strong>Телефон:</strong> {watch("phone")}</Typography>
       </div>
 
-      <Typography variant="h5" className="text-xl font-semibold text-gray-900 mt-6 mb-3">Церковь</Typography>
+      <Typography variant="h5" className="text-xl font-semibold text-gray-900 !mt-6 !mb-1">Церковь</Typography>
       <div className="space-y-1 text-gray-700">
         <Typography variant="body1"><strong>Церковь:</strong> {watch("church")}</Typography>
         {selectedChurch === 0 && (
@@ -36,19 +36,19 @@ export const ReviewStep = ({ form, selectedChurch, selectedCamps, getCurrentPric
         )}
       </div>
 
-      <Typography variant="h5" className="text-xl font-semibold text-gray-900 mt-6 mb-3">Выбранные лагеря</Typography>
+      <Typography variant="h5" className="text-xl font-semibold text-gray-900 !mt-6 !mb-1">Выбранные лагеря</Typography>
       <div className="space-y-1 text-gray-700">
         {selectedCamps.map((camp) => (
           <Typography variant="body1" key={camp.name}>
             <strong>{camp.name}</strong>
             <br />
-            {dayjs(camp.startDate).format('D MMMM')} - {dayjs(camp.endDate).format('D MMMM')} – {getCurrentPrice(camp.prices)}₽
+            {dayjs(camp.startDate).format('D MMMM')} - {dayjs(camp.endDate).format('D MMMM')} – {getCurrentPrice(camp.prices)?.totalValue}₽
           </Typography>
         ))}
       </div>
 
-      <Typography variant="h5" className="text-xl font-semibold text-gray-900 mt-6">
-        ИТОГО: <span className="text-blue-600">{selectedCamps.reduce((acc, camp) => acc + getCurrentPrice(camp.prices), 0)}₽</span>
+      <Typography variant="h5" className="text-xl font-semibold text-gray-900 !mt-6">
+        ИТОГО: <span className="text-blue-600">{selectedCamps.reduce((acc, camp) => acc + getCurrentPrice(camp.prices)?.totalValue!, 0)}₽</span>
       </Typography>
     </div>
   );

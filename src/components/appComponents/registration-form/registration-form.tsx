@@ -14,27 +14,32 @@ import {
 } from "@mui/material";
 import { IoChevronBack } from "react-icons/io5";
 import { CiCircleInfo } from "react-icons/ci";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 // @ts-ignore
 import { MuiTelInput, matchIsValidTel } from 'mui-tel-input';
 import 'dayjs/locale/ru';
 import { IChurch } from '@/models/IChurch';
-import { apiUrl } from '../../../constants'
+import { apiUrl } from '../../../../constants'
 import { ICamp } from '@/models/ICamp';
 import { IPrice } from '@/models/IPrice';
 import { IPaymentType } from '@/models/IPaymentType';
 import { PaymentTypeEnum } from '@/models/enums/paymentTypeEnum';
-import { PersonalInfoStep } from './registration-form/PersonalInfoStep';
-import { ChurchStep } from './registration-form/ChurchStep';
-import { CampSelectionStep } from './registration-form/CampSelectionStep';
-import { ReviewStep } from './registration-form/ReviewStep';
-import { PaymentStep } from './registration-form/PaymentStep';
+import { PersonalInfoStep } from './PersonalInfoStep';
+import { ChurchStep } from './ChurchStep';
+import { CampSelectionStep } from './CampSelectionStep';
+import { ReviewStep } from './ReviewStep';
+import { PaymentStep } from './PaymentStep';
 import { IRegistrationForm } from '@/models/IRegistrationForm';
 import { registrationSchema } from '@/constants';
+import { ICreateRegistration } from '@/models/dto/ICreateRegistration';
+import { useTabStore } from '@/stores/TabStore';
+import { IAdmin } from '@/models/IAdmin';
 
 const steps = ["Личная информация", "Церковь", "Лагерь", "Обзор", "Оплата"];
 
-export function RegistrationForm() {
+export const RegistrationForm = () => {
+  const { user } = useTabStore();
+
   const [step, setStep] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedChurch, setSelectedChurch] = useState<number | null>(null);
@@ -48,6 +53,20 @@ export function RegistrationForm() {
   const [churchesList, setChurchesList] = useState<IChurch[]>([]);
   const [campList, setCampList] = useState<ICamp[]>([]);
   const [paymentTypes, setPaymentTypes] = useState<IPaymentType[]>([])
+
+  const [admin, setAdmin] = useState<IAdmin>()
+
+  const getCurrentPrice = (prices: IPrice[]): IPrice | null => {
+    const now = new Date();
+    for (const price of prices) {
+      const startDate = new Date(price.startDate);
+      const endDate = new Date(price.endDate);
+      if (now >= startDate && now <= endDate) {
+        return price;
+      }
+    }
+    return null;
+  };
 
   useEffect(() => {
     (async () => {
@@ -175,11 +194,74 @@ export function RegistrationForm() {
     setIsOpen(false);
   };
 
+  const createRegistrationAsync = useCallback(async () => {
+    const formValues = form.getValues();
+
+    const priceList = selectedCamps.map((camp) => {
+      const currentPrice = getCurrentPrice(camp.prices);
+      if (!currentPrice) {
+        throw new Error(`Цена для лагеря ${camp.name} не найдена.`);
+      }
+      return currentPrice.id as number;
+    });
+
+    const body: ICreateRegistration = {
+      name: formValues.firstName,
+      lastName: formValues.lastName,
+      birthdate: formValues.dateOfBirth,
+      city: formValues.city,
+      registrationDate: new Date(),
+      priceIds: priceList,
+      userId: user ? user.id : 1,
+      churchId: formValues.church
+    }
+
+    try {
+      const response = await axios.post(`${apiUrl}/registrations`, body);
+
+      return response.data;
+    } catch (error) {
+      console.error("Ошибка при создании регистрации:", error);
+    }
+  }, [form, selectedCamps, paymentMethod, getCurrentPrice]);
+
+  const getAdminAsync = useCallback(async (adminId: number) => {
+    const response = await axios.get(`${apiUrl}/admins/${adminId}`);
+
+    setAdmin(response.data as IAdmin)
+  }, [])
+
+  const [registration, setRegistration] = useState<any>();
+
+  const uploadFile = async (file: File) => {
+    const formData = new FormData();
+    formData.append('fileUpload', file);
+
+    try {
+      const response = await axios.post(
+        `${apiUrl}/payment-check/${registration!.id}/${paymentMethod}`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+      console.log('Файл успешно загружен:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Ошибка при загрузке файла:', error);
+      throw error;
+    }
+  };
+
+
+
   const handleNextStep = async () => {
     let isValid = false;
 
     if (step === 0) {
-      isValid = await form.trigger(["firstName", "lastName", "dateOfBirth", "phone"]);
+      isValid = await form.trigger(["firstName", "lastName", "dateOfBirth", "phone", 'city']);
     } else if (step === 1) {
       isValid = await form.trigger(["church"]);
       if (selectedChurch === 0) {
@@ -190,7 +272,12 @@ export function RegistrationForm() {
     } else if (step === 3) {
       isValid = true;
 
-      console.log({ ...form.getValues(), selectedCampIds: selectedCamps.map(c => c.id) });
+      const registration = await createRegistrationAsync();
+
+      setRegistration(registration);
+
+      getAdminAsync(registration.adminId)
+
     } else if (step === 4) {
       if (paymentMethod === PaymentTypeEnum.Card) {
         isValid = !!file;
@@ -205,21 +292,6 @@ export function RegistrationForm() {
       console.log("Ошибки валидации:", form.formState.errors);
     }
   };
-
-  const getCurrentPrice = (prices: IPrice[]) => {
-    const now = new Date();
-
-    for (const price of prices) {
-      const startDate = new Date(price.startDate);
-      const endDate = new Date(price.endDate);
-      if (now >= startDate && now <= endDate) {
-        return price.totalValue;
-      }
-    }
-
-    return 0;
-  };
-
 
   return (
     <>
@@ -306,6 +378,7 @@ export function RegistrationForm() {
                   handleCopyCardNumber={handleCopyCardNumber}
                   handleFileUpload={handleFileUpload}
                   file={file}
+                  admin={admin!}
                 />
               )}
 
@@ -320,7 +393,7 @@ export function RegistrationForm() {
                     Далее
                   </Button>
                 ) : (
-                  <Button variant="contained">
+                  <Button variant="contained" onClick={() => uploadFile(file!)}>
                     Отправить
                   </Button>
                 )}

@@ -31,6 +31,12 @@ export const PersonalInfoStep: FC<IPersonalInfoStepProps> = ({ form }) => {
         error={!!formState.errors.lastName}
         helperText={formState.errors.lastName?.message}
       />
+      <TextField
+        label="Город"
+        {...register("city")}
+        error={!!formState.errors.city}
+        helperText={formState.errors.city?.message}
+      />
       <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ru">
         <DatePicker
           maxDate={dayjs()}

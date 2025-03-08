@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import './App.css';
 import { AccountingPage } from './pages/AccountingPage';
 import { useTabStore } from './stores/TabStore';
@@ -9,8 +9,12 @@ import { RegistrationPage } from './pages/RegistrationPage';
 
 const App: FC<{ user: any }> = ({ user }) => {
 
-  const { activeTab } = useTabStore();
+  const { activeTab, setUser } = useTabStore();
 
+  useEffect(() => {
+    setUser(user);
+  }, [])
+  
   return (
     <motion.div
       animate={{ opacity: 1 }}
