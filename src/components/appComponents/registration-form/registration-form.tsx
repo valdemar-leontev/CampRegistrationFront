@@ -86,7 +86,7 @@ export const RegistrationForm = () => {
 
   useEffect(() => {
     (async () => {
-      var response = await axios.get(`${apiUrl}/registrations/dictionaries/payment-types`);
+      var response = await axios.get(`${apiUrl}/registrations/dictionaries/paymentType`);
 
       setPaymentTypes(response.data as IPaymentType[])
     })()
