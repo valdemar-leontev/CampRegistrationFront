@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { motion, AnimatePresence } from "framer-motion";
@@ -19,7 +18,6 @@ import { useCallback, useEffect, useState } from "react";
 import { MuiTelInput, matchIsValidTel } from 'mui-tel-input';
 import 'dayjs/locale/ru';
 import { IChurch } from '@/models/IChurch';
-import { apiUrl } from '../../../../constants'
 import { ICamp } from '@/models/ICamp';
 import { IPrice } from '@/models/IPrice';
 import { IPaymentType } from '@/models/IPaymentType';
@@ -34,8 +32,10 @@ import { registrationSchema } from '@/constants';
 import { ICreateRegistration } from '@/models/dto/ICreateRegistration';
 import { useTabStore } from '@/stores/TabStore';
 import { IAdmin } from '@/models/IAdmin';
+import apiClient from '@/axios';
+import { Conclusion } from './Сonclusion';
 
-const steps = ["Личная информация", "Церковь", "Лагерь", "Обзор", "Оплата"];
+const steps = ["Личная информация", "Церковь", "Лагерь", "Обзор", "Оплата", ''];
 
 export const RegistrationForm = () => {
   const { user } = useTabStore();
@@ -70,7 +70,7 @@ export const RegistrationForm = () => {
 
   useEffect(() => {
     (async () => {
-      var response = await axios.get(`${apiUrl}/churches`);
+      var response = await apiClient.get(`/churches`);
 
       setChurchesList(response.data as IChurch[])
     })()
@@ -78,7 +78,7 @@ export const RegistrationForm = () => {
 
   useEffect(() => {
     (async () => {
-      var response = await axios.get(`${apiUrl}/camps`);
+      var response = await apiClient.get(`/camps`);
 
       setCampList(response.data as ICamp[])
     })()
@@ -86,7 +86,7 @@ export const RegistrationForm = () => {
 
   useEffect(() => {
     (async () => {
-      var response = await axios.get(`${apiUrl}/registrations/dictionaries/paymentType`);
+      var response = await apiClient.get(`/dictionaries/paymentType`);
 
       setPaymentTypes(response.data as IPaymentType[])
     })()
@@ -94,7 +94,7 @@ export const RegistrationForm = () => {
 
   const form = useForm<IRegistrationForm>({
     resolver: zodResolver(registrationSchema),
-    defaultValues: { firstName: "", lastName: "", dateOfBirth: undefined, phone: "", church: 0 },
+    defaultValues: { firstName: "", lastName: "", dateOfBirth: undefined, phone: "", church: undefined },
     mode: "onChange",
   });
 
@@ -217,7 +217,7 @@ export const RegistrationForm = () => {
     }
 
     try {
-      const response = await axios.post(`${apiUrl}/registrations`, body);
+      const response = await apiClient.post(`/registrations`, body);
 
       return response.data;
     } catch (error) {
@@ -226,36 +226,12 @@ export const RegistrationForm = () => {
   }, [form, selectedCamps, paymentMethod, getCurrentPrice]);
 
   const getAdminAsync = useCallback(async (adminId: number) => {
-    const response = await axios.get(`${apiUrl}/admins/${adminId}`);
+    const response = await apiClient.get(`/admins/${adminId}`);
 
     setAdmin(response.data as IAdmin)
   }, [])
 
   const [registration, setRegistration] = useState<any>();
-
-  const uploadFile = async (file: File) => {
-    const formData = new FormData();
-    formData.append('fileUpload', file);
-
-    try {
-      const response = await axios.post(
-        `${apiUrl}/payment-check/${registration!.id}/${paymentMethod}`,
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }
-      );
-      console.log('Файл успешно загружен:', response.data);
-      return response.data;
-    } catch (error) {
-      console.error('Ошибка при загрузке файла:', error);
-      throw error;
-    }
-  };
-
-
 
   const handleNextStep = async () => {
     let isValid = false;
@@ -285,11 +261,36 @@ export const RegistrationForm = () => {
         isValid = true;
       }
     }
-
     if (isValid) {
       setStep((prev) => prev + 1);
     } else {
       console.log("Ошибки валидации:", form.formState.errors);
+    }
+  };
+
+
+  const uploadFile = async (file: File) => {
+    const formData = new FormData();
+    formData.append('fileUpload', file);
+
+    try {
+      const response = await apiClient.post(
+        `/payment-check/${registration!.id}/${paymentMethod}`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+      console.log('Файл успешно загружен:', response.data);
+
+      handleNextStep()
+
+      return response.data;
+    } catch (error) {
+      console.error('Ошибка при загрузке файла:', error);
+      throw error;
     }
   };
 
@@ -309,7 +310,7 @@ export const RegistrationForm = () => {
             className='h-[100vh] overflow-x-auto'
             style={{ position: "fixed", top: 0, left: 0, width: "100%", backgroundColor: "white", padding: 24 }}
           >
-            <Box display="flex" justifyContent="space-between" alignItems="center" className="py-3">
+            {step !== steps.length - 1 && <Box display="flex" justifyContent="space-between" alignItems="center" className="py-3">
               <Button onClick={onClose} variant="contained" className="!h-12 !min-w-0 rounded-full !bg-black">
                 <IoChevronBack />
               </Button>
@@ -335,7 +336,7 @@ export const RegistrationForm = () => {
                   </Tooltip>
                 </ClickAwayListener>
               </Box>
-            </Box>
+            </Box>}
 
 
             <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-5 overflow-x-scroll pt-5">
@@ -382,17 +383,19 @@ export const RegistrationForm = () => {
                 />
               )}
 
+              {step === 5 && <Conclusion onClose={onClose} />}
+
               <Box display="flex" justifyContent="space-between" mt={4}>
-                {step > 0 && step !== 4 && (
+                {step > 0 && step <= 4 && (
                   <Button onClick={() => setStep(step - 1)} variant="outlined">
                     Назад
                   </Button>
                 )}
-                {step < steps.length - 1 ? (
+                {step < steps.length - 2 ? (
                   <Button onClick={handleNextStep} variant="contained">
                     Далее
                   </Button>
-                ) : (
+                ) : (step !== steps.length - 1 &&
                   <Button variant="contained" onClick={() => uploadFile(file!)}>
                     Отправить
                   </Button>

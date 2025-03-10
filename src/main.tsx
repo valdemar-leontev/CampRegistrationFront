@@ -10,6 +10,8 @@ import { ProfileBar } from './components/appComponents/profile-bar.js';
 
 
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { IUser } from './models/IUser.js';
+import apiClient from './axios.js';
 
 const theme = createTheme({
   palette: {
@@ -48,23 +50,35 @@ try {
 }
 
 const Root = () => {
-  const [user, setUser] = useState<any>()
+  const [user, setUser] = useState<IUser>()
   const [isVisible, setIsVisible] = useState<boolean>(false);
 
   useEffect(() => {
-    try {
-      const queryString = retrieveRawInitData();
-      console.log(queryString);
+    (async () => {
+      try {
+        const queryString = retrieveRawInitData();
+        console.log(queryString);
 
-      const decodedString = decodeURIComponent(queryString!);
-      const params = new URLSearchParams(decodedString);
-      const userJson = params.get('user');
-      const user = JSON.parse(decodeURIComponent(userJson as any));
+        const decodedString = decodeURIComponent(queryString!);
+        const params = new URLSearchParams(decodedString);
+        const userJson = params.get('user');
+        const user = JSON.parse(decodeURIComponent(userJson as any)) as IUser;
 
-      setUser(user);
-    } catch (error) {
-      console.log(error);
-    }
+        setUser(user);
+
+        console.log(user);
+
+        await apiClient.post('users', {
+          userName: user.username,
+          firstName: user.first_name,
+          lastName: user.last_name,
+          telegramId: String(user.id)
+        })
+        
+      } catch (error) {
+        console.log(error);
+      }
+    })()
   }, []);
 
   useEffect(() => {
