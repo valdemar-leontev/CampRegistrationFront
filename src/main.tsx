@@ -55,6 +55,8 @@ const Root = () => {
 
   useEffect(() => {
     (async () => {
+      let telegramUser;
+
       try {
         const queryString = retrieveRawInitData();
         console.log(queryString);
@@ -62,22 +64,24 @@ const Root = () => {
         const decodedString = decodeURIComponent(queryString!);
         const params = new URLSearchParams(decodedString);
         const userJson = params.get('user');
-        const user = JSON.parse(decodeURIComponent(userJson as any)) as IUser;
+        telegramUser = JSON.parse(decodeURIComponent(userJson as any)) as IUser;
 
-        setUser(user);
 
-        console.log(user);
-
-        await apiClient.post('users', {
-          userName: user.username,
-          firstName: user.first_name,
-          lastName: user.last_name,
-          telegramId: String(user.id)
-        })
-        
+        console.log(telegramUser);
       } catch (error) {
         console.log(error);
       }
+
+      const user = await apiClient.post('users', {
+        userName: telegramUser ? telegramUser.username : 'test username',
+        firstName: telegramUser ? telegramUser.first_name : 'test first_name',
+        lastName: telegramUser ? telegramUser.last_name : 'test last_name',
+        telegramId: telegramUser ? String(telegramUser.id) : String((Math.random() * 1000) + 1)
+      })
+
+      setUser(user.data);
+
+      console.log(user);
     })()
   }, []);
 

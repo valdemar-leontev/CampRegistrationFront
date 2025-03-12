@@ -4,8 +4,9 @@ import { AnimatePresence, motion } from "framer-motion";
 import { IPaymentType } from '@/models/IPaymentType';
 import { ICamp } from '@/models/ICamp';
 import { IPrice } from '@/models/IPrice';
-import { PaymentTypeEnum } from '@/models/enums/paymentTypeEnum';
 import { IAdmin } from '@/models/IAdmin';
+// @ts-ignore
+import { PaymentTypeEnum } from '@/models/enums/PaymentTypeEnum';
 
 interface PaymentStepProps {
   paymentMethod: number;
@@ -31,7 +32,7 @@ export const PaymentStep = ({
   admin
 }: PaymentStepProps) => {
   return (
-    <div className="text-left bg-white p-6 rounded-2xl shadow-lg border border-gray-200 overflow-auto">
+    admin && <div className="text-left bg-white p-6 rounded-2xl shadow-lg border border-gray-200 overflow-auto">
       <Typography variant="h5" className="text-xl font-semibold text-gray-900 mb-3">Оплата</Typography>
       <Typography variant="body1" className="mb-4">
         Ваша заявка оформлена! Осталось только оплатить.
@@ -81,7 +82,8 @@ export const PaymentStep = ({
 
             <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
               <Typography variant="body1" className="font-mono">
-                <strong>Получатель</strong> - ДОБАВИТЬ ИМЯ.
+                <strong>Получатель</strong> - ИМЯ.
+                <br />
                 <strong>Телефон</strong> - {admin.phoneNumber}
               </Typography>
             </div>
@@ -120,7 +122,7 @@ export const PaymentStep = ({
                 <strong>Имя:</strong> ДОБАВИТЬ ИМЯ
               </Typography>
               <Typography variant="body1">
-                <strong>Церковь:</strong> ПУСТЬ ШЛЮТ ЦЕРКОВЬ
+                <strong>Церковь:</strong> {admin.churchId}
               </Typography>
             </div>
           </motion.div>

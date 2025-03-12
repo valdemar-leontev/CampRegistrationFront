@@ -21,7 +21,6 @@ import { IChurch } from '@/models/IChurch';
 import { ICamp } from '@/models/ICamp';
 import { IPrice } from '@/models/IPrice';
 import { IPaymentType } from '@/models/IPaymentType';
-import { PaymentTypeEnum } from '@/models/enums/paymentTypeEnum';
 import { PersonalInfoStep } from './PersonalInfoStep';
 import { ChurchStep } from './ChurchStep';
 import { CampSelectionStep } from './CampSelectionStep';
@@ -34,6 +33,7 @@ import { useTabStore } from '@/stores/TabStore';
 import { IAdmin } from '@/models/IAdmin';
 import apiClient from '@/axios';
 import { Conclusion } from './Сonclusion';
+import { PaymentTypeEnum } from '@/models/enums/PaymentTypeEnum';
 
 const steps = ["Личная информация", "Церковь", "Лагерь", "Обзор", "Оплата", ''];
 
@@ -165,8 +165,7 @@ export const RegistrationForm = () => {
     }
   };
 
-  const handleCopyCardNumber = () => {
-    const cardNumber = "1234 5678 9012 3456";
+  const handleCopyCardNumber = (cardNumber: string) => {
     navigator.clipboard.writeText(cardNumber).then(() => {
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2000);
@@ -376,7 +375,7 @@ export const RegistrationForm = () => {
                   paymentTypes={paymentTypes}
                   selectedCamps={selectedCamps}
                   getCurrentPrice={getCurrentPrice}
-                  handleCopyCardNumber={handleCopyCardNumber}
+                  handleCopyCardNumber={() => handleCopyCardNumber(admin?.bankCardNumber!)}
                   handleFileUpload={handleFileUpload}
                   file={file}
                   admin={admin!}
@@ -386,7 +385,7 @@ export const RegistrationForm = () => {
               {step === 5 && <Conclusion onClose={onClose} />}
 
               <Box display="flex" justifyContent="space-between" mt={4}>
-                {step > 0 && step <= 4 && (
+                {step > 0 && step <= 3 && (
                   <Button onClick={() => setStep(step - 1)} variant="outlined">
                     Назад
                   </Button>

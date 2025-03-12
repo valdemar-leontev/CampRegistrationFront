@@ -1,3 +1,4 @@
+import { ChurchEnum } from '@/models/enums/ChurchEnum';
 import { ICamp } from '@/models/ICamp';
 import { IPrice } from '@/models/IPrice';
 import { IRegistrationForm } from '@/models/IRegistrationForm';
@@ -27,7 +28,7 @@ export const ReviewStep = ({ form, selectedChurch, selectedCamps, getCurrentPric
 
       <Typography variant="h5" className="text-xl font-semibold text-gray-900 !mt-6 !mb-1">Церковь</Typography>
       <div className="space-y-1 text-gray-700">
-        <Typography variant="body1"><strong>Церковь:</strong> {watch("church")}</Typography>
+        <Typography variant="body1"><strong>Церковь:</strong> {ChurchEnum[watch("church")]}</Typography>
         {selectedChurch === 0 && (
           <>
             <Typography variant="body1"><strong>Название:</strong> {watch("otherChurchName")}</Typography>
@@ -39,10 +40,12 @@ export const ReviewStep = ({ form, selectedChurch, selectedCamps, getCurrentPric
       <Typography variant="h5" className="text-xl font-semibold text-gray-900 !mt-6 !mb-1">Выбранные лагеря</Typography>
       <div className="space-y-1 text-gray-700">
         {selectedCamps.map((camp) => (
-          <Typography variant="body1" key={camp.name}>
+          <Typography variant="body1" className='text-gray-600' key={camp.name}>
             <strong>{camp.name}</strong>
             <br />
-            {dayjs(camp.startDate).format('D MMMM')} - {dayjs(camp.endDate).format('D MMMM')} – {getCurrentPrice(camp.prices)?.totalValue}₽
+            📅 {dayjs(camp.startDate).format('D MMMM')} - {dayjs(camp.endDate).format('D MMMM')}
+            <br />
+            💰 {getCurrentPrice(camp.prices)?.totalValue}₽
           </Typography>
         ))}
       </div>
