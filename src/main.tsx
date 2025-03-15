@@ -10,8 +10,10 @@ import { ProfileBar } from './components/appComponents/profile-bar.js';
 
 
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { IUser } from './models/IUser.js';
+import { ITelegramUser } from './models/ITelegramUser.js';
 import apiClient from './axios.js';
+import { useUserStore } from './stores/UserStore.js';
+import { IDataUser } from './models/dto/IDataUser.js';
 
 const theme = createTheme({
   palette: {
@@ -50,7 +52,7 @@ try {
 }
 
 const Root = () => {
-  const [user, setUser] = useState<IUser>()
+  const { user, setUser } = useUserStore();
   const [isVisible, setIsVisible] = useState<boolean>(false);
 
   useEffect(() => {
@@ -64,7 +66,7 @@ const Root = () => {
         const decodedString = decodeURIComponent(queryString!);
         const params = new URLSearchParams(decodedString);
         const userJson = params.get('user');
-        telegramUser = JSON.parse(decodeURIComponent(userJson as any)) as IUser;
+        telegramUser = JSON.parse(decodeURIComponent(userJson as any)) as ITelegramUser;
 
 
         console.log(telegramUser);
@@ -72,16 +74,16 @@ const Root = () => {
         console.log(error);
       }
 
-      const user = await apiClient.post('users', {
+      const user = await apiClient.post<IDataUser>('users', {
         userName: telegramUser ? telegramUser.username : 'test username',
         firstName: telegramUser ? telegramUser.first_name : 'test first_name',
         lastName: telegramUser ? telegramUser.last_name : 'test last_name',
-        telegramId: telegramUser ? String(telegramUser.id) : String((Math.random() * 1000) + 1)
+        telegramId: telegramUser ? String(telegramUser.id) : String(12123),
+        phone: telegramUser ? String(telegramUser.phone) : String(8951000000),
+        photoUrl: telegramUser ? String(telegramUser.photo_url) : String(8951000000),
       })
 
       setUser(user.data);
-
-      console.log(user);
     })()
   }, []);
 
@@ -97,7 +99,7 @@ const Root = () => {
     <StrictMode>
       <ThemeProvider theme={theme}>
         <PoweredByGod />
-        {isVisible && <div className='flex flex-col h-[100vh] overflow-hidden'>
+        {isVisible && user && <div className='flex flex-col h-[100vh] overflow-hidden'>
           <ProfileBar user={user} />
 
           <App user={user} />

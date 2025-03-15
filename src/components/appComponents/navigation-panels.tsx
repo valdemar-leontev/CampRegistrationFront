@@ -3,7 +3,7 @@ import { CiViewTable, CiHome } from "react-icons/ci";
 import { AiOutlineQuestion } from "react-icons/ai";
 import { useTabStore } from "../../stores/TabStore.ts";
 import { PiCards } from "react-icons/pi";
-
+import { GoChecklist } from "react-icons/go";
 
 export const NavigationPanels = () => {
   const { activeTab, setActiveTab } = useTabStore();
@@ -16,6 +16,9 @@ export const NavigationPanels = () => {
         </TabsTrigger>
         <TabsTrigger value="accountingPage" className="p-5 px-5">
           <CiViewTable size={22} />
+        </TabsTrigger>
+        <TabsTrigger value="myRequests" className="p-5 px-5">
+          <GoChecklist size={22} />
         </TabsTrigger>
         <TabsTrigger value="info" className="p-5 px-5">
           <PiCards size={22} />

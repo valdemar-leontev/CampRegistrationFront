@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react';
+import { FC } from 'react';
 import './App.css';
 import { AccountingPage } from './pages/AccountingPage';
 import { useTabStore } from './stores/TabStore';
@@ -6,15 +6,12 @@ import { motion } from 'framer-motion';
 import FAQ from './components/appComponents/faq';
 import { CampInfoPage } from './pages/CampInfoPage';
 import { RegistrationPage } from './pages/RegistrationPage';
+import { MyRegistrationPage } from './pages/MyRegistrationPage';
+import { IDataUser } from './models/dto/IDataUser';
 
-const App: FC<{ user: any }> = ({ user }) => {
+const App: FC<{ user: IDataUser }> = ({ user }) => {
+  const { activeTab } = useTabStore();
 
-  const { activeTab, setUser } = useTabStore();
-
-  useEffect(() => {
-    setUser(user);
-  }, [])
-  
   return (
     <motion.div
       animate={{ opacity: 1 }}
@@ -24,13 +21,19 @@ const App: FC<{ user: any }> = ({ user }) => {
     >
       {activeTab === "home" && (
         <div className='h-full justify-center flex items-center'>
-          <RegistrationPage username={`${user ? user.username : 'Друг'}`} />
+          <RegistrationPage username={`${user ? user.userName : 'Друг'}`} />
         </div>
       )}
 
       {activeTab === "accountingPage" && (
         <div>
           <AccountingPage />
+        </div>
+      )}
+
+      {activeTab === "myRequests" && (
+        <div>
+          <MyRegistrationPage />
         </div>
       )}
 

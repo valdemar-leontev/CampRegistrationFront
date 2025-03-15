@@ -3,21 +3,22 @@ import { CiBellOn } from "react-icons/ci";
 import { FC } from 'react';
 import { motion } from 'framer-motion';
 import { Skeleton } from '../ui/skeleton';
+import { IDataUser } from '@/models/dto/IDataUser';
 
-export const ProfileBar: FC<{ user: any }> = ({ user }) => {
+export const ProfileBar: FC<{ user: IDataUser }> = ({ user }) => {
   return (
     <div className='px-4 flex items-center gap-4 justify-between w-full py-2'>
       <div className='flex items-center gap-4'>
-        {(!user || !user.photo_url) ? (
+        {(!user || !user.photoUrl) ? (
           <Skeleton className="relative flex h-14 w-14 shrink-0 overflow-hidden rounded-2xl" />
         ) : (
           <Avatar>
-            <AvatarImage src={user.photo_url} />
+            <AvatarImage src={user.photoUrl} />
             <AvatarFallback>Avatar</AvatarFallback>
           </Avatar>
         )}
         <div className='flex flex-col text-left'>
-          <h1 className='text-[18px] font-bold'>{user ? `${user.last_name} ${user.first_name}` : 'Test user'}</h1>
+          <h1 className='text-[18px] font-bold w-[250px] text-nowrap text-ellipsis overflow-hidden'>{user ? `${user.lastName} ${user.firstName}` : 'Test user'}</h1>
           <h1 className='text-[#c448a4] font-bold text-[16px]'>Администратор</h1>
         </div>
       </div>

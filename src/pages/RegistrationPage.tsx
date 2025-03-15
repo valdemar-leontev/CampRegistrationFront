@@ -60,6 +60,7 @@ export const RegistrationPage: FC<IRegistrationPageProps> = ({ username }) => {
         </motion.p>
 
         <RegistrationForm />
+
       </motion.div>
     </motion.div>
   );

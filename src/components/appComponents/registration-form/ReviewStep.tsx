@@ -29,7 +29,7 @@ export const ReviewStep = ({ form, selectedChurch, selectedCamps, getCurrentPric
       <Typography variant="h5" className="text-xl font-semibold text-gray-900 !mt-6 !mb-1">Церковь</Typography>
       <div className="space-y-1 text-gray-700">
         <Typography variant="body1"><strong>Церковь:</strong> {ChurchEnum[watch("church")]}</Typography>
-        {selectedChurch === 0 && (
+        {selectedChurch === ChurchEnum.Другая && (
           <>
             <Typography variant="body1"><strong>Название:</strong> {watch("otherChurchName")}</Typography>
             <Typography variant="body1"><strong>Адрес:</strong> {watch("otherChurchAddress")}</Typography>

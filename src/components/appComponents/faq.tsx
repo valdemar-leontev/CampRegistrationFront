@@ -1,5 +1,8 @@
+import apiClient from '@/axios';
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
+import { IFaq } from '@/models/IFaq';
 import { motion } from "framer-motion";
+import { useEffect, useState } from 'react';
 
 const fadeInUp = (delay: number) => ({
   hidden: { opacity: 0, y: 20 },
@@ -7,21 +10,16 @@ const fadeInUp = (delay: number) => ({
 });
 
 const FAQ = () => {
-  const questions = [
-    { value: "price", question: "Сколько стоит лагерь?", answer: "50 рублей" },
-    { value: "types", question: "Какие есть лагеря?", answer: <ul className="list-disc ml-4"><li>Детский</li><li>Подростковый</li><li>Отец и сын</li><li>Молодежный</li><li>Семейный</li></ul> },
-    { value: "pickup", question: "Откуда будут забирать участников?", answer: "Деревня Криуши" },
-    { value: "process", question: "Как проходит лагерь?", answer: "Всем нравится" },
-    { value: "location", question: "Где проходят лагеря?", answer: "Остров возле деревни Криуши" },
-    { value: "age", question: "Для какого возраста подходят лагеря?", answer: "У нас есть программы для детей от 7 лет, подростков, молодежи, а также общий семейный отдых." },
-    { value: "safety", question: "Какие меры безопасности предусмотрены?", answer: "В лагере есть медицинский персонал, проверенные вожатые и строгий контроль за безопасностью участников." },
-    { value: "other1", question: "Еще вопрос", answer: "Еще ответ" },
-    { value: "other2", question: "Еще вопрос", answer: "Еще ответ" },
-    { value: "other3", question: "Еще вопрос", answer: "Еще ответ" },
-    { value: "other4", question: "Еще вопрос", answer: "Еще ответ" },
-    { value: "other5", question: "Еще вопрос", answer: "Еще ответ" },
-    { value: "other6", question: "Еще вопрос1", answer: "Еще ответ" },
-  ];
+  const [faqItems, setFaqItems] = useState<IFaq[]>([])
+
+  useEffect(() => {
+    (async () => {
+      const response = await apiClient.get('faqs');
+
+      setFaqItems(response.data);
+    })() 
+  }, [])
+  
 
   return (
     <div className="max-w-2xl text-left px-6">
@@ -35,14 +33,14 @@ const FAQ = () => {
       </motion.h1>
 
       <Accordion type="single" collapsible className='overflow-auto h-[57vh]'>
-        {questions.map((item, index) => (
+        {faqItems.map((item, index) => (
           <motion.div 
-            key={item.value} 
+            key={item.id} 
             variants={fadeInUp(index * 0.1)} 
             initial="hidden" 
             animate="visible"
           >
-            <AccordionItem value={item.value}>
+            <AccordionItem value={item.question}>
               <AccordionTrigger>{item.question}</AccordionTrigger>
               <AccordionContent>{item.answer}</AccordionContent>
             </AccordionItem>

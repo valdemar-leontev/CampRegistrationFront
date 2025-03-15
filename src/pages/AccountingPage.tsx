@@ -25,14 +25,54 @@ import drawerImage3 from '../assets/draweImage-3.svg'
 import drawerImage4 from '../assets/draweImage-4.svg'
 import { useEffect, useState } from 'react';
 import { Invoice } from '@/types';
+import apiClient from '@/axios';
+import { useUserStore } from '@/stores/UserStore';
 
 const drawerImages = [drawerImage1, drawerImage2, drawerImage3, drawerImage4];
+interface IRegistration {
+  id: number;
+  name: string;
+  lastName: string;
+  birthdate: string;
+  city: string;
+  registrationDate: string;
+  userId: number;
+  registrationStatusId: number;
+  paymentTypeId: number;
+  adminId: number;
+  registrationLinkPrice: {
+    price: {
+      campId: number;
+      camp: {
+        name: string;
+      };
+      value: number;
+    };
+  }[];
+  paymentType: {
+    name: string;
+  };
+  registrationStatus: {
+    name: string;
+  };
+}
 
 export const AccountingPage = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
   const [randomImage, setRandomImage] = useState<string>(drawerImages[0]);
 
+  const { user } = useUserStore();
+
+  const [registratinList, setRegistrationList] = useState<IRegistration[]>([])
+
+  useEffect(() => {
+    (async () => {
+      const response = await apiClient.get<IRegistration[]>(`users/${user!.id}/registrations`);
+
+      setRegistrationList(response.data);
+    })()
+  }, [])
 
   const handleRowClick = (invoice: Invoice) => {
     const randomIndex = Math.floor(Math.random() * drawerImages.length);

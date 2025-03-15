@@ -1,3 +1,4 @@
+import { ChurchEnum } from '@/models/enums/ChurchEnum';
 import { IChurch } from '@/models/IChurch';
 import { IRegistrationForm } from '@/models/IRegistrationForm';
 import { FormControl, InputLabel, Select, MenuItem, TextField, FormHelperText } from "@mui/material";
@@ -41,7 +42,7 @@ export const ChurchStep: FC<ChurchStepProps> = ({ form, churchesList, selectedCh
           </FormHelperText>
         )}
       </FormControl>
-      {selectedChurch === 0 && (
+      {selectedChurch === ChurchEnum.Другая && (
         <>
           <TextField
             label="Название церкви"

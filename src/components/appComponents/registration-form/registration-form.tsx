@@ -29,16 +29,17 @@ import { PaymentStep } from './PaymentStep';
 import { IRegistrationForm } from '@/models/IRegistrationForm';
 import { registrationSchema } from '@/constants';
 import { ICreateRegistration } from '@/models/dto/ICreateRegistration';
-import { useTabStore } from '@/stores/TabStore';
 import { IAdmin } from '@/models/IAdmin';
 import apiClient from '@/axios';
 import { Conclusion } from './Сonclusion';
 import { PaymentTypeEnum } from '@/models/enums/PaymentTypeEnum';
+import { useUserStore } from '@/stores/UserStore';
+import { ChurchEnum } from '@/models/enums/ChurchEnum';
 
 const steps = ["Личная информация", "Церковь", "Лагерь", "Обзор", "Оплата", ''];
 
 export const RegistrationForm = () => {
-  const { user } = useTabStore();
+  const { user } = useUserStore();
 
   const [step, setStep] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
@@ -141,9 +142,15 @@ export const RegistrationForm = () => {
         }
         break;
       case "Молодежный":
-        if (age < 16) {
-          errorMessage = "Нельзя ехать в молодежный лагерь в 15 лет, если ты не будешь в подростковом";
+        if (age === 15 && !selectedCamps.some((c) => c.name === "Подростковый")) {
+          errorMessage = "Нельзя ехать в молодежный лагерь если тебе 15 лет и ты не зарегистрирован в подростковый";
+        }
+
+        if (age < 15) {
+          errorMessage = "Недопустимый возраст для молодежного лагеря (только от 15 лет)";
           isValid = false;
+
+          break;
         }
         break;
       default:
@@ -211,7 +218,7 @@ export const RegistrationForm = () => {
       city: formValues.city,
       registrationDate: new Date(),
       priceIds: priceList,
-      userId: user ? user.id : 1,
+      userId: user ? user.id : 0,
       churchId: formValues.church
     }
 
@@ -239,7 +246,7 @@ export const RegistrationForm = () => {
       isValid = await form.trigger(["firstName", "lastName", "dateOfBirth", "phone", 'city']);
     } else if (step === 1) {
       isValid = await form.trigger(["church"]);
-      if (selectedChurch === 0) {
+      if (selectedChurch === ChurchEnum.Другая) {
         isValid = isValid && (await form.trigger(["otherChurchName", "otherChurchAddress"]));
       }
     } else if (step === 2) {
@@ -292,6 +299,14 @@ export const RegistrationForm = () => {
       throw error;
     }
   };
+
+  const onFinishHandler = () => {
+    form.reset();
+    form.clearErrors();
+    setSelectedCamps([]);
+    setStep(0);
+    onClose();
+  }
 
   return (
     <>
@@ -382,7 +397,7 @@ export const RegistrationForm = () => {
                 />
               )}
 
-              {step === 5 && <Conclusion onClose={onClose} />}
+              {step === 5 && <Conclusion onClose={onFinishHandler} />}
 
               <Box display="flex" justifyContent="space-between" mt={4}>
                 {step > 0 && step <= 3 && (
