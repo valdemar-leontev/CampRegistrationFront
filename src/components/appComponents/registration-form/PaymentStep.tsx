@@ -7,6 +7,7 @@ import { IPrice } from '@/models/IPrice';
 import { IAdmin } from '@/models/IAdmin';
 // @ts-ignore
 import { PaymentTypeEnum } from '@/models/enums/PaymentTypeEnum';
+import { ChurchEnum } from '@/models/enums/ChurchEnum';
 
 interface PaymentStepProps {
   paymentMethod: number;
@@ -18,6 +19,7 @@ interface PaymentStepProps {
   handleFileUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
   file: File | null;
   admin: IAdmin;
+  errorMessage: string | null;
 }
 
 export const PaymentStep = ({
@@ -29,7 +31,8 @@ export const PaymentStep = ({
   handleCopyCardNumber,
   handleFileUpload,
   file,
-  admin
+  admin,
+  errorMessage
 }: PaymentStepProps) => {
   return (
     admin && <div className="text-left bg-white p-6 rounded-2xl shadow-lg border border-gray-200 overflow-auto">
@@ -82,21 +85,28 @@ export const PaymentStep = ({
 
             <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
               <Typography variant="body1" className="font-mono">
-                <strong>Получатель</strong> - ИМЯ.
+                <strong>Получатель</strong> - {admin.bankCardOwner}
                 <br />
                 <strong>Телефон</strong> - {admin.phoneNumber}
               </Typography>
             </div>
 
-            <Typography variant="body1" className="mt-4">
-              Загрузите скриншот оплаты:
-            </Typography>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleFileUpload}
-              className="mt-2 w-full"
-            />
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Прикрепите скриншот оплаты:
+              </label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleFileUpload}
+                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+              />
+              {errorMessage && (
+                <div className="text-red-500 mt-2">
+                  {errorMessage}
+                </div>
+              )}
+            </div>
             {file && (
               <Typography variant="body2" className="mt-2">
                 Файл загружен: {file.name}
@@ -119,10 +129,13 @@ export const PaymentStep = ({
             </Typography>
             <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
               <Typography variant="body1">
-                <strong>Имя:</strong> ДОБАВИТЬ ИМЯ
+                <strong>Имя:</strong> {admin.bankCardOwner}
               </Typography>
               <Typography variant="body1">
-                <strong>Церковь:</strong> {admin.churchId}
+                <strong>Церковь:</strong> {ChurchEnum[admin.churchId]}
+              </Typography>
+              <Typography variant="body1">
+                <strong>Номер:</strong> {admin.phoneNumber}
               </Typography>
             </div>
           </motion.div>

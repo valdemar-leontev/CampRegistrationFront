@@ -1,6 +1,5 @@
 import { FC } from 'react';
 import './App.css';
-import { AccountingPage } from './pages/AccountingPage';
 import { useTabStore } from './stores/TabStore';
 import { motion } from 'framer-motion';
 import FAQ from './components/appComponents/faq';
@@ -8,6 +7,7 @@ import { CampInfoPage } from './pages/CampInfoPage';
 import { RegistrationPage } from './pages/RegistrationPage';
 import { MyRegistrationPage } from './pages/MyRegistrationPage';
 import { IDataUser } from './models/dto/IDataUser';
+import { AdminRegistrationsPage } from './pages/AdminRegistrationsPage';
 
 const App: FC<{ user: IDataUser }> = ({ user }) => {
   const { activeTab } = useTabStore();
@@ -27,7 +27,7 @@ const App: FC<{ user: IDataUser }> = ({ user }) => {
 
       {activeTab === "accountingPage" && (
         <div>
-          <AccountingPage />
+          <AdminRegistrationsPage />
         </div>
       )}
 

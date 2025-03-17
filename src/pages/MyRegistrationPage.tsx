@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/table";
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import apiClient from '@/axios';
 import { useUserStore } from '@/stores/UserStore';
 import dayjs from 'dayjs';
@@ -36,6 +36,7 @@ interface IRegistration {
   registrationStatusId: number;
   paymentTypeId: number;
   adminId: number;
+  totalAmount: number;
   registrationLinkPrice: {
     price: {
       campId: number;
@@ -177,26 +178,38 @@ export const MyRegistrationPage = () => {
     };
   }, [tooltipOpen]);
 
-  const totalAmount = selectedRegistration
-    ? selectedRegistration.registrationLinkPrice.reduce((sum, link) => sum + link.price.value, 0)
-    : 0;
+  const totalAmount = useMemo(() => {
+    return selectedRegistration?.totalAmount
+  }, [selectedRegistration]);
+
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file && file.type.startsWith('image/')) {
-      setUploadedFile(file);
+    if (!file) return;
 
+    const maxSize = 1 * 1024 * 1024;
+
+    if (file.size > maxSize) {
+      setErrorMessage("Размер файла не должен превышать 1 МБ.");
+      return;
+    }
+
+    // Проверка типа файла (только изображения)
+    if (file.type.startsWith("image/")) {
+      setUploadedFile(file);
+      setErrorMessage(null); // Сброс ошибки, если файл подходит
     } else {
-      alert('Пожалуйста, загрузите изображение.');
+      setErrorMessage("Пожалуйста, загрузите изображение.");
     }
   };
 
   const changeRequestStatus = useCallback(async () => {
-
     const formData = new FormData();
     formData.append('fileUpload', uploadedFile!);
 
-    const response = await apiClient.post(`/payment-check/${selectedRegistration!.id}/${paymentMethod}`,
+    const response = await apiClient.post(
+      `/payment-check/${selectedRegistration!.id}/${paymentMethod}`,
       formData,
       {
         headers: {
@@ -209,24 +222,37 @@ export const MyRegistrationPage = () => {
       setRegistrationList((prevList) =>
         prevList.map((reg) =>
           reg.id === selectedRegistration!.id
-            ? { ...reg, registrationStatusId: RegistrationStatusEnum["На проверке"] }
+            ? {
+              ...reg,
+              registrationStatusId: RegistrationStatusEnum["На проверке"],
+              registrationStatus: {
+                ...reg.registrationStatus,
+                name: "На проверке",
+              },
+            }
             : reg
         )
       );
+      setIsDrawerOpen(false);
     }
-  }, [uploadedFile]);
+  }, [uploadedFile, selectedRegistration, paymentMethod]);
 
   return (
     <div className="py-6">
+
+      <Typography className="!font-bold !text-4xl !mb-8">
+        Мои регистрации
+      </Typography>
+
       <motion.div
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 100, opacity: 0 }}
         transition={{ type: 'spring', stiffness: 100 }}
       >
-        <Table className="bg-white border shadow-md border-transparent">
+        <Table className="bg-white border border-transparent !overflow-auto !max-h-[50vh]">
           <TableHeader>
-            <TableRow className="bg-blue-100 !border-none">
+            <TableRow className="bg-blue-100 !border-none sticky top-0 z-10">
               <TableHead className="py-3 px-4 font-bold text-center text-[16px] rounded-s-[40px]">Статус</TableHead>
               <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Лагеря</TableHead>
               <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Фамилия</TableHead>
@@ -382,7 +408,6 @@ export const MyRegistrationPage = () => {
                         <div className='text-blue-500 font-bold mt-3'>ИТОГО: {totalAmount}₽</div>
                       </div>
 
-                      {/* Просмотр чека оплаты */}
                       <PhotoProvider>
                         {renderPaymentCheck(selectedRegistration!.paymentCheck as any)}
                       </PhotoProvider>
@@ -396,7 +421,6 @@ export const MyRegistrationPage = () => {
                       transition={{ duration: 0.3 }}
                       className="space-y-4 text-left pb-24"
                     >
-                      {/* Шаг оплаты (только для статуса "Ожидает оплаты") */}
                       {selectedRegistration!.registrationStatusId === RegistrationStatusEnum["Ожидает оплаты"] && (
                         <>
                           <div className="bg-white p-6 rounded-2xl shadow-md">
@@ -468,19 +492,25 @@ export const MyRegistrationPage = () => {
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
                                   Прикрепите скриншот оплаты:
                                 </label>
-                                <input
-                                  type="file"
-                                  accept="image/*"
-                                  onChange={handleFileUpload}
-                                  className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                                />
+                                <div>
+                                  <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleFileUpload}
+                                    className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                                  />
+                                  {errorMessage && (
+                                    <div className="text-red-500 mt-2">
+                                      {errorMessage}
+                                    </div>
+                                  )}
+                                </div>
                               </div>
                             </div>
                           )}
                         </>
                       )}
 
-                      {/* Итоговая сумма */}
                       <div className="bg-gray-100 p-6 rounded-2xl shadow-sm">
                         <Typography variant="h6" className="!font-semibold !mb-2 !text-blue-500">
                           Итоговая сумма

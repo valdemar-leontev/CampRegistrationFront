@@ -78,7 +78,7 @@ const Root = () => {
         userName: telegramUser ? telegramUser.username : 'test username',
         firstName: telegramUser ? telegramUser.first_name : 'test first_name',
         lastName: telegramUser ? telegramUser.last_name : 'test last_name',
-        telegramId: telegramUser ? String(telegramUser.id) : String(12123),
+        telegramId: telegramUser ? String(telegramUser.id) : String(1235986704),
         phone: telegramUser ? String(telegramUser.phone) : String(8951000000),
         photoUrl: telegramUser ? String(telegramUser.photo_url) : String(8951000000),
       })

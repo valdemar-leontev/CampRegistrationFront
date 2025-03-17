@@ -179,12 +179,27 @@ export const RegistrationForm = () => {
     });
   };
 
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const uploadedFile = event.target.files?.[0];
-    if (uploadedFile) {
-      setFile(uploadedFile);
+    const file = event.target.files?.[0];
+    if (!file) return;
+  
+    // Проверка размера файла (1 МБ = 1 * 1024 * 1024 байт)
+    const maxSize = 1 * 1024 * 1024; // 1 МБ
+    if (file.size > maxSize) {
+      setErrorMessage("Размер файла не должен превышать 1 МБ.");
+      return;
+    }
+  
+    if (file.type.startsWith("image/")) {
+      setFile(file);
+      setErrorMessage(null); // Сброс ошибки, если файл подходит
+    } else {
+      setErrorMessage("Пожалуйста, загрузите изображение.");
     }
   };
+  
 
   const onSubmit = () => {
     console.log({ ...form.getValues(), selectedCamps, paymentMethod, file });
@@ -219,7 +234,8 @@ export const RegistrationForm = () => {
       registrationDate: new Date(),
       priceIds: priceList,
       userId: user ? user.id : 0,
-      churchId: formValues.church
+      churchId: formValues.church,
+      totalAmount: selectedCamps.reduce((acc, camp) => acc + getCurrentPrice(camp.prices)?.totalValue!, 0)
     }
 
     try {
@@ -352,7 +368,6 @@ export const RegistrationForm = () => {
               </Box>
             </Box>}
 
-
             <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-5 overflow-x-scroll pt-5">
               {step === 0 && <PersonalInfoStep form={form} />}
 
@@ -394,6 +409,7 @@ export const RegistrationForm = () => {
                   handleFileUpload={handleFileUpload}
                   file={file}
                   admin={admin!}
+                  errorMessage={errorMessage}
                 />
               )}
 
@@ -409,8 +425,8 @@ export const RegistrationForm = () => {
                   <Button onClick={handleNextStep} variant="contained">
                     Далее
                   </Button>
-                ) : (step !== steps.length - 1 &&
-                  <Button variant="contained" onClick={() => uploadFile(file!)}>
+                ) : (step !== steps.length - 1 && paymentMethod !== PaymentTypeEnum.Cash &&
+                  <Button variant="contained" onClick={() => uploadFile(file!)} disabled={!!errorMessage || file === null}>
                     Отправить
                   </Button>
                 )}
