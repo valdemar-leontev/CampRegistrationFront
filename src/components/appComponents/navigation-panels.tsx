@@ -4,9 +4,11 @@ import { AiOutlineQuestion } from "react-icons/ai";
 import { useTabStore } from "../../stores/TabStore.ts";
 import { PiCards } from "react-icons/pi";
 import { GoChecklist } from "react-icons/go";
+import { useUserStore } from '@/stores/UserStore.ts';
 
 export const NavigationPanels = () => {
   const { activeTab, setActiveTab } = useTabStore();
+  const { user } = useUserStore();
 
   return (
     <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="w-full px-2 !mb-4">
@@ -14,9 +16,11 @@ export const NavigationPanels = () => {
         <TabsTrigger value="home" className="p-5 px-5">
           <CiHome size={22} />
         </TabsTrigger>
-        <TabsTrigger value="accountingPage" className="p-5 px-5">
+
+        {user!.admins && <TabsTrigger value="accountingPage" className="p-5 px-5">
           <CiViewTable size={22} />
-        </TabsTrigger>
+        </TabsTrigger>}
+
         <TabsTrigger value="myRequests" className="p-5 px-5">
           <GoChecklist size={22} />
         </TabsTrigger>

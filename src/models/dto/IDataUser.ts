@@ -9,7 +9,7 @@ export interface IDataUser {
 
     telegramId: string
 
-    isAdmin?: boolean;
+    admins?: any;
 
     phone: string;
 
