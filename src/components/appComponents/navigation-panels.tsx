@@ -11,13 +11,13 @@ export const NavigationPanels = () => {
   const { user } = useUserStore();
 
   return (
-    <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="w-full px-2 !mb-4">
+    user && <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="w-full px-2 !mb-4">
       <TabsList className="bg-white flex gap-1 h-full rounded-full shadow-xl ">
         <TabsTrigger value="home" className="p-5 px-5">
           <CiHome size={22} />
         </TabsTrigger>
 
-        {user!.admins && <TabsTrigger value="accountingPage" className="p-5 px-5">
+        {user.admins.length > 0 && <TabsTrigger value="accountingPage" className="p-5 px-5">
           <CiViewTable size={22} />
         </TabsTrigger>}
 
