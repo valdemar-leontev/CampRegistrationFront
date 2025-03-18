@@ -151,6 +151,7 @@ export const MyRegistrationPage = () => {
         setCurrentPaymentCheck(response.data);
       } catch (error) {
         console.error("Ошибка при загрузке payment check:", error);
+        setCurrentPaymentCheck(undefined);
       }
     })();
   }, [selectedRegistration]);
