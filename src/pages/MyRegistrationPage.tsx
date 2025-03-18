@@ -38,17 +38,14 @@ interface IRegistration {
   adminId: number;
   totalAmount: number;
   registrationLinkPrice: {
-      value: number;
-      campName: string;
+    value: number;
+    campName: string;
   }[];
   paymentType: {
     name: string;
   };
   registrationStatus: {
     name: string;
-  };
-  paymentCheck: {
-    data: { [key: string]: number };
   };
 }
 
@@ -87,13 +84,10 @@ const getStatusIcon = (status: number) => {
   }
 };
 
-const renderPaymentCheck = (paymentCheck: { data: { [key: string]: number } }) => {
-  if (!paymentCheck?.data) return null;
+const renderPaymentCheck = (paymentCheck: string) => {
+  if (!paymentCheck) return null;
 
-  const byteArray = Object.values(paymentCheck.data);
-  const uint8Array = new Uint8Array(byteArray);
-
-  const blob = new Blob([uint8Array], { type: 'image/*' });
+  const blob = new Blob([paymentCheck], { type: 'image/*' });
   const imageUrl = URL.createObjectURL(blob);
 
   return (
@@ -117,10 +111,13 @@ export const MyRegistrationPage = () => {
 
   useEffect(() => {
     (async () => {
+      if (!selectedRegistration) return;
+
       const response = await apiClient.get<IAdmin>(`/admins/${selectedRegistration!.adminId}`);
       setAdmin(response.data);
     })();
   }, [selectedRegistration]);
+
 
   const [currentStep, setCurrentStep] = useState<"info" | "payment">("info");
 
@@ -141,6 +138,22 @@ export const MyRegistrationPage = () => {
       }
     })();
   }, [user]);
+
+  const [currentPaymentCheck, setCurrentPaymentCheck] = useState<string>();
+
+  useEffect(() => {
+    (async () => {
+      if (!selectedRegistration?.id) return;
+
+      try {
+        const response = await apiClient.get<string>(`payment-check/registration/${selectedRegistration.id}`, { responseType: 'blob' });
+
+        setCurrentPaymentCheck(response.data);
+      } catch (error) {
+        console.error("Ошибка при загрузке payment check:", error);
+      }
+    })();
+  }, [selectedRegistration]);
 
   const handleRowClick = (registration: IRegistration) => {
     setSelectedRegistration(registration);
@@ -190,14 +203,15 @@ export const MyRegistrationPage = () => {
       return;
     }
 
-    // Проверка типа файла (только изображения)
     if (file.type.startsWith("image/")) {
       setUploadedFile(file);
-      setErrorMessage(null); // Сброс ошибки, если файл подходит
+      setErrorMessage(null);
     } else {
       setErrorMessage("Пожалуйста, загрузите изображение.");
     }
   };
+
+  const [highlightedRowId, setHighlightedRowId] = useState<number | null>(null);
 
   const changeRequestStatus = useCallback(async () => {
     const formData = new FormData();
@@ -213,7 +227,7 @@ export const MyRegistrationPage = () => {
       }
     );
 
-    if (response.status === 200) {
+    if (response.status === 201) {
       setRegistrationList((prevList) =>
         prevList.map((reg) =>
           reg.id === selectedRegistration!.id
@@ -228,6 +242,13 @@ export const MyRegistrationPage = () => {
             : reg
         )
       );
+
+      // Подсветка измененной строки
+      setHighlightedRowId(selectedRegistration!.id);
+      setTimeout(() => {
+        setHighlightedRowId(null); // Сброс подсветки через 3 секунды
+      }, 3000);
+
       setIsDrawerOpen(false);
     }
   }, [uploadedFile, selectedRegistration, paymentMethod]);
@@ -245,7 +266,7 @@ export const MyRegistrationPage = () => {
         exit={{ y: 100, opacity: 0 }}
         transition={{ type: 'spring', stiffness: 100 }}
       >
-        <Table className="bg-white border border-transparent !overflow-auto !max-h-[50vh]">
+        <Table className="bg-white border border-transparent !overflow-auto !max-h-[50vh]" >
           <TableHeader>
             <TableRow className="bg-blue-100 !border-none sticky top-0 z-10">
               <TableHead className="py-3 px-4 font-bold text-center text-[16px] rounded-s-[40px]">Статус</TableHead>
@@ -260,7 +281,7 @@ export const MyRegistrationPage = () => {
             {registrationList.map((registration) => (
               <TableRow
                 key={registration.id}
-                className="border-b hover:bg-gray-50 transition-colors duration-200 cursor-pointer"
+                className={`border-b hover:bg-gray-50 duration-200 cursor-pointer transition-all ${highlightedRowId === registration.id ? 'bg-blue-100' : ''}`}
                 onClick={() => handleRowClick(registration)}
               >
                 <TableCell className="text-center flex justify-center">
@@ -383,7 +404,6 @@ export const MyRegistrationPage = () => {
                         </div>
                       )}
 
-                      {/* Остальная информация о заявке */}
                       <div>
                         <div className='text-[18px]'><strong>Фамилия:</strong> {selectedRegistration!.lastName}</div>
                         <div className='text-[18px]'><strong>Имя:</strong> {selectedRegistration!.name}</div>
@@ -403,9 +423,9 @@ export const MyRegistrationPage = () => {
                         <div className='text-blue-500 font-bold mt-3'>ИТОГО: {totalAmount}₽</div>
                       </div>
 
-                      <PhotoProvider>
-                        {renderPaymentCheck(selectedRegistration!.paymentCheck as any)}
-                      </PhotoProvider>
+                      {currentPaymentCheck && <PhotoProvider>
+                        {renderPaymentCheck(currentPaymentCheck as any)}
+                      </PhotoProvider>}
                     </motion.div>
                   ) : (
                     <motion.div

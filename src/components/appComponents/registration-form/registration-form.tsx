@@ -11,7 +11,6 @@ import {
   Alert,
   Snackbar
 } from "@mui/material";
-import { IoChevronBack } from "react-icons/io5";
 import { CiCircleInfo } from "react-icons/ci";
 import { useCallback, useEffect, useState } from "react";
 // @ts-ignore
@@ -35,6 +34,9 @@ import { Conclusion } from './Сonclusion';
 import { PaymentTypeEnum } from '@/models/enums/PaymentTypeEnum';
 import { useUserStore } from '@/stores/UserStore';
 import { ChurchEnum } from '@/models/enums/ChurchEnum';
+import { IoMdClose } from "react-icons/io";
+
+
 
 const steps = ["Личная информация", "Церковь", "Лагерь", "Обзор", "Оплата", ''];
 
@@ -96,7 +98,7 @@ export const RegistrationForm = () => {
   const form = useForm<IRegistrationForm>({
     resolver: zodResolver(registrationSchema),
     defaultValues: { firstName: "", lastName: "", dateOfBirth: undefined, phone: "", church: undefined },
-    mode: "onChange",
+    mode: "onChange"
   });
 
   const calculateAge = (dateOfBirth: Date): number => {
@@ -184,14 +186,13 @@ export const RegistrationForm = () => {
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
-  
-    // Проверка размера файла (1 МБ = 1 * 1024 * 1024 байт)
-    const maxSize = 1 * 1024 * 1024; // 1 МБ
+
+    const maxSize = 1 * 1024 * 1024;
     if (file.size > maxSize) {
       setErrorMessage("Размер файла не должен превышать 1 МБ.");
       return;
     }
-  
+
     if (file.type.startsWith("image/")) {
       setFile(file);
       setErrorMessage(null); // Сброс ошибки, если файл подходит
@@ -199,7 +200,6 @@ export const RegistrationForm = () => {
       setErrorMessage("Пожалуйста, загрузите изображение.");
     }
   };
-  
 
   const onSubmit = () => {
     console.log({ ...form.getValues(), selectedCamps, paymentMethod, file });
@@ -341,9 +341,6 @@ export const RegistrationForm = () => {
             style={{ position: "fixed", top: 0, left: 0, width: "100%", backgroundColor: "white", padding: 24 }}
           >
             {step !== steps.length - 1 && <Box display="flex" justifyContent="space-between" alignItems="center" className="py-3">
-              <Button onClick={onClose} variant="contained" className="!h-12 !min-w-0 rounded-full !bg-black">
-                <IoChevronBack />
-              </Button>
               <Box display="flex" alignItems="center" gap={1}>
                 <Typography variant="h6">{steps[step]}</Typography>
                 <ClickAwayListener onClickAway={handleTooltipClose}>
@@ -366,6 +363,9 @@ export const RegistrationForm = () => {
                   </Tooltip>
                 </ClickAwayListener>
               </Box>
+              <Button onClick={onClose} variant="contained" className="!h-12 !min-w-0 rounded-full !bg-black">
+                <IoMdClose />
+              </Button>
             </Box>}
 
             <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-5 overflow-x-scroll pt-5">
@@ -413,7 +413,7 @@ export const RegistrationForm = () => {
                 />
               )}
 
-              {step === 5 && <Conclusion onClose={onFinishHandler} />}
+              {step === 5 && <Conclusion onClose={onFinishHandler} paymentMethod={paymentMethod} />}
 
               <Box display="flex" justifyContent="space-between" mt={4}>
                 {step > 0 && step <= 3 && (
@@ -430,6 +430,7 @@ export const RegistrationForm = () => {
                     Отправить
                   </Button>
                 )}
+                {step === steps.length - 2 && paymentMethod === PaymentTypeEnum.Cash && <Button variant="contained" onClick={() => handleNextStep()}>Завершить</Button>}
               </Box>
             </form>
 

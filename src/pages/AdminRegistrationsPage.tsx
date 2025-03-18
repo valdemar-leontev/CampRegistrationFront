@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import apiClient from '@/axios';
 import dayjs from 'dayjs';
-import { Tooltip, Typography } from '@mui/material';
+import { TextField, Tooltip, Typography } from '@mui/material';
 import { RegistrationStatusEnum } from '@/models/enums/RegistrationStatusEnum';
 import { CiCreditCard1 } from "react-icons/ci";
 import { IoChevronBack, IoInformationOutline } from "react-icons/io5";
@@ -25,6 +25,7 @@ import { IRegistrationStatus } from '@/models/IRegistrationStatus';
 import { ICamp } from '@/models/ICamp';
 import { IChurch } from '@/models/IChurch';
 import { useUserStore } from '@/stores/UserStore';
+import { AccordionItem, AccordionTrigger, AccordionContent, Accordion } from '@radix-ui/react-accordion';
 
 interface IAdminRegistration {
   id: number;
@@ -44,9 +45,6 @@ interface IAdminRegistration {
   }[];
   registrationStatus: string;
   church: string;
-  paymentCheck: null | {
-    data: { [key: string]: number };
-  };
   sum: number;
 }
 
@@ -85,13 +83,10 @@ const getStatusIcon = (status: number) => {
   }
 };
 
-const renderPaymentCheck = (paymentCheck: { data: { [key: string]: number } }) => {
-  if (!paymentCheck?.data) return null;
+const renderPaymentCheck = (paymentCheck: string) => {
+  if (!paymentCheck) return null;
 
-  const byteArray = Object.values(paymentCheck.data);
-  const uint8Array = new Uint8Array(byteArray);
-
-  const blob = new Blob([uint8Array], { type: 'image/*' });
+  const blob = new Blob([paymentCheck], { type: 'image/*' });
   const imageUrl = URL.createObjectURL(blob);
 
   return (
@@ -186,16 +181,6 @@ export const AdminRegistrationsPage = () => {
     }
   }, [selectedRegistration]);
 
-  const filteredRegistrations = useMemo(() => {
-    return registrationList.filter((registration) => {
-      const matchesStatus = statusFilter.length === 0 || statusFilter.includes(registration.registrationStatusId);
-      const matchesChurch = churchFilter.length === 0 || churchFilter.includes(registration.church);
-      const matchesCamp = campFilter.length === 0 || registration.registrationLinkPrice.some((link) => campFilter.includes(link.campName));
-      return matchesStatus && matchesChurch && matchesCamp;
-    });
-  }, [registrationList, statusFilter, churchFilter, campFilter]);
-
-
   const [statusList, setStatusList] = useState<IRegistrationStatus[]>();
   const [churchList, setChurchList] = useState<IChurch[]>();
   const [campList, setCampList] = useState<ICamp[]>();
@@ -213,79 +198,139 @@ export const AdminRegistrationsPage = () => {
     })()
   }, [])
 
+  const [searchQuery, setSearchQuery] = useState<string>('');
+
+  const filteredRegistrations = useMemo(() => {
+    return registrationList.filter((registration) => {
+      const matchesStatus = statusFilter.length === 0 || statusFilter.includes(registration.registrationStatusId);
+      const matchesChurch = churchFilter.length === 0 || churchFilter.includes(registration.church);
+      const matchesCamp = campFilter.length === 0 || registration.registrationLinkPrice.some((link) => campFilter.includes(link.campName));
+
+      const matchesSearch = searchQuery === '' || Object.values(registration).some((value) => {
+        if (typeof value === 'string') {
+          return value.toLowerCase().includes(searchQuery.toLowerCase());
+        }
+        if (Array.isArray(value)) {
+          return value.some((item) => item.campName.toLowerCase().includes(searchQuery.toLowerCase()));
+        }
+        return false;
+      });
+
+      return matchesStatus && matchesChurch && matchesCamp && matchesSearch;
+    });
+  }, [registrationList, statusFilter, churchFilter, campFilter, searchQuery]);
+
+  const [currentPaymentCheck, setCurrentPaymentCheck] = useState<string>();
+
+  useEffect(() => {
+    (async () => {
+      if (!selectedRegistration?.id) return;
+
+      try {
+        const response = await apiClient.get<string>(`payment-check/registration/${selectedRegistration.id}`, { responseType: 'blob' });
+
+        setCurrentPaymentCheck(response.data);
+      } catch (error) {
+        console.error("Ошибка при загрузке payment check:", error);
+      }
+    })();
+  }, [selectedRegistration]);
+
+
   return (
     statusList && churchList && campList && <div className="py-6">
       <Typography className="!font-bold !text-2xl !mb-2">
         Управление заявками
       </Typography>
 
-      <div className="flex gap-4 mb-6 flex-col">
-        {statusList.length > 0 ? (
-          <FormControl variant="outlined" className="w-full">
-            <InputLabel>Статус</InputLabel>
-            <Select
-              label={'Статус'}
-              multiple
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value as number[])}
-              renderValue={(selected) => (selected as number[]).map((s) => RegistrationStatusEnum[s]).join(', ')}
-            >
-              {statusList!.map(({ id, name }) => (
-                <MenuItem key={id} value={id}>
-                  <Checkbox checked={statusFilter.includes(id)} />
-                  <ListItemText primary={name} />
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        ) : (
-          <Typography>Загрузка статусов...</Typography>
-        )}
+      <Accordion type="single" collapsible>
+        <AccordionItem value={'Фильтры'}>
+          <AccordionTrigger className='p-3 border mb-3 border-blue-100 rounded-2xl'>Фильтры</AccordionTrigger>
+          <AccordionContent>
+            <AnimatePresence mode='sync'>
 
-        <FormControl variant="outlined">
-          <InputLabel>Церковь</InputLabel>
-          <Select
-            label={'Церковь'}
-            multiple
-            value={churchFilter}
-            onChange={(e) => setChurchFilter(e.target.value as string[])}
-            renderValue={(selected) => selected.join(', ')}
-          >
-            {churchList.map(({ id, name }) => (
-              <MenuItem key={id} value={name}>
-                <Checkbox checked={churchFilter.includes(name)} />
-                <ListItemText primary={name} />
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+              <motion.div
+                className="flex gap-4 mb-6 flex-col"
+                initial={{ opacity: 0, height: 0, y: -10 }}
+                animate={{ opacity: 1, height: "auto", y: 0 }}
+                exit={{ opacity: 0, height: 0, y: -10 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}>
 
-        <FormControl variant="outlined">
-          <InputLabel>Лагеря</InputLabel>
-          <Select
-            label={'Лагеря'}
-            multiple
-            value={campFilter}
-            onChange={(e) => setCampFilter(e.target.value as string[])}
-            renderValue={(selected) => selected.join(', ')}
-          >
-            {campList.map(({ id, name }) => (
-              <MenuItem key={id} value={name}>
-                <Checkbox checked={campFilter.includes(name)} />
-                <ListItemText primary={name} />
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      </div>
+                <div className="flex gap-4 mb-6 flex-wrap">
+                  <TextField
+                    label="Поиск"
+                    variant="outlined"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full md:w-auto"
+                  />
+                  <FormControl variant="outlined" className="w-full md:w-auto">
+                    <InputLabel>Статус</InputLabel>
+                    <Select
+                      label={'Статус'}
+                      multiple
+                      value={statusFilter}
+                      onChange={(e) => setStatusFilter(e.target.value as number[])}
+                      renderValue={(selected) => (selected as number[]).map((s) => RegistrationStatusEnum[s]).join(', ')}
+                    >
+                      {statusList!.map(({ id, name }) => (
+                        <MenuItem key={id} value={id}>
+                          <Checkbox checked={statusFilter.includes(id)} />
+                          <ListItemText primary={name} />
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  <FormControl variant="outlined" className="w-full md:w-auto">
+                    <InputLabel>Церковь</InputLabel>
+                    <Select
+                      label={'Церковь'}
+                      multiple
+                      value={churchFilter}
+                      onChange={(e) => setChurchFilter(e.target.value as string[])}
+                      renderValue={(selected) => selected.join(', ')}
+                    >
+                      {churchList.map(({ id, name }) => (
+                        <MenuItem key={id} value={name}>
+                          <Checkbox checked={churchFilter.includes(name)} />
+                          <ListItemText primary={name} />
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  <FormControl variant="outlined" className="w-full md:w-auto">
+                    <InputLabel>Лагеря</InputLabel>
+                    <Select
+                      label={'Лагеря'}
+                      multiple
+                      value={campFilter}
+                      onChange={(e) => setCampFilter(e.target.value as string[])}
+                      renderValue={(selected) => selected.join(', ')}
+                    >
+                      {campList.map(({ id, name }) => (
+                        <MenuItem key={id} value={name}>
+                          <Checkbox checked={campFilter.includes(name)} />
+                          <ListItemText primary={name} />
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
 
       <motion.div
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 100, opacity: 0 }}
         transition={{ type: 'spring', stiffness: 100 }}
+        className='!h-[20vh]'
       >
-        <Table className="bg-white border border-transparent !overflow-auto !max-h-[50vh]">
+        <Table className="bg-white border border-transparent !overflow-auto" mainContainerClassName={'!h-[55vh]'}>
           <TableHeader>
             <TableRow className="bg-blue-100 !border-none sticky top-0 z-10">
               <TableHead className="py-3 px-4 font-bold text-center text-[16px] rounded-s-[40px]">Статус</TableHead>
@@ -370,7 +415,6 @@ export const AdminRegistrationsPage = () => {
                     transition={{ duration: 0.3 }}
                     className="space-y-4 text-left pb-24"
                   >
-                    {/* Информация о заявке */}
                     <div>
                       <div className='text-[18px]'><strong>Фамилия:</strong> {selectedRegistration!.lastName}</div>
                       <div className='text-[18px]'><strong>Имя:</strong> {selectedRegistration!.name}</div>
@@ -391,12 +435,10 @@ export const AdminRegistrationsPage = () => {
                       <div className='text-blue-500 font-bold mt-3'>ИТОГО: {totalAmount}₽</div>
                     </div>
 
-                    {/* Просмотр чека оплаты */}
                     <PhotoProvider>
-                      {renderPaymentCheck(selectedRegistration!.paymentCheck as any)}
+                      {renderPaymentCheck(currentPaymentCheck as any)}
                     </PhotoProvider>
 
-                    {/* Кнопки для администратора */}
                     <div className="flex gap-4 mt-6">
                       <Button
                         onClick={() => changeRequestStatus(RegistrationStatusEnum.Оплачено)}
@@ -420,6 +462,6 @@ export const AdminRegistrationsPage = () => {
           )}
         </AnimatePresence>
       </motion.div>
-    </div>
+    </div >
   );
 };
