@@ -38,13 +38,8 @@ interface IRegistration {
   adminId: number;
   totalAmount: number;
   registrationLinkPrice: {
-    price: {
-      campId: number;
-      camp: {
-        name: string;
-      };
       value: number;
-    };
+      campName: string;
   }[];
   paymentType: {
     name: string;
@@ -238,7 +233,7 @@ export const MyRegistrationPage = () => {
   }, [uploadedFile, selectedRegistration, paymentMethod]);
 
   return (
-    <div className="py-6">
+    registrationList ? <div className="py-6">
 
       <Typography className="!font-bold !text-4xl !mb-8">
         Мои регистрации
@@ -291,7 +286,7 @@ export const MyRegistrationPage = () => {
                 </TableCell>
                 <TableCell className="py-2 px-4 text-nowrap text-left">
                   {registration.registrationLinkPrice.map((link, index) => (
-                    <div key={index}>{++index}. {link.price.camp.name}</div>
+                    <div key={index}>{++index}. {link.campName}</div>
                   ))}
                 </TableCell>
                 <TableCell className="py-2 px-4 text-nowrap">{registration.lastName}</TableCell>
@@ -300,7 +295,7 @@ export const MyRegistrationPage = () => {
                   {dayjs(registration.registrationDate).format('D MMMM YYYY')}
                 </TableCell>
                 <TableCell className="py-2 px-4 text-nowrap">
-                  {registration.registrationLinkPrice.reduce((sum, link) => sum + link.price.value, 0)}₽
+                  {registration.registrationLinkPrice.reduce((sum, link) => sum + link.value, 0)}₽
                 </TableCell>
               </TableRow>
             ))}
@@ -400,7 +395,7 @@ export const MyRegistrationPage = () => {
                         <ul>
                           {selectedRegistration!.registrationLinkPrice.map((link, index) => (
                             <li key={index} className='text-[18px]'>
-                              🏕️ {link.price.camp.name}: {link.price.value}₽
+                              🏕️ {link.campName}: {link.value}₽
                             </li>
                           ))}
                         </ul>
@@ -576,6 +571,6 @@ export const MyRegistrationPage = () => {
           )}
         </AnimatePresence>
       </motion.div>
-    </div>
+    </div> : <h1>jkdfbjhdbhewdhuewcbhubewcdkhuqbcdekhjqwbcdhjqcdbkjhqdebckhqdbckhjqcd</h1>
   );
 };
