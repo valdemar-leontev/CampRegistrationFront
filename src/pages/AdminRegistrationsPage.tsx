@@ -8,18 +8,14 @@ import {
 } from "@/components/ui/table";
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import apiClient from '@/axios';
 import dayjs from 'dayjs';
-import { TextField, Tooltip, Typography } from '@mui/material';
+import { TextField, Typography } from '@mui/material';
 import { RegistrationStatusEnum } from '@/models/enums/RegistrationStatusEnum';
-import { CiCreditCard1 } from "react-icons/ci";
-import { IoChevronBack, IoInformationOutline } from "react-icons/io5";
-import { IoCheckmarkSharp } from "react-icons/io5";
-import { CiCircleQuestion } from "react-icons/ci";
+import { IoChevronBack } from "react-icons/io5";
 import { PhotoProvider, PhotoView } from 'react-photo-view';
 import 'react-photo-view/dist/react-photo-view.css';
-import { TfiFaceSad } from "react-icons/tfi";
 import { Select, MenuItem, FormControl, InputLabel, Checkbox, ListItemText } from '@mui/material';
 import { IRegistrationStatus } from '@/models/IRegistrationStatus';
 import { ICamp } from '@/models/ICamp';
@@ -42,46 +38,12 @@ interface IAdminRegistration {
   registrationLinkPrice: {
     value: number;
     campName: string;
+    startDate: Date
   }[];
   registrationStatus: string;
   church: string;
   sum: number;
 }
-
-const getStatusIcon = (status: number) => {
-  switch (status) {
-    case RegistrationStatusEnum["Ожидает оплаты"]:
-      return (
-        <div className="flex justify-center bg-yellow-500 opacity-80 w-8 h-8 items-center rounded-full">
-          <CiCreditCard1 size={22} className="text-white" />
-        </div>
-      );
-    case RegistrationStatusEnum["На проверке"]:
-      return (
-        <div className="flex justify-center bg-purple-500 opacity-80 w-8 h-8 items-center rounded-full">
-          <IoInformationOutline size={22} className="text-white" />
-        </div>
-      );
-    case RegistrationStatusEnum.Оплачено:
-      return (
-        <div className="flex justify-center bg-green-500 opacity-80 w-8 h-8 items-center rounded-full">
-          <IoCheckmarkSharp size={22} className="text-white" />
-        </div>
-      );
-    case RegistrationStatusEnum.Отклонено:
-      return (
-        <div className="flex justify-center bg-red-500 opacity-80 w-8 h-8 items-center rounded-full">
-          <TfiFaceSad size={22} className="text-white" />
-        </div>
-      );
-    default:
-      return (
-        <div className="flex justify-center bg-gray-500 opacity-80 w-8 h-8 items-center rounded-full">
-          <CiCircleQuestion size={22} className="text-white" />
-        </div>
-      );
-  }
-};
 
 const renderPaymentCheck = (paymentCheck: string) => {
   if (!paymentCheck) return null;
@@ -103,14 +65,10 @@ const renderPaymentCheck = (paymentCheck: string) => {
 export const AdminRegistrationsPage = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   const [selectedRegistration, setSelectedRegistration] = useState<IAdminRegistration | null>(null);
-  const [tooltipOpen, setTooltipOpen] = useState<{ [key: number]: boolean }>({});
-  const tooltipRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
-
-
   const [statusFilter, setStatusFilter] = useState<number[]>([]);
   const [churchFilter, setChurchFilter] = useState<string[]>([]);
   const [campFilter, setCampFilter] = useState<string[]>([]);
-
+  const [searchQuery, setSearchQuery] = useState<string>('');
   const [registrationList, setRegistrationList] = useState<IAdminRegistration[]>([]);
 
   const { user } = useUserStore();
@@ -130,31 +88,6 @@ export const AdminRegistrationsPage = () => {
     setSelectedRegistration(registration);
     setIsDrawerOpen(true);
   };
-
-  const handleTooltipOpen = (id: number) => {
-    setTooltipOpen((prev) => ({ ...prev, [id]: true }));
-  };
-
-  const handleTooltipClose = (id: number) => {
-    setTooltipOpen((prev) => ({ ...prev, [id]: false }));
-  };
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      Object.keys(tooltipOpen).forEach((key) => {
-        const id = Number(key);
-        const tooltipElement = tooltipRefs.current[id];
-        if (tooltipElement && !tooltipElement.contains(event.target as Node)) {
-          handleTooltipClose(id);
-        }
-      });
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [tooltipOpen]);
 
   const totalAmount = useMemo(() => {
     return selectedRegistration?.totalAmount;
@@ -198,8 +131,6 @@ export const AdminRegistrationsPage = () => {
     })()
   }, [])
 
-  const [searchQuery, setSearchQuery] = useState<string>('');
-
   const filteredRegistrations = useMemo(() => {
     return registrationList.filter((registration) => {
       const matchesStatus = statusFilter.length === 0 || statusFilter.includes(registration.registrationStatusId);
@@ -237,6 +168,31 @@ export const AdminRegistrationsPage = () => {
     })();
   }, [selectedRegistration]);
 
+  const calculateAgeAtCamp = (birthdate: string, targetDate: Date): number => {
+    const birth = dayjs(birthdate);
+    const target = dayjs(targetDate);
+
+    let age = target.year() - birth.year();
+
+    if (target.month() < birth.month() || (target.month() === birth.month() && target.date() < birth.date())) {
+      age--;
+    }
+
+    return age;
+  }
+
+  const [pendingAction, setPendingAction] = useState<RegistrationStatusEnum | null>(null);
+
+  const handleConfirmAction = () => {
+    if (pendingAction && selectedRegistration) {
+      changeRequestStatus(pendingAction);
+      setPendingAction(null);
+    }
+  };
+
+  const handleCancelAction = () => {
+    setPendingAction(null);
+  };
 
   return (
     statusList && churchList && campList && <div className="py-6">
@@ -340,7 +296,8 @@ export const AdminRegistrationsPage = () => {
               <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Фамилия</TableHead>
               <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Имя</TableHead>
               <TableHead className="py-3 px-4 font-bold text-center text-[16px] text-nowrap">Дата регистрации</TableHead>
-              <TableHead className="py-3 px-4 font-bold text-center text-[16px] text-nowrap rounded-e-[40px]">Сумма</TableHead>
+              <TableHead className="py-3 px-4 font-bold text-center text-[16px] text-nowrap ">Сумма</TableHead>
+              <TableHead className="py-3 px-4 font-bold text-center text-[16px] rounded-e-[40px]">Возраст</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -350,26 +307,23 @@ export const AdminRegistrationsPage = () => {
                 className="border-b hover:bg-gray-50 transition-colors duration-200 cursor-pointer"
                 onClick={() => handleRowClick(registration)}
               >
-                <TableCell className="text-center flex justify-center">
-                  <Tooltip
-                    open={tooltipOpen[registration.id] || false}
-                    onClose={() => handleTooltipClose(registration.id)}
-                    disableFocusListener
-                    disableHoverListener
-                    disableTouchListener
-                    title={registration.registrationStatus}
-                    arrow
+                <TableCell className="text-center flex justify-center flex-col">
+                  <div
+                    className={`flex flex-col items-center gap-1 p-2 rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-200 ${registration.registrationStatusId === RegistrationStatusEnum["Ожидает оплаты"]
+                      ? "bg-gradient-to-br from-yellow-100 to-yellow-200"
+                      : registration.registrationStatusId === RegistrationStatusEnum["На проверке"]
+                        ? "bg-gradient-to-br from-purple-100 to-purple-200"
+                        : registration.registrationStatusId === RegistrationStatusEnum.Оплачено
+                          ? "bg-gradient-to-br from-green-100 to-green-200"
+                          : registration.registrationStatusId === RegistrationStatusEnum.Отклонено
+                            ? "bg-gradient-to-br from-red-100 to-red-200"
+                            : "bg-gradient-to-br from-gray-100 to-gray-200"
+                      }`}
                   >
-                    <div
-                      ref={(el: HTMLDivElement | null) => (tooltipRefs.current[registration.id] = el)}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleTooltipOpen(registration.id);
-                      }}
-                    >
-                      {getStatusIcon(registration.registrationStatusId)}
-                    </div>
-                  </Tooltip>
+                    <span className="text-sm font-medium text-gray-700">
+                      {RegistrationStatusEnum[registration.registrationStatusId]}
+                    </span>
+                  </div>
                 </TableCell>
                 <TableCell className="py-2 px-4 text-nowrap">{registration.church}</TableCell>
                 <TableCell className="py-2 px-4 text-nowrap">
@@ -384,6 +338,11 @@ export const AdminRegistrationsPage = () => {
                 </TableCell>
                 <TableCell className="py-2 px-4 text-nowrap">
                   {registration.registrationLinkPrice.reduce((sum, link) => sum + link.value, 0)}₽
+                </TableCell>
+                <TableCell className="py-2 px-4 text-nowrap">
+                  {registration.registrationLinkPrice.length > 0
+                    ? calculateAgeAtCamp(registration.birthdate, registration.registrationLinkPrice[0].startDate)
+                    : '—'}
                 </TableCell>
               </TableRow>
             ))}
@@ -419,6 +378,11 @@ export const AdminRegistrationsPage = () => {
                     <div>
                       <div className='text-[18px]'><strong>Фамилия:</strong> {selectedRegistration!.lastName}</div>
                       <div className='text-[18px]'><strong>Имя:</strong> {selectedRegistration!.name}</div>
+
+                      <div className='text-[18px]'><strong>Возраст на момент лагеря:</strong> {selectedRegistration.registrationLinkPrice.length > 0
+                        ? calculateAgeAtCamp(selectedRegistration.birthdate, selectedRegistration.registrationLinkPrice[0].startDate)
+                        : '—'}
+                      </div>
                       <div className='text-[18px]'><strong>Дата рождения:</strong> {dayjs(selectedRegistration!.birthdate).format('D MMMM YYYY')}</div>
                       <div className='text-[18px]'><strong>Город:</strong> {selectedRegistration!.city}</div>
                       <div className='text-[18px]'><strong>Церковь:</strong> {selectedRegistration!.church}</div>
@@ -440,22 +404,68 @@ export const AdminRegistrationsPage = () => {
                       {renderPaymentCheck(currentPaymentCheck as any)}
                     </PhotoProvider>
 
-                    <div className="flex gap-4 mt-6">
-                      <Button
-                        onClick={() => changeRequestStatus(RegistrationStatusEnum.Оплачено)}
-                        variant="outline"
-                        className="flex-1 text-white"
-                      >
-                        Подтвердить
-                      </Button>
-                      <Button
-                        onClick={() => changeRequestStatus(RegistrationStatusEnum.Отклонено)}
-                        variant="ghost"
-                        className="flex-1 text-white"
-                      >
-                        Отклонить
-                      </Button>
-                    </div>
+                    {selectedRegistration.registrationStatusId !== RegistrationStatusEnum.Оплачено
+                      && selectedRegistration.registrationStatusId !== RegistrationStatusEnum.Отклонено
+                      && (
+                        <div className="flex gap-4 mt-6 flex-col">
+                          <AnimatePresence mode='wait'>
+                            {pendingAction ? (
+                              <motion.div
+                                key="confirmation"
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -20 }}
+                                transition={{ duration: 0.3 }}
+                                className='flex flex-col w-full'
+                              >
+                                <div className='text-center'>
+                                  Вы уверены, что хотите перевести заявку в состояние <strong>{pendingAction === RegistrationStatusEnum.Оплачено ? "Оплачено" : "Отклонено"}</strong>?
+                                </div>
+                                <div className='flex gap-4 mt-4'>
+                                  <Button
+                                    onClick={handleConfirmAction}
+                                    variant="outline"
+                                    className="flex-1 text-white"
+                                  >
+                                    Да
+                                  </Button>
+                                  <Button
+                                    onClick={handleCancelAction}
+                                    variant="ghost"
+                                    className="flex-1 text-white"
+                                  >
+                                    Нет
+                                  </Button>
+                                </div>
+                              </motion.div>
+                            ) : (
+                              <motion.div
+                                key="actions"
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -20 }}
+                                transition={{ duration: 0.3 }}
+                                className='flex gap-4 w-full'
+                              >
+                                <Button
+                                  onClick={() => setPendingAction(RegistrationStatusEnum.Оплачено)}
+                                  variant="outline"
+                                  className="flex-1 text-white"
+                                >
+                                  Подтвердить
+                                </Button>
+                                <Button
+                                  onClick={() => setPendingAction(RegistrationStatusEnum.Отклонено)}
+                                  variant="ghost"
+                                  className="flex-1 text-white"
+                                >
+                                  Отклонить
+                                </Button>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      )}
                   </motion.div>
                 )}
               </motion.div>

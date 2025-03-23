@@ -7,8 +7,6 @@ import { init } from '@telegram-apps/sdk-react'
 import { retrieveRawInitData } from '@telegram-apps/bridge';
 import { NavigationPanels } from './components/appComponents/navigation-panels.js';
 import { ProfileBar } from './components/appComponents/profile-bar.js';
-
-
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { ITelegramUser } from './models/ITelegramUser.js';
 import apiClient from './axios.js';
@@ -18,7 +16,7 @@ import { IDataUser } from './models/dto/IDataUser.js';
 const theme = createTheme({
   palette: {
     secondary: {
-      main: "#4caf50", // Вторичный цвет
+      main: "#4caf50",
     },
   },
   components: {
@@ -100,7 +98,7 @@ const Root = () => {
       <ThemeProvider theme={theme}>
         <PoweredByGod />
         {isVisible && user && <div className='flex flex-col h-[100vh] overflow-hidden'>
-          <ProfileBar user={user} />
+          <ProfileBar />
 
           <App user={user} />
 

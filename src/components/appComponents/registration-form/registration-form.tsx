@@ -36,8 +36,6 @@ import { useUserStore } from '@/stores/UserStore';
 import { ChurchEnum } from '@/models/enums/ChurchEnum';
 import { IoMdClose } from "react-icons/io";
 
-
-
 const steps = ["Личная информация", "Церковь", "Лагерь", "Обзор", "Оплата", ''];
 
 export const RegistrationForm = () => {
@@ -169,8 +167,25 @@ export const RegistrationForm = () => {
 
   const toggleCamp = (camp: ICamp) => {
     const age = calculateAge(form.getValues("dateOfBirth"));
+
+    console.log(age);
+
+
     if (validateAgeForCamp(camp, age)) {
-      setSelectedCamps((prev) => (prev.includes(camp) ? prev.filter((c) => c !== camp) : [...prev, camp]));
+      setSelectedCamps((prev) => {
+        let newCamps = prev.includes(camp)
+          ? prev.filter((c) => c !== camp)
+          : [...prev, camp];
+
+        if (age === 12 && camp.name === "Детский" && !newCamps.includes(camp)) {
+          const teenCamp = campList.find((c) => c.name === "Подростковый");
+          if (teenCamp) {
+            newCamps = newCamps.filter((c) => c !== teenCamp);
+          }
+        }
+
+        return newCamps;
+      });
     }
   };
 
@@ -201,8 +216,9 @@ export const RegistrationForm = () => {
     }
   };
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     console.log({ ...form.getValues(), selectedCamps, paymentMethod, file });
+
 
     form.reset();
     form.clearErrors();
@@ -320,6 +336,7 @@ export const RegistrationForm = () => {
     form.reset();
     form.clearErrors();
     setSelectedCamps([]);
+    setFile(null);
     setStep(0);
     onClose();
   }

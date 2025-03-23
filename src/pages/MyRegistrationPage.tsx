@@ -8,22 +8,17 @@ import {
 } from "@/components/ui/table";
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import apiClient from '@/axios';
 import { useUserStore } from '@/stores/UserStore';
 import dayjs from 'dayjs';
-import { Tooltip, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { RegistrationStatusEnum } from '@/models/enums/RegistrationStatusEnum';
-import { CiCreditCard1 } from "react-icons/ci";
-import { IoChevronBack, IoInformationOutline } from "react-icons/io5";
-import { IoCheckmarkSharp } from "react-icons/io5";
-import { CiCircleQuestion } from "react-icons/ci";
+import { IoChevronBack } from "react-icons/io5";
 import { PhotoProvider, PhotoView } from 'react-photo-view';
 import 'react-photo-view/dist/react-photo-view.css';
 import { IAdmin } from '@/models/IAdmin';
 import { PaymentTypeEnum } from '@/models/enums/PaymentTypeEnum';
-import { TfiFaceSad } from "react-icons/tfi";
-
 
 interface IRegistration {
   id: number;
@@ -49,41 +44,6 @@ interface IRegistration {
   };
 }
 
-const getStatusIcon = (status: number) => {
-  switch (status) {
-    case RegistrationStatusEnum["Ожидает оплаты"]:
-      return (
-        <div className="flex justify-center bg-yellow-500 opacity-80 w-8 h-8 items-center rounded-full">
-          <CiCreditCard1 size={22} className="text-white" />
-        </div>
-      );
-    case RegistrationStatusEnum["На проверке"]:
-      return (
-        <div className="flex justify-center bg-purple-500 opacity-80 w-8 h-8 items-center rounded-full">
-          <IoInformationOutline size={22} className="text-white" />
-        </div>
-      );
-    case RegistrationStatusEnum.Оплачено:
-      return (
-        <div className="flex justify-center bg-green-500 opacity-80 w-8 h-8 items-center rounded-full">
-          <IoCheckmarkSharp size={22} className="text-white" />
-        </div>
-      );
-    case RegistrationStatusEnum.Отклонено:
-      return (
-        <div className="flex justify-center bg-red-500 opacity-80 w-8 h-8 items-center rounded-full">
-          <TfiFaceSad size={22} className="text-white" />
-        </div>
-      );
-    default:
-      return (
-        <div className="flex justify-center bg-gray-500 opacity-80 w-8 h-8 items-center rounded-full">
-          <CiCircleQuestion size={22} className="text-white" />
-        </div>
-      );
-  }
-};
-
 const renderPaymentCheck = (paymentCheck: string) => {
   if (!paymentCheck) return null;
 
@@ -104,8 +64,6 @@ const renderPaymentCheck = (paymentCheck: string) => {
 export const MyRegistrationPage = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   const [selectedRegistration, setSelectedRegistration] = useState<IRegistration | null>(null);
-  const [tooltipOpen, setTooltipOpen] = useState<{ [key: number]: boolean }>({});
-  const tooltipRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
 
   const [admin, setAdmin] = useState<IAdmin>();
 
@@ -161,31 +119,6 @@ export const MyRegistrationPage = () => {
     setIsDrawerOpen(true);
     setCurrentStep("info");
   };
-
-  const handleTooltipOpen = (id: number) => {
-    setTooltipOpen((prev) => ({ ...prev, [id]: true }));
-  };
-
-  const handleTooltipClose = (id: number) => {
-    setTooltipOpen((prev) => ({ ...prev, [id]: false }));
-  };
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      Object.keys(tooltipOpen).forEach((key) => {
-        const id = Number(key);
-        const tooltipElement = tooltipRefs.current[id];
-        if (tooltipElement && !tooltipElement.contains(event.target as Node)) {
-          handleTooltipClose(id);
-        }
-      });
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [tooltipOpen]);
 
   const totalAmount = useMemo(() => {
     return selectedRegistration?.totalAmount
@@ -244,10 +177,9 @@ export const MyRegistrationPage = () => {
         )
       );
 
-      // Подсветка измененной строки
       setHighlightedRowId(selectedRegistration!.id);
       setTimeout(() => {
-        setHighlightedRowId(null); // Сброс подсветки через 3 секунды
+        setHighlightedRowId(null);
       }, 3000);
 
       setIsDrawerOpen(false);
@@ -285,26 +217,23 @@ export const MyRegistrationPage = () => {
                 className={`border-b hover:bg-gray-50 duration-200 cursor-pointer transition-all ${highlightedRowId === registration.id ? 'bg-blue-100' : ''}`}
                 onClick={() => handleRowClick(registration)}
               >
-                <TableCell className="text-center flex justify-center">
-                  <Tooltip
-                    open={tooltipOpen[registration.id] || false}
-                    onClose={() => handleTooltipClose(registration.id)}
-                    disableFocusListener
-                    disableHoverListener
-                    disableTouchListener
-                    title={registration.registrationStatus.name}
-                    arrow
+                <TableCell className="text-center flex justify-center flex-col">
+                  <div
+                    className={`flex flex-col items-center gap-1 p-2 rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-200 ${registration.registrationStatusId === RegistrationStatusEnum["Ожидает оплаты"]
+                      ? "bg-gradient-to-br from-yellow-100 to-yellow-200"
+                      : registration.registrationStatusId === RegistrationStatusEnum["На проверке"]
+                        ? "bg-gradient-to-br from-purple-100 to-purple-200"
+                        : registration.registrationStatusId === RegistrationStatusEnum.Оплачено
+                          ? "bg-gradient-to-br from-green-100 to-green-200"
+                          : registration.registrationStatusId === RegistrationStatusEnum.Отклонено
+                            ? "bg-gradient-to-br from-red-100 to-red-200"
+                            : "bg-gradient-to-br from-gray-100 to-gray-200"
+                      }`}
                   >
-                    <div
-                      ref={(el: HTMLDivElement | null) => (tooltipRefs.current[registration.id] = el)}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleTooltipOpen(registration.id);
-                      }}
-                    >
-                      {getStatusIcon(registration.registrationStatusId)}
-                    </div>
-                  </Tooltip>
+                    <span className="text-sm font-medium text-gray-700">
+                      {RegistrationStatusEnum[registration.registrationStatusId]}
+                    </span>
+                  </div>
                 </TableCell>
                 <TableCell className="py-2 px-4 text-nowrap text-left">
                   {registration.registrationLinkPrice.map((link, index) => (
@@ -574,7 +503,7 @@ export const MyRegistrationPage = () => {
                               console.log("Отправлено на проверку");
                               setIsDrawerOpen(false);
                               await changeRequestStatus();
-
+                              setUploadedFile(null);
                             }}
                             variant={"outline"}
                             className="flex-1 bg-blue-500 text-white"
@@ -592,6 +521,6 @@ export const MyRegistrationPage = () => {
           )}
         </AnimatePresence>
       </motion.div>
-    </div> : <h1>jkdfbjhdbhewdhuewcbhubewcdkhuqbcdekhjqwbcdhjqcdbkjhqdebckhqdbckhjqcd</h1>
+    </div> : <h1>Loading...</h1>
   );
 };
