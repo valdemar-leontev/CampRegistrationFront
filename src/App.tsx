@@ -1,4 +1,3 @@
-import { FC } from 'react';
 import './App.css';
 import { useTabStore } from './stores/TabStore';
 import { motion } from 'framer-motion';
@@ -6,11 +5,12 @@ import FAQ from './components/appComponents/faq';
 import { CampInfoPage } from './pages/CampInfoPage';
 import { RegistrationPage } from './pages/RegistrationPage';
 import { MyRegistrationPage } from './pages/MyRegistrationPage';
-import { IDataUser } from './models/dto/IDataUser';
 import { AdminRegistrationsPage } from './pages/AdminRegistrationsPage';
+import { useUserStore } from './stores/UserStore';
 
-const App: FC<{ user: IDataUser }> = ({ user }) => {
+const App = () => {
   const { activeTab } = useTabStore();
+  const { user } = useUserStore();
 
   return (
     <motion.div

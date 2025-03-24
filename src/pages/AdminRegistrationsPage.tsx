@@ -256,9 +256,9 @@ export const AdminRegistrationsPage = () => {
                     </Select>
                   </FormControl>
                   <FormControl variant="outlined" className="w-full md:w-auto">
-                    <InputLabel>Лагеря</InputLabel>
+                    <InputLabel>Летний отдых</InputLabel>
                     <Select
-                      label={'Лагеря'}
+                      label={'Летний отдых'}
                       multiple
                       value={campFilter}
                       onChange={(e) => setCampFilter(e.target.value as string[])}
@@ -292,7 +292,7 @@ export const AdminRegistrationsPage = () => {
             <TableRow className="bg-blue-100 !border-none sticky top-0 z-10">
               <TableHead className="py-3 px-4 font-bold text-center text-[16px] rounded-s-[40px]">Статус</TableHead>
               <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Церковь</TableHead>
-              <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Лагеря</TableHead>
+              <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Летний отдых</TableHead>
               <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Фамилия</TableHead>
               <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Имя</TableHead>
               <TableHead className="py-3 px-4 font-bold text-center text-[16px] text-nowrap">Дата регистрации</TableHead>
@@ -379,7 +379,7 @@ export const AdminRegistrationsPage = () => {
                       <div className='text-[18px]'><strong>Фамилия:</strong> {selectedRegistration!.lastName}</div>
                       <div className='text-[18px]'><strong>Имя:</strong> {selectedRegistration!.name}</div>
 
-                      <div className='text-[18px]'><strong>Возраст на момент лагеря:</strong> {selectedRegistration.registrationLinkPrice.length > 0
+                      <div className='text-[18px]'><strong>Возраст на момент летнего отдыха:</strong> {selectedRegistration.registrationLinkPrice.length > 0
                         ? calculateAgeAtCamp(selectedRegistration.birthdate, selectedRegistration.registrationLinkPrice[0].startDate)
                         : '—'}
                       </div>
@@ -388,7 +388,7 @@ export const AdminRegistrationsPage = () => {
                       <div className='text-[18px]'><strong>Церковь:</strong> {selectedRegistration!.church}</div>
                       <div className='text-[18px]'><strong>Дата регистрации:</strong> {dayjs(selectedRegistration!.registrationDate).format('D MMMM YYYY, HH:mm')}</div>
                       <div className='text-[18px]'><strong>Статус:</strong> {selectedRegistration!.registrationStatus}</div>
-                      <div className='text-[18px]'><strong>Лагеря:</strong></div>
+                      <div className='text-[18px]'><strong>Летний отдых:</strong></div>
                       <ul>
                         {selectedRegistration!.registrationLinkPrice.map((link, index) => (
                           <li key={index} className='text-[18px]'>

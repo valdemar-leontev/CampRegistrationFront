@@ -72,7 +72,7 @@ export const PersonalInfoStep: FC<IPersonalInfoStepProps> = ({ form }) => {
             });
 
             if (!isValid) {
-              setError('phone', { type: "custom", message: "Неверный формат" });
+              setError('phone', { type: "custom", message: "Неверный формат телефона" });
             } else {
               clearErrors('phone');
             }

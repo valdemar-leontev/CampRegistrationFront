@@ -37,7 +37,7 @@ export const ReviewStep = ({ form, selectedChurch, selectedCamps, getCurrentPric
         )}
       </div>
 
-      <Typography variant="h5" className="text-xl font-semibold text-gray-900 !mt-6 !mb-1">Выбранные лагеря</Typography>
+      <Typography variant="h5" className="text-xl font-semibold text-gray-900 !mt-6 !mb-1">Выбранные летнии отдыхи</Typography>
       <div className="space-y-1 text-gray-700">
         {selectedCamps.map((camp) => (
           <Typography variant="body1" className='text-gray-600' key={camp.name}>

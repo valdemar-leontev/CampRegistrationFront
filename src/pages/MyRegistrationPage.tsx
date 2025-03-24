@@ -186,10 +186,6 @@ export const MyRegistrationPage = () => {
     }
   }, [uploadedFile, selectedRegistration, paymentMethod]);
 
-  // const totalAmount = useMemo(() => {
-
-  // }, [selectedRegistration])
-
   return (
     registrationList ? <div className="py-6">
 
@@ -207,7 +203,7 @@ export const MyRegistrationPage = () => {
           <TableHeader>
             <TableRow className="bg-blue-100 !border-none sticky top-0 z-10">
               <TableHead className="py-3 px-4 font-bold text-center text-[16px] rounded-s-[40px]">Статус</TableHead>
-              <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Лагеря</TableHead>
+              <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Летний отдых</TableHead>
               <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Фамилия</TableHead>
               <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Имя</TableHead>
               <TableHead className="py-3 px-4 font-bold text-center text-[16px] text-nowrap">Дата регистрации</TableHead>
@@ -320,7 +316,7 @@ export const MyRegistrationPage = () => {
                             Оплата успешно завершена
                           </Typography>
                           <Typography variant="body1" className="text-gray-600">
-                            Мы ждем вас в наших лагерях! Все оплачено, и ваша заявка подтверждена.
+                            Мы ждем вас на нашем летнем отдыхе! Все оплачено, и ваша заявка подтверждена.
                           </Typography>
                           <Typography variant="body1" className="text-gray-600 !mt-2">
                             Если у вас есть вопросы, свяжитесь с администратором по телефону: <span className="!font-semibold text-gray-900">{admin?.phoneNumber}</span>.
@@ -349,7 +345,7 @@ export const MyRegistrationPage = () => {
                         <div className='text-[18px]'><strong>Город:</strong> {selectedRegistration!.city}</div>
                         <div className='text-[18px]'><strong>Дата регистрации:</strong> {dayjs(selectedRegistration!.registrationDate).format('D MMMM YYYY, HH:mm')}</div>
                         <div className='text-[18px]'><strong>Статус:</strong> {selectedRegistration!.registrationStatus.name}</div>
-                        <div className='text-[18px]'><strong>Лагеря:</strong></div>
+                        <div className='text-[18px]'><strong>Летний отдых:</strong></div>
                         <ul>
                           {selectedRegistration!.registrationLinkPrice.map((link, index) => (
                             <li key={index} className='text-[18px]'>

@@ -97,10 +97,10 @@ const Root = () => {
     <StrictMode>
       <ThemeProvider theme={theme}>
         <PoweredByGod />
-        {isVisible && user && <div className='flex flex-col h-[100vh] overflow-hidden'>
+        {isVisible && user?.userName !== undefined && <div className='flex flex-col h-[100vh] overflow-hidden'>
           <ProfileBar />
 
-          <App user={user} />
+          <App />
 
           <NavigationPanels />
         </div>}

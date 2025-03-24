@@ -35,8 +35,9 @@ import { PaymentTypeEnum } from '@/models/enums/PaymentTypeEnum';
 import { useUserStore } from '@/stores/UserStore';
 import { ChurchEnum } from '@/models/enums/ChurchEnum';
 import { IoMdClose } from "react-icons/io";
+import { ZodType } from 'zod';
 
-const steps = ["Личная информация", "Церковь", "Лагерь", "Обзор", "Оплата", ''];
+const steps = ["Личная информация", "Церковь", "Летний отдых", "Обзор", "Оплата", ''];
 
 export const RegistrationForm = () => {
   const { user } = useUserStore();
@@ -94,8 +95,15 @@ export const RegistrationForm = () => {
   }, [])
 
   const form = useForm<IRegistrationForm>({
-    resolver: zodResolver(registrationSchema),
-    defaultValues: { firstName: "", lastName: "", dateOfBirth: undefined, phone: "", church: undefined },
+    resolver: zodResolver(registrationSchema as unknown as ZodType<IRegistrationForm>),
+    defaultValues: { 
+      firstName: "", 
+      lastName: "", 
+      dateOfBirth: undefined, 
+      phone: "",
+      city: "",
+      church: undefined 
+    },
     mode: "onChange"
   });
 
@@ -126,7 +134,7 @@ export const RegistrationForm = () => {
     switch (camp.name) {
       case "Детский":
         if (age < 6 || age > 13) {
-          errorMessage = "Недопустимый возраст для детского лагеря (только от 6 до 13 лет)";
+          errorMessage = "Недопустимый возраст для детского летнего отдыха (только от 6 до 13 лет)";
           isValid = false;
         } else if (age === 6) {
           errorMessage = "Для возраста 6 лет требуется сопровождение бабушки или тети";
@@ -134,20 +142,20 @@ export const RegistrationForm = () => {
         break;
       case "Подростковый":
         if (age < 12 || age > 16) {
-          errorMessage = "Недопустимый возраст для подросткового лагеря (только от 12 до 16 лет)";
+          errorMessage = "Недопустимый возраст для подросткового летнего отдыха (только от 12 до 16 лет)";
           isValid = false;
         } else if (age === 12 && !selectedCamps.some((c) => c.name === "Детский")) {
-          errorMessage = "В таком возрасте ехать в подростковый можно, если ты будешь в детском лагере";
+          errorMessage = "В таком возрасте ехать в подростковый можно, если ты будешь в детском летнем отдыхе";
           isValid = false;
         }
         break;
       case "Молодежный":
         if (age === 15 && !selectedCamps.some((c) => c.name === "Подростковый")) {
-          errorMessage = "Нельзя ехать в молодежный лагерь если тебе 15 лет и ты не зарегистрирован в подростковый";
+          errorMessage = "Нельзя ехать в молодежный летний отдых если тебе 15 лет и ты не зарегистрирован в подростковый";
         }
 
         if (age < 15) {
-          errorMessage = "Недопустимый возраст для молодежного лагеря (только от 15 лет)";
+          errorMessage = "Недопустимый возраст для молодежного летнего отдыха (только от 15 лет)";
           isValid = false;
 
           break;
@@ -237,7 +245,7 @@ export const RegistrationForm = () => {
     const priceList = selectedCamps.map((camp) => {
       const currentPrice = getCurrentPrice(camp.prices);
       if (!currentPrice) {
-        throw new Error(`Цена для лагеря ${camp.name} не найдена.`);
+        throw new Error(`Цена для летнего отдыха ${camp.name} не найдена.`);
       }
       return currentPrice.id as number;
     });

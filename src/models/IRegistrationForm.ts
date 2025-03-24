@@ -5,7 +5,7 @@ export interface IRegistrationForm {
 
   dateOfBirth: Date;
 
-  phone?: string | undefined;
+  phone?: string;
 
   city: string;
 

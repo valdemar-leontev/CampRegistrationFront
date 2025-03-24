@@ -47,7 +47,7 @@ export const RegistrationPage: FC<IRegistrationPageProps> = ({ username }) => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5, duration: 0.8 }}
         >
-          Регистрация на Лагерь
+          Регистрация на летний отдых
         </motion.h1>
 
         <motion.p
@@ -56,7 +56,7 @@ export const RegistrationPage: FC<IRegistrationPageProps> = ({ username }) => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8, duration: 0.8 }}
         >
-          Присоединяйтесь к нашему лагерю! Пожалуйста, заполните форму ниже, чтобы зарегистрироваться.
+          Присоединяйтесь к нашему летнему отдыху! Пожалуйста, заполните форму ниже, чтобы зарегистрироваться.
         </motion.p>
 
         <RegistrationForm />
