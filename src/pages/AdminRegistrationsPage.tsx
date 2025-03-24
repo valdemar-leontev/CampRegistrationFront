@@ -30,7 +30,7 @@ interface IAdminRegistration {
   birthdate: string;
   city: string;
   registrationDate: string;
-  totalAmount: number;
+  totalSum: number;
   churchId: number;
   userId: number;
   registrationStatusId: number;
@@ -90,7 +90,7 @@ export const AdminRegistrationsPage = () => {
   };
 
   const totalAmount = useMemo(() => {
-    return selectedRegistration?.totalAmount;
+    return selectedRegistration?.totalSum;
   }, [selectedRegistration]);
 
   const changeRequestStatus = useCallback(async (status: RegistrationStatusEnum) => {

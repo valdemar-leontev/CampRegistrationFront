@@ -250,8 +250,7 @@ export const RegistrationForm = () => {
       registrationDate: new Date(),
       priceIds: priceList,
       userId: user ? user.id : 0,
-      churchId: formValues.church,
-      totalAmount: selectedCamps.reduce((acc, camp) => acc + getCurrentPrice(camp.prices)?.totalValue!, 0)
+      churchId: formValues.church
     }
 
     try {

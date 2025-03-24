@@ -31,7 +31,7 @@ interface IRegistration {
   registrationStatusId: number;
   paymentTypeId: number;
   adminId: number;
-  totalAmount: number;
+  totalSum: number;
   registrationLinkPrice: {
     value: number;
     campName: string;
@@ -120,8 +120,8 @@ export const MyRegistrationPage = () => {
     setCurrentStep("info");
   };
 
-  const totalAmount = useMemo(() => {
-    return selectedRegistration?.totalAmount
+  const totalSum = useMemo(() => {
+    return selectedRegistration?.totalSum
   }, [selectedRegistration]);
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -185,6 +185,10 @@ export const MyRegistrationPage = () => {
       setIsDrawerOpen(false);
     }
   }, [uploadedFile, selectedRegistration, paymentMethod]);
+
+  // const totalAmount = useMemo(() => {
+
+  // }, [selectedRegistration])
 
   return (
     registrationList ? <div className="py-6">
@@ -286,6 +290,10 @@ export const MyRegistrationPage = () => {
                           <Typography variant="body1" className="text-yellow-800 mt-2">
                             Для завершения регистрации необходимо произвести оплату. Выберите удобный способ оплаты ниже.
                           </Typography>
+                          <br />
+                          <Typography variant="body1" className="text-yellow-800 mt-2 !font-bold">
+                            Ваша заявка удалится в течении 7 дней автоматически, если оплата не поступила.
+                          </Typography>
                         </div>
                       )}
 
@@ -350,7 +358,7 @@ export const MyRegistrationPage = () => {
                           ))}
                         </ul>
 
-                        <div className='text-blue-500 font-bold mt-3'>ИТОГО: {totalAmount}₽</div>
+                        <div className='text-blue-500 font-bold mt-3'>ИТОГО: {totalSum}₽</div>
                       </div>
 
                       {currentPaymentCheck && <PhotoProvider>
@@ -404,7 +412,7 @@ export const MyRegistrationPage = () => {
                                 Способ оплаты: Наличные
                               </Typography>
                               <Typography variant="body1" className="text-gray-600">
-                                Передайте <span className="!font-semibold text-gray-900">{totalAmount}₽</span> администратору.
+                                Передайте <span className="!font-semibold text-gray-900">{totalSum}₽</span> администратору.
                               </Typography>
                               <Typography variant="body1" className="text-gray-600 !mt-2">
                                 Получатель: <span className="!font-semibold text-gray-900">{admin?.bankCardOwner}</span>
@@ -421,13 +429,13 @@ export const MyRegistrationPage = () => {
                                 Способ оплаты: Карта
                               </Typography>
                               <Typography variant="body1" className="text-gray-600">
-                                Переведите <span className="!font-semibold text-gray-900">{totalAmount}₽</span> на карту.
+                                Переведите <span className="!font-semibold text-gray-900">{totalSum}₽</span> на карту.
                               </Typography>
                               <Typography variant="body1" className="text-gray-600 !mt-2">
                                 Номер карты: <span className="!font-semibold text-gray-900">{admin?.bankCardNumber}</span>
                               </Typography>
                               <Typography variant="body1" className="text-gray-600 !mt-2">
-                                Владелец карты: <span className="!font-semibold text-gray-900">{admin?.bankCardOwner}</span>
+                                Получатель: <span className="!font-semibold text-gray-900">{admin?.bankCardOwner}</span>
                               </Typography>
                               <Typography variant="body1" className="text-gray-600 !mt-2">
                                 Банк: <span className="!font-semibold text-gray-900">{admin?.bankName}</span>
@@ -461,7 +469,7 @@ export const MyRegistrationPage = () => {
                           Итоговая сумма
                         </Typography>
                         <Typography variant="body1" className="!text-2xl !font-bold !text-blue-500">
-                          {totalAmount}₽
+                          {totalSum}₽
                         </Typography>
                       </div>
                     </motion.div>

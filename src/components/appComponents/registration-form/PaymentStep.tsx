@@ -87,6 +87,10 @@ export const PaymentStep = ({
               <Typography variant="body1" className="font-mono">
                 <strong>Получатель</strong> - {admin.bankCardOwner}
                 <br />
+                <strong>Банк</strong> - {admin.bankName}
+                <br />
+                <strong>Церковь</strong> - {admin.church.name}
+                <br />
                 <strong>Телефон</strong> - {admin.phoneNumber}
               </Typography>
             </div>

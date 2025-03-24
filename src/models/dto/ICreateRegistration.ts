@@ -7,5 +7,4 @@ export interface ICreateRegistration {
     priceIds: number[]
     userId: number,
     churchId: number,
-    totalAmount: number
 }
