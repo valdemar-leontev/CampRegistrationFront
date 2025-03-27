@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import apiClient from '@/axios';
 import dayjs from 'dayjs';
-import { TextField, Typography } from '@mui/material';
+import { Backdrop, Box, CircularProgress, TextField, Typography } from '@mui/material';
 import { RegistrationStatusEnum } from '@/models/enums/RegistrationStatusEnum';
 import { IoChevronBack } from "react-icons/io5";
 import { PhotoProvider, PhotoView } from 'react-photo-view';
@@ -22,6 +22,7 @@ import { ICamp } from '@/models/ICamp';
 import { IChurch } from '@/models/IChurch';
 import { useUserStore } from '@/stores/UserStore';
 import { AccordionItem, AccordionTrigger, AccordionContent, Accordion } from '@radix-ui/react-accordion';
+import { Pagination, PaginationContent, PaginationEllipsis, PaginationLink, PaginationNext, PaginationPrevious, PaginationItem } from '@/components/ui/pagination';
 
 interface IAdminRegistration {
   id: number;
@@ -43,6 +44,7 @@ interface IAdminRegistration {
   registrationStatus: string;
   church: string;
   sum: number;
+  discountСoefficient: number;
 }
 
 const renderPaymentCheck = (paymentCheck: string) => {
@@ -70,19 +72,9 @@ export const AdminRegistrationsPage = () => {
   const [campFilter, setCampFilter] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [registrationList, setRegistrationList] = useState<IAdminRegistration[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { user } = useUserStore();
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const response = await apiClient.get<IAdminRegistration[]>(`admins/${user?.id}/registrations`);
-        setRegistrationList(response.data);
-      } catch (error) {
-        console.error('Ошибка при загрузке данных:', error);
-      }
-    })();
-  }, []);
 
   const handleRowClick = (registration: IAdminRegistration) => {
     setSelectedRegistration(registration);
@@ -96,6 +88,7 @@ export const AdminRegistrationsPage = () => {
   const changeRequestStatus = useCallback(async (status: RegistrationStatusEnum) => {
     if (!selectedRegistration) return;
 
+    setIsLoading(true);
     try {
       const response = await apiClient.put(`/registrations/${selectedRegistration.id}/status/${status}`);
 
@@ -111,25 +104,14 @@ export const AdminRegistrationsPage = () => {
       }
     } catch (error) {
       console.error("Ошибка при изменении статуса:", error);
+    } finally {
+      setTimeout(() => setIsLoading(false), 500);
     }
   }, [selectedRegistration]);
 
   const [statusList, setStatusList] = useState<IRegistrationStatus[]>();
   const [churchList, setChurchList] = useState<IChurch[]>();
   const [campList, setCampList] = useState<ICamp[]>();
-
-  useEffect(() => {
-    (async () => {
-      var statusResponse = await apiClient.get(`/dictionaries/registrationStatus`);
-      var churchResponse = await apiClient.get(`/dictionaries/church`);
-      var campResponse = await apiClient.get(`/dictionaries/camp`);
-
-
-      setStatusList(statusResponse.data as IRegistrationStatus[])
-      setChurchList(churchResponse.data as IChurch[])
-      setCampList(campResponse.data as ICamp[])
-    })()
-  }, [])
 
   const filteredRegistrations = useMemo(() => {
     return registrationList.filter((registration) => {
@@ -194,8 +176,66 @@ export const AdminRegistrationsPage = () => {
     setPendingAction(null);
   };
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
+  const paginatedData = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filteredRegistrations.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredRegistrations, currentPage]);
+
+  const totalPages = Math.ceil(filteredRegistrations.length / itemsPerPage);
+
+  const goToPage = (page: number) => {
+    setCurrentPage(Math.max(1, Math.min(page, totalPages)));
+  };
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const goToPrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  useEffect(() => {
+    const fetchAllData = async () => {
+      try {
+        setIsLoading(true);
+
+        const [
+          registrations,
+          statuses,
+          churches,
+          camps
+        ] = await Promise.all([
+          apiClient.get<IAdminRegistration[]>(`admins/${user?.id}/registrations`),
+          apiClient.get(`/dictionaries/registrationStatus`),
+          apiClient.get(`/dictionaries/church`),
+          apiClient.get(`/dictionaries/camp`)
+        ]);
+
+        setRegistrationList(registrations.data);
+        setStatusList(statuses.data as IRegistrationStatus[]);
+        setChurchList(churches.data as IChurch[]);
+        setCampList(camps.data as ICamp[]);
+
+      } catch (error) {
+        console.error('Ошибка загрузки данных:', error);
+      } finally {
+        setTimeout(() => setIsLoading(false), 500);
+      }
+    };
+
+    fetchAllData();
+  }, [user?.id]);
+
   return (
-    statusList && churchList && campList && <div className="py-6">
+    registrationList && statusList && churchList && campList && <div className="py-6 relative">
       <Typography className="!font-bold !text-2xl !mb-2">
         Управление заявками
       </Typography>
@@ -292,7 +332,7 @@ export const AdminRegistrationsPage = () => {
             <TableRow className="bg-blue-100 !border-none sticky top-0 z-10">
               <TableHead className="py-3 px-4 font-bold text-center text-[16px] rounded-s-[40px]">Статус</TableHead>
               <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Церковь</TableHead>
-              <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Летний отдых</TableHead>
+              <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Отдых</TableHead>
               <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Фамилия</TableHead>
               <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Имя</TableHead>
               <TableHead className="py-3 px-4 font-bold text-center text-[16px] text-nowrap">Дата регистрации</TableHead>
@@ -301,7 +341,7 @@ export const AdminRegistrationsPage = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredRegistrations && filteredRegistrations.map((registration) => (
+            {paginatedData && paginatedData.map((registration) => (
               <TableRow
                 key={registration.id}
                 className="border-b hover:bg-gray-50 transition-colors duration-200 cursor-pointer"
@@ -326,9 +366,9 @@ export const AdminRegistrationsPage = () => {
                   </div>
                 </TableCell>
                 <TableCell className="py-2 px-4 text-nowrap">{registration.church}</TableCell>
-                <TableCell className="py-2 px-4 text-nowrap">
+                <TableCell className="py-2 px-4 text-nowrap text-left">
                   {registration.registrationLinkPrice!.map((link, index) => (
-                    <div key={index}>{link.campName}</div>
+                    <div key={index}>{++index}. {link.campName}</div>
                   ))}
                 </TableCell>
                 <TableCell className="py-2 px-4 text-nowrap">{registration.lastName}</TableCell>
@@ -337,7 +377,29 @@ export const AdminRegistrationsPage = () => {
                   {dayjs(registration.registrationDate).format('D MMMM YYYY')}
                 </TableCell>
                 <TableCell className="py-2 px-4 text-nowrap">
-                  {registration.registrationLinkPrice.reduce((sum, link) => sum + link.value, 0)}₽
+                  {registration.discountСoefficient < 1 ? (
+                    <div className="flex flex-col">
+                      <div className="line-through text-gray-400 text-sm">
+                        {registration.registrationLinkPrice.reduce((sum, link) => sum + link.value, 0)}₽
+                      </div>
+                      <div className="text-green-600 font-semibold">
+                        {Math.round(registration.registrationLinkPrice.reduce((sum, link) => sum + link.value, 0) * registration.discountСoefficient)}₽
+                      </div>
+                      <div className="text-xs text-gray-500 mt-[-2px]">
+                        {registration.discountСoefficient === 0 ? (
+                          "Бесплатно (до 2 лет)"
+                        ) : registration.discountСoefficient === 0.5 ? (
+                          "Скидка 50% (2-6 лет)"
+                        ) : (
+                          `Скидка ${Math.round((1 - registration.discountСoefficient) * 100)}%`
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <span>
+                      {registration.registrationLinkPrice.reduce((sum, link) => sum + link.value, 0)}₽
+                    </span>
+                  )}
                 </TableCell>
                 <TableCell className="py-2 px-4 text-nowrap">
                   {registration.registrationLinkPrice.length > 0
@@ -348,6 +410,91 @@ export const AdminRegistrationsPage = () => {
             ))}
           </TableBody>
         </Table>
+
+        {totalPages > 1 && (
+          <div className="mt-4 flex justify-center">
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      goToPrevPage();
+                    }}
+                    isActive={currentPage === 1}
+                  />
+                </PaginationItem>
+
+                <PaginationItem>
+                  <PaginationLink
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      goToPage(1);
+                    }}
+                    isActive={1 === currentPage}
+                  >
+                    1
+                  </PaginationLink>
+                </PaginationItem>
+
+                {currentPage > 2 && (
+                  <PaginationItem>
+                    <PaginationEllipsis />
+                  </PaginationItem>
+                )}
+
+                {currentPage > 1 && currentPage < totalPages && (
+                  <PaginationItem>
+                    <PaginationLink
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        goToPage(currentPage);
+                      }}
+                      isActive
+                    >
+                      {currentPage}
+                    </PaginationLink>
+                  </PaginationItem>
+                )}
+
+                {currentPage < totalPages - 1 && (
+                  <PaginationItem>
+                    <PaginationEllipsis />
+                  </PaginationItem>
+                )}
+
+                {totalPages > 1 && (
+                  <PaginationItem>
+                    <PaginationLink
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        goToPage(totalPages);
+                      }}
+                      isActive={totalPages === currentPage}
+                    >
+                      {totalPages}
+                    </PaginationLink>
+                  </PaginationItem>
+                )}
+
+                <PaginationItem>
+                  <PaginationNext
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      goToNextPage();
+                    }}
+                    isActive={currentPage === totalPages}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
+        )}
 
         <AnimatePresence>
           {isDrawerOpen && (
@@ -379,7 +526,7 @@ export const AdminRegistrationsPage = () => {
                       <div className='text-[18px]'><strong>Фамилия:</strong> {selectedRegistration!.lastName}</div>
                       <div className='text-[18px]'><strong>Имя:</strong> {selectedRegistration!.name}</div>
 
-                      <div className='text-[18px]'><strong>Возраст на момент летнего отдыха:</strong> {selectedRegistration.registrationLinkPrice.length > 0
+                      <div className='text-[18px]'><strong>Возраст на момент отдыха:</strong> {selectedRegistration.registrationLinkPrice.length > 0
                         ? calculateAgeAtCamp(selectedRegistration.birthdate, selectedRegistration.registrationLinkPrice[0].startDate)
                         : '—'}
                       </div>
@@ -392,12 +539,44 @@ export const AdminRegistrationsPage = () => {
                       <ul>
                         {selectedRegistration!.registrationLinkPrice.map((link, index) => (
                           <li key={index} className='text-[18px]'>
-                            🏕️ {link.campName}: {link.value}₽
+                            🏕️ {link.campName}: {' '}
+                            <span className={selectedRegistration.discountСoefficient < 1 ? 'line-through text-gray-500 mr-1' : ''}>
+                              {link.value}₽
+                            </span>
+                            {selectedRegistration.discountСoefficient < 1 && (
+                              <span className='text-green-600 font-semibold'>
+                                {Math.round(link.value * selectedRegistration.discountСoefficient)}₽
+                              </span>
+                            )}
                           </li>
                         ))}
                       </ul>
 
-                      <div className='text-blue-500 font-bold mt-3'>ИТОГО: {totalAmount}₽</div>
+                      <div className='text-blue-500 font-bold mt-3'>
+                        ИТОГО:{' '}
+                        {selectedRegistration.discountСoefficient < 1 ? (
+                          <>
+                            <span className='line-through text-gray-500 mr-1'>{totalAmount}₽</span>
+                            <span className='text-green-600 font-semibold'>
+                              {Math.round(totalAmount! * selectedRegistration.discountСoefficient)}₽
+                            </span>
+                          </>
+                        ) : (
+                          <span>{totalAmount}₽</span>
+                        )}
+                      </div>
+
+                      {selectedRegistration.discountСoefficient < 1 && (
+                        <div className="mt-2 text-sm text-gray-600">
+                          {selectedRegistration.discountСoefficient === 0 ? (
+                            <span>✅ До 2 лет - бесплатно (скидка 100%)</span>
+                          ) : selectedRegistration.discountСoefficient === 0.5 ? (
+                            <span>✅ Возраст 2-6 лет - скидка 50%</span>
+                          ) : (
+                            <span>✅ Применена скидка {Math.round((1 - selectedRegistration.discountСoefficient) * 100)}%</span>
+                          )}
+                        </div>
+                      )}
                     </div>
 
                     <PhotoProvider>
@@ -473,6 +652,28 @@ export const AdminRegistrationsPage = () => {
           )}
         </AnimatePresence>
       </motion.div>
+      <Backdrop
+        sx={{
+          color: '#fff',
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+          position: 'fixed',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          backdropFilter: 'blur(3px)'
+        }}
+        open={isLoading}
+      >
+        <Box
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          gap={2}
+        >
+          <CircularProgress color="inherit" size={60} thickness={4} />
+          <Typography variant="h6" color="white">
+            Пожалуйста, подождите...
+          </Typography>
+        </Box>
+      </Backdrop>
     </div >
   );
 };

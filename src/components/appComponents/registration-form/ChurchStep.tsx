@@ -1,19 +1,18 @@
 import { ChurchEnum } from '@/models/enums/ChurchEnum';
 import { IChurch } from '@/models/IChurch';
 import { IRegistrationForm } from '@/models/IRegistrationForm';
-import { FormControl, InputLabel, Select, MenuItem, TextField, FormHelperText } from "@mui/material";
+import { FormControl, InputLabel, Select, MenuItem, FormHelperText } from "@mui/material";
 import { FC } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 
 interface ChurchStepProps {
   form: UseFormReturn<IRegistrationForm>;
   churchesList: IChurch[];
-  selectedChurch: number | null;
   setSelectedChurch: (value: number | null) => void;
 }
 
-export const ChurchStep: FC<ChurchStepProps> = ({ form, churchesList, selectedChurch, setSelectedChurch }) => {
-  const { register, watch, setValue, formState, trigger } = form;
+export const ChurchStep: FC<ChurchStepProps> = ({ form, churchesList, setSelectedChurch }) => {
+  const { watch, setValue, formState, trigger } = form;
 
   return (
     <>
@@ -31,8 +30,19 @@ export const ChurchStep: FC<ChurchStepProps> = ({ form, churchesList, selectedCh
           className='text-left'
         >
           {churchesList.map((church) => (
-            <MenuItem key={church.id} value={church.id}>
-              {church.name}
+            <MenuItem
+              key={church.id}
+              value={church.id}
+              disabled={church.id === ChurchEnum.Другая}
+            >
+              <div className="flex flex-col">
+                <span>{church.name}</span>
+                {church.id === ChurchEnum.Другая && (
+                  <p className="text-xs text-red-500 mt-1">
+                    Регистрация откроется 1 июня
+                  </p>
+                )}
+              </div>
             </MenuItem>
           ))}
         </Select>
@@ -42,22 +52,6 @@ export const ChurchStep: FC<ChurchStepProps> = ({ form, churchesList, selectedCh
           </FormHelperText>
         )}
       </FormControl>
-      {selectedChurch === ChurchEnum.Другая && (
-        <>
-          <TextField
-            label="Название церкви"
-            {...register("otherChurchName")}
-            error={!!formState.errors.otherChurchName}
-            helperText={formState.errors.otherChurchName?.message}
-          />
-          <TextField
-            label="Адрес церкви"
-            {...register("otherChurchAddress")}
-            error={!!formState.errors.otherChurchAddress}
-            helperText={formState.errors.otherChurchAddress?.message}
-          />
-        </>
-      )}
     </>
   );
 };

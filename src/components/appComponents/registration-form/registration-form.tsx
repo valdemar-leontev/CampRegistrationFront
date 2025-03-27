@@ -9,7 +9,9 @@ import {
   IconButton,
   ClickAwayListener,
   Alert,
-  Snackbar
+  Snackbar,
+  CircularProgress,
+  Backdrop
 } from "@mui/material";
 import { CiCircleInfo } from "react-icons/ci";
 import { useCallback, useEffect, useState } from "react";
@@ -33,11 +35,18 @@ import apiClient from '@/axios';
 import { Conclusion } from './Сonclusion';
 import { PaymentTypeEnum } from '@/models/enums/PaymentTypeEnum';
 import { useUserStore } from '@/stores/UserStore';
-import { ChurchEnum } from '@/models/enums/ChurchEnum';
 import { IoMdClose } from "react-icons/io";
 import { ZodType } from 'zod';
+import { HiOutlineViewfinderCircle } from "react-icons/hi2";
+import { useDebounce } from '@/hooks/useDebounce';
+import { CampEnum } from '@/models/enums/CampEnum';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 
-const steps = ["Личная информация", "Церковь", "Летний отдых", "Обзор", "Оплата", ''];
+dayjs.extend(utc);
+
+
+const steps = ["О себе", "Церковь", "Отдых", "Обзор", "Оплата", ''];
 
 export const RegistrationForm = () => {
   const { user } = useUserStore();
@@ -96,35 +105,56 @@ export const RegistrationForm = () => {
 
   const form = useForm<IRegistrationForm>({
     resolver: zodResolver(registrationSchema as unknown as ZodType<IRegistrationForm>),
-    defaultValues: { 
-      firstName: "", 
-      lastName: "", 
-      dateOfBirth: undefined, 
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      dateOfBirth: undefined,
       phone: "",
       city: "",
-      church: undefined 
+      church: undefined
     },
     mode: "onChange"
   });
 
-  const calculateAge = (dateOfBirth: Date): number => {
-    const today = new Date();
-    let age = today.getFullYear() - dateOfBirth.getFullYear();
-    const monthDifference = today.getMonth() - dateOfBirth.getMonth();
-    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < dateOfBirth.getDate())) {
-      age--;
+  const debounceLastName = useDebounce(form.watch('lastName'));
+  const debounceDateOfBirth = useDebounce(form.watch('dateOfBirth'));
+
+  const [existedRegistrationData, setExistedRegistrationData] = useState<number[]>([]);
+
+  useEffect(() => {
+    const dob = form.getValues("dateOfBirth");
+    if (dob) {
+      const today = new Date();
+      let calculatedAge = today.getFullYear() - dob.getFullYear();
+      const monthDifference = today.getMonth() - dob.getMonth();
+
+      if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < dob.getDate())) {
+        calculatedAge--;
+      }
+
+      setAge(calculatedAge);
     }
-    return age;
+  }, [form.watch('dateOfBirth')]);
+
+  const [age, setAge] = useState(0);
+
+  const [isRuleTooltipOpen, setRuleIsTooltipOpen] = useState<boolean>(false);
+  const [isExistedCampRegistrationTooltipOpen, setIsExistedCampRegistrationTooltipOpen] = useState<boolean>(false)
+
+  const handleRuleTooltipClose = () => {
+    setRuleIsTooltipOpen(false);
   };
 
-  const [isTooltipOpen, setIsTooltipOpen] = useState(false);
-
-  const handleTooltipClose = () => {
-    setIsTooltipOpen(false);
+  const handleRuleTooltipOpen = () => {
+    setRuleIsTooltipOpen(true);
   };
 
-  const handleTooltipOpen = () => {
-    setIsTooltipOpen(true);
+  const handleExistedCampRegistrationTooltipOpenClose = () => {
+    setIsExistedCampRegistrationTooltipOpen(false);
+  };
+
+  const handleExistedCampRegistrationTooltipOpenOpen = () => {
+    setIsExistedCampRegistrationTooltipOpen(true);
   };
 
   const validateAgeForCamp = (camp: ICamp, age: number): boolean => {
@@ -144,13 +174,18 @@ export const RegistrationForm = () => {
         if (age < 12 || age > 16) {
           errorMessage = "Недопустимый возраст для подросткового летнего отдыха (только от 12 до 16 лет)";
           isValid = false;
-        } else if (age === 12 && !selectedCamps.some((c) => c.name === "Детский")) {
+        } else if (age === 12
+          && !selectedCamps.some((c) => c.name === "Детский")
+          && !existedRegistrationData.some(r => r === CampEnum.Детский)) {
           errorMessage = "В таком возрасте ехать в подростковый можно, если ты будешь в детском летнем отдыхе";
           isValid = false;
         }
         break;
       case "Молодежный":
-        if (age === 15 && !selectedCamps.some((c) => c.name === "Подростковый")) {
+        if (age === 15
+          && !selectedCamps.some((c) => c.name === "Подростковый")
+          && !existedRegistrationData.some(r => r === CampEnum.Подростковый)
+        ) {
           errorMessage = "Нельзя ехать в молодежный летний отдых если тебе 15 лет и ты не зарегистрирован в подростковый";
         }
 
@@ -174,8 +209,6 @@ export const RegistrationForm = () => {
   };
 
   const toggleCamp = (camp: ICamp) => {
-    const age = calculateAge(form.getValues("dateOfBirth"));
-
     console.log(age);
 
 
@@ -218,7 +251,7 @@ export const RegistrationForm = () => {
 
     if (file.type.startsWith("image/")) {
       setFile(file);
-      setErrorMessage(null); // Сброс ошибки, если файл подходит
+      setErrorMessage(null);
     } else {
       setErrorMessage("Пожалуйста, загрузите изображение.");
     }
@@ -239,36 +272,45 @@ export const RegistrationForm = () => {
     setIsOpen(false);
   };
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const createRegistrationAsync = useCallback(async () => {
-    const formValues = form.getValues();
-
-    const priceList = selectedCamps.map((camp) => {
-      const currentPrice = getCurrentPrice(camp.prices);
-      if (!currentPrice) {
-        throw new Error(`Цена для летнего отдыха ${camp.name} не найдена.`);
-      }
-      return currentPrice.id as number;
-    });
-
-    const body: ICreateRegistration = {
-      name: formValues.firstName,
-      lastName: formValues.lastName,
-      birthdate: formValues.dateOfBirth,
-      city: formValues.city,
-      registrationDate: new Date(),
-      priceIds: priceList,
-      userId: user ? user.id : 0,
-      churchId: formValues.church
-    }
-
+    setIsLoading(true);
     try {
-      const response = await apiClient.post(`/registrations`, body);
+      const formValues = form.getValues();
+      const priceList = selectedCamps.map((camp) => {
+        const currentPrice = getCurrentPrice(camp.prices);
+        if (!currentPrice) {
+          throw new Error(`Цена для летнего отдыха ${camp.name} не найдена.`);
+        }
+        return currentPrice.id as number;
+      });
 
+      const body: ICreateRegistration = {
+        name: formValues.firstName,
+        lastName: formValues.lastName,
+        birthdate: formValues.dateOfBirth,
+        city: formValues.city,
+        registrationDate: new Date(),
+        priceIds: priceList,
+        userId: user ? user.id : 0,
+        churchId: formValues.church
+      };
+
+      const response = await apiClient.post(`/registrations`, body);
       return response.data;
-    } catch (error) {
-      console.error("Ошибка при создании регистрации:", error);
+    } catch (error: any) {
+      if (error.response?.status === 400) {
+        setSnackbarMessage('Места на выбранные отдыхи уже закончились, вернитесь на этап выбора');
+        setSnackbarOpen(true);
+        setSelectedCamps([]);
+      }
+      throw error;
+    } finally {
+      setIsLoading(false);
     }
   }, [form, selectedCamps, paymentMethod, getCurrentPrice]);
+
 
   const getAdminAsync = useCallback(async (adminId: number) => {
     const response = await apiClient.get(`/admins/${adminId}`);
@@ -285,9 +327,6 @@ export const RegistrationForm = () => {
       isValid = await form.trigger(["firstName", "lastName", "dateOfBirth", "phone", 'city']);
     } else if (step === 1) {
       isValid = await form.trigger(["church"]);
-      if (selectedChurch === ChurchEnum.Другая) {
-        isValid = isValid && (await form.trigger(["otherChurchName", "otherChurchAddress"]));
-      }
     } else if (step === 2) {
       isValid = selectedCamps.length > 0;
     } else if (step === 3) {
@@ -315,10 +354,11 @@ export const RegistrationForm = () => {
 
 
   const uploadFile = async (file: File) => {
-    const formData = new FormData();
-    formData.append('fileUpload', file);
-
+    setIsLoading(true);
     try {
+      const formData = new FormData();
+      formData.append('fileUpload', file);
+
       const response = await apiClient.post(
         `/payment-check/${registration!.id}/${paymentMethod}`,
         formData,
@@ -328,14 +368,13 @@ export const RegistrationForm = () => {
           },
         }
       );
-      console.log('Файл успешно загружен:', response.data);
-
-      handleNextStep()
-
+      handleNextStep();
       return response.data;
     } catch (error) {
       console.error('Ошибка при загрузке файла:', error);
       throw error;
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -347,6 +386,30 @@ export const RegistrationForm = () => {
     setStep(0);
     onClose();
   }
+
+  useEffect(() => {
+    const fetchExistedRegistrations = async () => {
+      if (!debounceLastName || !debounceDateOfBirth) return;
+
+      try {
+        const formattedDate = dayjs(debounceDateOfBirth)
+          .utc()
+          .format('YYYY-MM-DD HH:mm:ss.SSS');
+
+        const encodedDate = encodeURIComponent(formattedDate);
+
+        const response = await apiClient.get(
+          `/camps/${debounceLastName}/${encodedDate}`
+        );
+
+        setExistedRegistrationData(response.data);
+      } catch (err) {
+        console.error('Error checking existed registrations:', err);
+      };
+    }
+
+    fetchExistedRegistrations();
+  }, [debounceLastName, debounceDateOfBirth]);
 
   return (
     <>
@@ -364,25 +427,61 @@ export const RegistrationForm = () => {
             className='h-[100vh] overflow-x-auto'
             style={{ position: "fixed", top: 0, left: 0, width: "100%", backgroundColor: "white", padding: 24 }}
           >
-            {step !== steps.length - 1 && <Box display="flex" justifyContent="space-between" alignItems="center" className="py-3">
+            {step !== steps.length - 1 && <Box display="flex" justifyContent="space-between" alignItems="center" className="py-3 px-1">
               <Box display="flex" alignItems="center" gap={1}>
                 <Typography variant="h6">{steps[step]}</Typography>
-                <ClickAwayListener onClickAway={handleTooltipClose}>
+                <ClickAwayListener onClickAway={handleRuleTooltipClose}>
                   <Tooltip
-                    onClick={handleTooltipOpen}
-                    onClose={handleTooltipClose}
-                    open={isTooltipOpen}
+                    onClick={handleRuleTooltipOpen}
+                    onClose={handleRuleTooltipClose}
+                    open={isRuleTooltipOpen}
                     disableFocusListener
                     disableHoverListener
                     disableTouchListener
                     title={<>
-                      • Детский: 7-13 лет (6 лет с сопровождением) <br />
-                      • Подростковый: 13-16 лет (12 лет только с регистрацией в детский) <br />
+                      • Детский: от 7 до 13 лет (6 лет с сопровождением) <br />
+                      • Подростковый: от 13 до 16 лет (12 лет только с регистрацией в детский) <br />
                       • Молодежный: от 16 лет (15 лет только с регистрацией в подростковый)</>}
                     arrow
                   >
                     <IconButton>
-                      <CiCircleInfo className="text-gray-500" />
+                      <CiCircleInfo className="text-gray-500" size={30} />
+                    </IconButton>
+                  </Tooltip>
+                </ClickAwayListener>
+                <ClickAwayListener onClickAway={handleExistedCampRegistrationTooltipOpenClose}>
+                  <Tooltip
+                    onClick={handleExistedCampRegistrationTooltipOpenOpen}
+                    onClose={handleExistedCampRegistrationTooltipOpenClose}
+                    open={isExistedCampRegistrationTooltipOpen}
+                    disableFocusListener
+                    disableHoverListener
+                    disableTouchListener
+                    title={
+                      existedRegistrationData.length > 0
+                        ? `Вы уже зарегистрированы на ${existedRegistrationData.map(r => CampEnum[r]).join(', ')}`
+                        : 'Нет активных регистраций'
+                    }
+                    arrow
+                  >
+                    <IconButton>
+                      {existedRegistrationData.length > 0 ? (
+                        <motion.div
+                          animate={{
+                            opacity: [0.3, 1, 0.3],
+                            scale: [0.9, 1.1, 0.9],
+                          }}
+                          transition={{
+                            duration: 2,
+                            repeat: Infinity,
+                            ease: "easeInOut",
+                          }}
+                        >
+                          <HiOutlineViewfinderCircle className="text-red-500" size={30} />
+                        </motion.div>
+                      ) : (
+                        <HiOutlineViewfinderCircle className="text-gray-400" size={30} />
+                      )}
                     </IconButton>
                   </Tooltip>
                 </ClickAwayListener>
@@ -399,7 +498,6 @@ export const RegistrationForm = () => {
                 <ChurchStep
                   form={form}
                   churchesList={churchesList}
-                  selectedChurch={selectedChurch}
                   setSelectedChurch={setSelectedChurch}
                 />
               )}
@@ -410,15 +508,17 @@ export const RegistrationForm = () => {
                   selectedCamps={selectedCamps}
                   toggleCamp={toggleCamp}
                   getCurrentPrice={getCurrentPrice}
+                  age={age}
+                  existedRegistrationData={existedRegistrationData}
                 />
               )}
 
               {step === 3 && (
                 <ReviewStep
                   form={form}
-                  selectedChurch={selectedChurch}
                   selectedCamps={selectedCamps}
                   getCurrentPrice={getCurrentPrice}
+                  age={age}
                 />
               )}
 
@@ -434,6 +534,8 @@ export const RegistrationForm = () => {
                   file={file}
                   admin={admin!}
                   errorMessage={errorMessage}
+                  selectedChurch={selectedChurch}
+                  age={age}
                 />
               )}
 
@@ -478,6 +580,28 @@ export const RegistrationForm = () => {
                 {snackbarMessage}
               </Alert>
             </Snackbar>
+            <Backdrop
+              sx={{
+                color: '#fff',
+                zIndex: (theme) => theme.zIndex.drawer + 1,
+                position: 'fixed',
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                backdropFilter: 'blur(3px)'
+              }}
+              open={isLoading}
+            >
+              <Box
+                display="flex"
+                flexDirection="column"
+                alignItems="center"
+                gap={2}
+              >
+                <CircularProgress color="inherit" size={60} thickness={4} />
+                <Typography variant="h6" color="white">
+                  Пожалуйста, подождите...
+                </Typography>
+              </Box>
+            </Backdrop>
           </motion.div>
         )}
       </AnimatePresence>

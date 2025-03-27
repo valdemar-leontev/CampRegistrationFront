@@ -12,13 +12,23 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import apiClient from '@/axios';
 import { useUserStore } from '@/stores/UserStore';
 import dayjs from 'dayjs';
-import { Typography } from '@mui/material';
+import { Backdrop, Box, CircularProgress, Typography } from '@mui/material';
 import { RegistrationStatusEnum } from '@/models/enums/RegistrationStatusEnum';
 import { IoChevronBack } from "react-icons/io5";
 import { PhotoProvider, PhotoView } from 'react-photo-view';
 import 'react-photo-view/dist/react-photo-view.css';
 import { IAdmin } from '@/models/IAdmin';
 import { PaymentTypeEnum } from '@/models/enums/PaymentTypeEnum';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
+
 
 interface IRegistration {
   id: number;
@@ -42,6 +52,7 @@ interface IRegistration {
   registrationStatus: {
     name: string;
   };
+  discountСoefficient: number;
 }
 
 const renderPaymentCheck = (paymentCheck: string) => {
@@ -66,20 +77,24 @@ export const MyRegistrationPage = () => {
   const [selectedRegistration, setSelectedRegistration] = useState<IRegistration | null>(null);
 
   const [admin, setAdmin] = useState<IAdmin>();
+  const [isLoading, setIsLoading] = useState(false);
+
 
   useEffect(() => {
     (async () => {
+      setIsLoading(true)
       if (!selectedRegistration) return;
 
       const response = await apiClient.get<IAdmin>(`/admins/${selectedRegistration!.adminId}`);
       setAdmin(response.data);
+      setTimeout(() => setIsLoading(false), 500);
     })();
   }, [selectedRegistration]);
 
 
   const [currentStep, setCurrentStep] = useState<"info" | "payment">("info");
 
-  const [paymentMethod, setPaymentMethod] = useState<PaymentTypeEnum | null>(null);
+  const [paymentMethod, setPaymentMethod] = useState<PaymentTypeEnum | null>(PaymentTypeEnum.Cash);
 
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
@@ -89,10 +104,13 @@ export const MyRegistrationPage = () => {
   useEffect(() => {
     (async () => {
       try {
+        setIsLoading(true)
         const response = await apiClient.get<IRegistration[]>(`users/${user!.id}/registrations`);
         setRegistrationList(response.data);
       } catch (error) {
         console.error('Ошибка при загрузке данных:', error);
+      } finally {
+        setTimeout(() => setIsLoading(false), 500);
       }
     })();
   }, [user]);
@@ -104,12 +122,16 @@ export const MyRegistrationPage = () => {
       if (!selectedRegistration?.id) return;
 
       try {
+        setIsLoading(true)
+
         const response = await apiClient.get<string>(`payment-check/registration/${selectedRegistration.id}`, { responseType: 'blob' });
 
         setCurrentPaymentCheck(response.data);
       } catch (error) {
         console.error("Ошибка при загрузке payment check:", error);
         setCurrentPaymentCheck(undefined);
+      } finally {
+        setTimeout(() => setIsLoading(false), 500);
       }
     })();
   }, [selectedRegistration]);
@@ -186,9 +208,35 @@ export const MyRegistrationPage = () => {
     }
   }, [uploadedFile, selectedRegistration, paymentMethod]);
 
-  return (
-    registrationList ? <div className="py-6">
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
+  const paginatedData = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return registrationList.slice(startIndex, startIndex + itemsPerPage);
+  }, [registrationList, currentPage]);
+
+  const totalPages = Math.ceil(registrationList.length / itemsPerPage);
+
+  const goToPage = (page: number) => {
+    setCurrentPage(Math.max(1, Math.min(page, totalPages)));
+  };
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const goToPrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  return (
+    registrationList && <div className="py-6 relative">
       <Typography className="!font-bold !text-4xl !mb-8">
         Мои регистрации
       </Typography>
@@ -203,7 +251,7 @@ export const MyRegistrationPage = () => {
           <TableHeader>
             <TableRow className="bg-blue-100 !border-none sticky top-0 z-10">
               <TableHead className="py-3 px-4 font-bold text-center text-[16px] rounded-s-[40px]">Статус</TableHead>
-              <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Летний отдых</TableHead>
+              <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Отдых</TableHead>
               <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Фамилия</TableHead>
               <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Имя</TableHead>
               <TableHead className="py-3 px-4 font-bold text-center text-[16px] text-nowrap">Дата регистрации</TableHead>
@@ -211,7 +259,7 @@ export const MyRegistrationPage = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {registrationList.map((registration) => (
+            {paginatedData.map((registration) => (
               <TableRow
                 key={registration.id}
                 className={`border-b hover:bg-gray-50 duration-200 cursor-pointer transition-all ${highlightedRowId === registration.id ? 'bg-blue-100' : ''}`}
@@ -246,12 +294,119 @@ export const MyRegistrationPage = () => {
                   {dayjs(registration.registrationDate).format('D MMMM YYYY')}
                 </TableCell>
                 <TableCell className="py-2 px-4 text-nowrap">
-                  {registration.registrationLinkPrice.reduce((sum, link) => sum + link.value, 0)}₽
+                  {registration.discountСoefficient < 1 ? (
+                    <div className="flex flex-col">
+                      <div className="line-through text-gray-400 text-sm">
+                        {registration.registrationLinkPrice.reduce((sum, link) => sum + link.value, 0)}₽
+                      </div>
+                      <div className="text-green-600 font-semibold">
+                        {Math.round(registration.registrationLinkPrice.reduce((sum, link) => sum + link.value, 0) * registration.discountСoefficient)}₽
+                      </div>
+                      <div className="text-xs text-gray-500 mt-[-2px]">
+                        {registration.discountСoefficient === 0 ? (
+                          "Бесплатно (до 2 лет)"
+                        ) : registration.discountСoefficient === 0.5 ? (
+                          "Скидка 50% (2-6 лет)"
+                        ) : (
+                          `Скидка ${Math.round((1 - registration.discountСoefficient) * 100)}%`
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <span>
+                      {registration.registrationLinkPrice.reduce((sum, link) => sum + link.value, 0)}₽
+                    </span>
+                  )}
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
+
+        {totalPages > 1 && (
+          <div className="mt-4 flex justify-center">
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      goToPrevPage();
+                    }}
+                    isActive={currentPage === 1}
+                  />
+                </PaginationItem>
+
+                <PaginationItem>
+                  <PaginationLink
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      goToPage(1);
+                    }}
+                    isActive={1 === currentPage}
+                  >
+                    1
+                  </PaginationLink>
+                </PaginationItem>
+
+                {currentPage > 2 && (
+                  <PaginationItem>
+                    <PaginationEllipsis />
+                  </PaginationItem>
+                )}
+
+                {currentPage > 1 && currentPage < totalPages && (
+                  <PaginationItem>
+                    <PaginationLink
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        goToPage(currentPage);
+                      }}
+                      isActive
+                    >
+                      {currentPage}
+                    </PaginationLink>
+                  </PaginationItem>
+                )}
+
+                {currentPage < totalPages - 1 && (
+                  <PaginationItem>
+                    <PaginationEllipsis />
+                  </PaginationItem>
+                )}
+
+                {totalPages > 1 && (
+                  <PaginationItem>
+                    <PaginationLink
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        goToPage(totalPages);
+                      }}
+                      isActive={totalPages === currentPage}
+                    >
+                      {totalPages}
+                    </PaginationLink>
+                  </PaginationItem>
+                )}
+
+                <PaginationItem>
+                  <PaginationNext
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      goToNextPage();
+                    }}
+                    isActive={currentPage === totalPages}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
+        )}
 
         <AnimatePresence>
           {isDrawerOpen && (
@@ -349,12 +504,44 @@ export const MyRegistrationPage = () => {
                         <ul>
                           {selectedRegistration!.registrationLinkPrice.map((link, index) => (
                             <li key={index} className='text-[18px]'>
-                              🏕️ {link.campName}: {link.value}₽
+                              🏕️ {link.campName}: {' '}
+                              <span className={selectedRegistration.discountСoefficient < 1 ? 'line-through text-gray-500 mr-1' : ''}>
+                                {link.value}₽
+                              </span>
+                              {selectedRegistration.discountСoefficient < 1 && (
+                                <span className='text-green-600 font-semibold'>
+                                  {Math.round(link.value * selectedRegistration.discountСoefficient)}₽
+                                </span>
+                              )}
                             </li>
                           ))}
                         </ul>
 
-                        <div className='text-blue-500 font-bold mt-3'>ИТОГО: {totalSum}₽</div>
+                        <div className='text-blue-500 font-bold mt-3'>
+                          ИТОГО:{' '}
+                          {selectedRegistration.discountСoefficient < 1 ? (
+                            <>
+                              <span className='line-through text-gray-500 mr-1'>{totalSum}₽</span>
+                              <span className='text-green-600 font-semibold'>
+                                {Math.round(totalSum! * selectedRegistration.discountСoefficient)}₽
+                              </span>
+                            </>
+                          ) : (
+                            <span>{totalSum}₽</span>
+                          )}
+                        </div>
+
+                        {selectedRegistration.discountСoefficient < 1 && (
+                          <div className="mt-2 text-sm text-gray-600">
+                            {selectedRegistration.discountСoefficient === 0 ? (
+                              <span>✅ До 2 лет - бесплатно (скидка 100%)</span>
+                            ) : selectedRegistration.discountСoefficient === 0.5 ? (
+                              <span>✅ Возраст 2-6 лет - скидка 50%</span>
+                            ) : (
+                              <span>✅ Применена скидка {Math.round((1 - selectedRegistration.discountСoefficient) * 100)}%</span>
+                            )}
+                          </div>
+                        )}
                       </div>
 
                       {currentPaymentCheck && <PhotoProvider>
@@ -385,6 +572,7 @@ export const MyRegistrationPage = () => {
                                   checked={paymentMethod === PaymentTypeEnum.Cash}
                                   onChange={() => setPaymentMethod(PaymentTypeEnum.Cash)}
                                   className="form-radio h-4 w-4 text-blue-600"
+                                  
                                 />
                                 <span className="text-gray-700">Наличные</span>
                               </label>
@@ -396,8 +584,9 @@ export const MyRegistrationPage = () => {
                                   checked={paymentMethod === PaymentTypeEnum.Card}
                                   onChange={() => setPaymentMethod(PaymentTypeEnum.Card)}
                                   className="form-radio h-4 w-4 text-blue-600"
+                                  disabled
                                 />
-                                <span className="text-gray-700">Карта</span>
+                                <span className="text-gray-400">Карта (с 1 Июня, для гостей)</span>
                               </label>
                             </div>
                           </div>
@@ -408,7 +597,7 @@ export const MyRegistrationPage = () => {
                                 Способ оплаты: Наличные
                               </Typography>
                               <Typography variant="body1" className="text-gray-600">
-                                Передайте <span className="!font-semibold text-gray-900">{totalSum}₽</span> администратору.
+                                Передайте <span className="!font-semibold text-gray-900">{totalSum! * selectedRegistration.discountСoefficient}₽</span> администратору.
                               </Typography>
                               <Typography variant="body1" className="text-gray-600 !mt-2">
                                 Получатель: <span className="!font-semibold text-gray-900">{admin?.bankCardOwner}</span>
@@ -425,7 +614,7 @@ export const MyRegistrationPage = () => {
                                 Способ оплаты: Карта
                               </Typography>
                               <Typography variant="body1" className="text-gray-600">
-                                Переведите <span className="!font-semibold text-gray-900">{totalSum}₽</span> на карту.
+                                Переведите <span className="!font-semibold text-gray-900">{totalSum! * selectedRegistration.discountСoefficient}₽</span> на карту.
                               </Typography>
                               <Typography variant="body1" className="text-gray-600 !mt-2">
                                 Номер карты: <span className="!font-semibold text-gray-900">{admin?.bankCardNumber}</span>
@@ -465,7 +654,7 @@ export const MyRegistrationPage = () => {
                           Итоговая сумма
                         </Typography>
                         <Typography variant="body1" className="!text-2xl !font-bold !text-blue-500">
-                          {totalSum}₽
+                          {totalSum! * selectedRegistration.discountСoefficient}₽
                         </Typography>
                       </div>
                     </motion.div>
@@ -525,6 +714,28 @@ export const MyRegistrationPage = () => {
           )}
         </AnimatePresence>
       </motion.div>
-    </div> : <h1>Loading...</h1>
+      <Backdrop
+        sx={{
+          color: '#fff',
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+          position: 'fixed',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          backdropFilter: 'blur(3px)'
+        }}
+        open={isLoading}
+      >
+        <Box
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          gap={2}
+        >
+          <CircularProgress color="inherit" size={60} thickness={4} />
+          <Typography variant="h6" color="white">
+            Пожалуйста, подождите...
+          </Typography>
+        </Box>
+      </Backdrop>
+    </div>
   );
 };

@@ -8,6 +8,8 @@ import { IAdmin } from '@/models/IAdmin';
 // @ts-ignore
 import { PaymentTypeEnum } from '@/models/enums/PaymentTypeEnum';
 import { ChurchEnum } from '@/models/enums/ChurchEnum';
+import { useEffect } from 'react';
+import { getDiscountedPrice } from '@/helpers/getDiscountedPrice';
 
 interface PaymentStepProps {
   paymentMethod: number;
@@ -20,6 +22,8 @@ interface PaymentStepProps {
   file: File | null;
   admin: IAdmin;
   errorMessage: string | null;
+  selectedChurch: number | null;
+  age: number;
 }
 
 export const PaymentStep = ({
@@ -32,8 +36,19 @@ export const PaymentStep = ({
   handleFileUpload,
   file,
   admin,
-  errorMessage
+  errorMessage,
+  selectedChurch,
+  age
 }: PaymentStepProps) => {
+
+  useEffect(() => {
+    if (selectedChurch === ChurchEnum.Другая) {
+      setPaymentMethod(PaymentTypeEnum.Card);
+    } else {
+      setPaymentMethod(PaymentTypeEnum.Cash);
+    }
+  }, [selectedChurch, setPaymentMethod]);
+
   return (
     admin && <div className="text-left bg-white p-6 rounded-2xl shadow-lg border border-gray-200 overflow-auto">
       <Typography variant="h5" className="text-xl font-semibold text-gray-900 mb-3">Оплата</Typography>
@@ -44,15 +59,29 @@ export const PaymentStep = ({
       <FormControl component="fieldset" className="mb-4">
         <RadioGroup
           value={paymentMethod}
-          onChange={(e) => setPaymentMethod(Number(e.target.value))}
+          onChange={(e) => {
+            if (selectedChurch !== ChurchEnum.Другая) {
+              setPaymentMethod(Number(e.target.value));
+            }
+          }}
         >
           {paymentTypes.map((paymentType) => (
-            <FormControlLabel
-              key={paymentType.id}
-              value={paymentType.id}
-              control={<Radio />}
-              label={paymentType.name}
-            />
+            <div className='flex items-center' key={paymentType.id}>
+              <FormControlLabel
+                value={paymentType.id}
+                control={<Radio />}
+                label={paymentType.name}
+                disabled={
+                  (selectedChurch === ChurchEnum.Другая && paymentType.id !== PaymentTypeEnum.Card) ||
+                  (selectedChurch !== ChurchEnum.Другая && paymentType.id !== PaymentTypeEnum.Cash)
+                }
+              />
+              {paymentType.id === PaymentTypeEnum.Card && (
+                <span className="text-sm text-gray-400">
+                  (после 1 июня, для гостей)
+                </span>
+              )}
+            </div>
           ))}
         </RadioGroup>
       </FormControl>
@@ -129,7 +158,7 @@ export const PaymentStep = ({
             className="space-y-4"
           >
             <Typography variant="body1">
-              Пожалуйста, передайте сумму <strong>{selectedCamps.reduce((acc, camp) => acc + getCurrentPrice(camp.prices)?.totalValue!, 0)}₽</strong> следующему человеку:
+              Пожалуйста, передайте сумму <strong>{ getDiscountedPrice(age, selectedCamps.reduce((acc, camp) => acc + getCurrentPrice(camp.prices)?.totalValue!, 0))}₽</strong> следующему человеку:
             </Typography>
             <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
               <Typography variant="body1">

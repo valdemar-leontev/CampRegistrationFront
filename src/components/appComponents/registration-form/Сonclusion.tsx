@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Typography, Button } from "@mui/material";
 import { IoCheckmark } from "react-icons/io5";
 import { GiCircle, GiMoneyStack } from "react-icons/gi";
+import { FaClock } from "react-icons/fa";
 import { PaymentTypeEnum } from '@/models/enums/PaymentTypeEnum';
 
 export const Conclusion = ({ onClose, paymentMethod }: { onClose: () => void, paymentMethod: number }) => {
@@ -27,7 +28,7 @@ export const Conclusion = ({ onClose, paymentMethod }: { onClose: () => void, pa
           <GiCircle
             className="w-full h-full text-primary"
             size={150}
-            color={isCardPayment ? 'green' : 'red'}
+            color={isCardPayment ? '#4CAF50' : '#FF9800'}
           />
         </motion.div>
 
@@ -39,9 +40,15 @@ export const Conclusion = ({ onClose, paymentMethod }: { onClose: () => void, pa
           style={{ width: 100, height: 100 }}
         >
           {isCardPayment ? (
-            <IoCheckmark className="w-full h-full text-primary" color='green' />
+            <IoCheckmark className="w-full h-full text-primary" color='#4CAF50' />
           ) : (
-            <GiMoneyStack className="w-full h-full text-primary" color='red' />
+            <div className="relative">
+              <GiMoneyStack className="w-full h-full text-primary" color='#FF9800' />
+              <FaClock 
+                className="absolute -bottom-2 -right-2 text-white bg-amber-600 rounded-full p-1" 
+                size={24}
+              />
+            </div>
           )}
         </motion.div>
       </motion.div>
@@ -64,27 +71,68 @@ export const Conclusion = ({ onClose, paymentMethod }: { onClose: () => void, pa
           </>
         ) : (
           <>
-            <Typography variant="h4" align="center" sx={{ fontWeight: 600 }}>
-              Место зарезервировано
+            <Typography variant="h5" align="center" sx={{ fontWeight: 600, color: '#FF9800', mb: 2 }}>
+              Ожидание подтверждения оплаты
             </Typography>
-            <div className="bg-red-100 p-6 rounded-2xl shadow-md">
-              <Typography variant="h6" className="!font-semibold !mb-3 text-red-800">
-                Ваша заявка в статусе "Ожидает Оплаты"
+            
+            <motion.div
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.8, duration: 0.3 }}
+              className="bg-amber-50 border-l-4 border-amber-400 p-6 rounded-lg shadow-sm w-full max-w-md"
+            >
+              <div className="flex items-start gap-3">
+                <div>
+                  <Typography variant="h6" sx={{ fontWeight: 600, color: 'text.primary', mb: 1 }}>
+                    Место зарезервировано
+                  </Typography>
+                  <Typography variant="body1" sx={{ color: 'text.secondary', mb: 2 }}>
+                    Для завершения регистрации необходимо произвести оплату наличными.
+                  </Typography>
+                  <div className="bg-amber-100 p-3 rounded-lg">
+                    <Typography variant="body2" sx={{ color: 'amber.800', fontStyle: 'italic' }}>
+                      <strong>Обратите внимание:</strong> резерв будет автоматически снят через 7 дней при отсутствии оплаты.
+                    </Typography>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.2 }}
+              className="mt-2 text-center max-w-md"
+            >
+              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                Мы отправили вам контакты ответственного лица для передачи денежных средств.
               </Typography>
-              <Typography variant="body1" className="text-red-800">
-                К сожалению, мы не можем подтвердить ваше присутствие на летнем отдыхе. Но мы зарезервировали место под вас. <br /> <strong className='text-red-700'>Резерв будет снят через неделю автоматически и регистрация будет удалена, при непоступлении оплаты.</strong><br /> Мы вас уведомим.
-              </Typography>
-            </div>
+            </motion.div>
           </>
         )}
 
-        <Button
-          variant="contained"
-          onClick={onClose}
-          sx={{ mt: 4, px: 6, py: 1.5, borderRadius: 2 }}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.5 }}
         >
-          Закрыть
-        </Button>
+          <Button
+            variant="contained"
+            onClick={onClose}
+            sx={{ 
+              mt: 4, 
+              px: 6, 
+              py: 1.5, 
+              borderRadius: 2,
+              backgroundColor: isCardPayment ? '#4CAF50' : '#FF9800',
+              '&:hover': {
+                backgroundColor: isCardPayment ? '#388E3C' : '#F57C00',
+              }
+            }}
+          >
+            Понятно
+          </Button>
+        </motion.div>
       </motion.div>
     </motion.div>
   );

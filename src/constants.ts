@@ -28,23 +28,4 @@ export const registrationSchema = z.object({
     ),
   city: z.string().min(1, "Город обязателен"),
   church: z.number().min(1, "Церковь обязательна"),
-  otherChurchName: z.string().optional(),
-  otherChurchAddress: z.string().optional(),
-}).superRefine((data, ctx) => {
-  if (data.church === 0) {
-    if (!data.otherChurchName) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Название церкви обязательно",
-        path: ["otherChurchName"],
-      });
-    }
-    if (!data.otherChurchAddress) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Адрес церкви обязателен",
-        path: ["otherChurchAddress"],
-      });
-    }
-  }
 });

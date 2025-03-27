@@ -10,8 +10,4 @@ export interface IRegistrationForm {
   city: string;
 
   church: number;
-
-  otherChurchName?: string | undefined;
-
-  otherChurchAddress?: string | undefined;
 }

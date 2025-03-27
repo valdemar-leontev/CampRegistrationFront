@@ -16,6 +16,7 @@ import { useUserStore } from '@/stores/UserStore';
 import apiClient from '@/axios';
 import { INotification } from '@/models/INotification';
 import dayjs from 'dayjs';
+import { Crown } from 'lucide-react';
 
 export const ProfileBar = () => {
   const [notificationsList, setNotificationsList] = useState<INotification[]>([]);
@@ -100,20 +101,35 @@ export const ProfileBar = () => {
   return (
     user && <div className='px-4 flex items-center gap-4 justify-between w-full py-2'>
       <div className='flex items-center gap-4'>
-        {(!user || !user.photoUrl) ? (
+        {!user ? (
           <Skeleton className="relative flex h-14 w-14 shrink-0 overflow-hidden rounded-2xl" />
         ) : (
-          <Avatar>
-            <AvatarImage src={user.photoUrl} />
-            <AvatarFallback>Avatar</AvatarFallback>
-          </Avatar>
+          <div className="relative">
+            <Avatar>
+              <AvatarImage
+                src={user.photoUrl}
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                }}
+              />
+              <AvatarFallback className="bg-gradient-to-br from-pink-500 to-purple-600 text-white font-bold">
+                {user.firstName?.[0]?.toUpperCase()}
+                {user.lastName?.[0]?.toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+            {user.admins?.length > 0 && (
+              <div className="absolute -bottom-1 -right-1 bg-amber-400 rounded-full p-1">
+                <Crown className="h-3 w-3 text-white" />
+              </div>
+            )}
+          </div>
         )}
         <div className='flex flex-col text-left'>
           <h1 className='text-[18px] font-bold max-w-[220px] text-nowrap text-ellipsis overflow-hidden'>
             {user ? `${user.lastName} ${user.firstName}` : 'Test user'}
           </h1>
           <h1 className='text-[#c448a4] font-bold text-[16px]'>
-            {user.admins.length > 0 ? 'Администратор' : 'Пользователь'}
+            {user?.admins?.length > 0 ? 'Администратор' : 'Пользователь'}
           </h1>
         </div>
       </div>
@@ -176,7 +192,7 @@ export const ProfileBar = () => {
                       <div className="flex-1">
                         <h3 className="font-semibold text-sm">{notification.title}</h3>
                         <p className="text-xs text-gray-600">{notification.content}</p>
-                        <span className="text-xs text-gray-400">{dayjs(notification.date).format('D MMMM')}</span>
+                        <span className="text-xs text-gray-400">{dayjs(notification.date).format('dd, D MMMM YYYY, HH:mm')}</span>
                       </div>
                       {!notification.isRead && (
                         <div className="w-3 h-3 bg-blue-500 rounded-full" />
