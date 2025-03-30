@@ -2,8 +2,14 @@ import { ChurchEnum } from '@/models/enums/ChurchEnum';
 import { IChurch } from '@/models/IChurch';
 import { IRegistrationForm } from '@/models/IRegistrationForm';
 import { FormControl, InputLabel, Select, MenuItem, FormHelperText } from "@mui/material";
+import dayjs from 'dayjs';
 import { FC } from 'react';
 import { UseFormReturn } from 'react-hook-form';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 interface ChurchStepProps {
   form: UseFormReturn<IRegistrationForm>;
@@ -33,11 +39,14 @@ export const ChurchStep: FC<ChurchStepProps> = ({ form, churchesList, setSelecte
             <MenuItem
               key={church.id}
               value={church.id}
-              disabled={church.id === ChurchEnum.Другая}
+              disabled={
+                church.id === ChurchEnum.Другая &&
+                !dayjs().isAfter(dayjs('2025-06-01'))
+              }
             >
               <div className="flex flex-col">
                 <span>{church.name}</span>
-                {church.id === ChurchEnum.Другая && (
+                {church.id === ChurchEnum.Другая && !dayjs().isAfter(dayjs('2025-06-01')) && (
                   <p className="text-xs text-red-500 mt-1">
                     Регистрация откроется 1 июня
                   </p>
@@ -45,13 +54,15 @@ export const ChurchStep: FC<ChurchStepProps> = ({ form, churchesList, setSelecte
               </div>
             </MenuItem>
           ))}
-        </Select>
-        {formState.errors.church && (
-          <FormHelperText error>
-            {formState.errors.church.message}
-          </FormHelperText>
-        )}
-      </FormControl>
+        </Select >
+        {
+          formState.errors.church && (
+            <FormHelperText error>
+              {formState.errors.church.message}
+            </FormHelperText>
+          )
+        }
+      </FormControl >
     </>
   );
 };

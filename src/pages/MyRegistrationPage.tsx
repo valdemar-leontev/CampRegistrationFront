@@ -45,6 +45,7 @@ interface IRegistration {
   registrationLinkPrice: {
     value: number;
     campName: string;
+    discountCoefficient: number;
   }[];
   paymentType: {
     name: string;
@@ -294,22 +295,13 @@ export const MyRegistrationPage = () => {
                   {dayjs(registration.registrationDate).format('D MMMM YYYY')}
                 </TableCell>
                 <TableCell className="py-2 px-4 text-nowrap">
-                  {registration.discountСoefficient < 1 ? (
+                  {registration.registrationLinkPrice.reduce((sum, link) => sum + link.discountCoefficient, 0) !== 0 ? (
                     <div className="flex flex-col">
-                      <div className="line-through text-gray-400 text-sm">
-                        {registration.registrationLinkPrice.reduce((sum, link) => sum + link.value, 0)}₽
-                      </div>
                       <div className="text-green-600 font-semibold">
-                        {Math.round(registration.registrationLinkPrice.reduce((sum, link) => sum + link.value, 0) * registration.discountСoefficient)}₽
+                        {registration.totalSum} ₽
                       </div>
                       <div className="text-xs text-gray-500 mt-[-2px]">
-                        {registration.discountСoefficient === 0 ? (
-                          "Бесплатно (до 2 лет)"
-                        ) : registration.discountСoefficient === 0.5 ? (
-                          "Скидка 50% (2-6 лет)"
-                        ) : (
-                          `Скидка ${Math.round((1 - registration.discountСoefficient) * 100)}%`
-                        )}
+                        Со скидкой
                       </div>
                     </div>
                   ) : (
@@ -502,19 +494,40 @@ export const MyRegistrationPage = () => {
                         <div className='text-[18px]'><strong>Статус:</strong> {selectedRegistration!.registrationStatus.name}</div>
                         <div className='text-[18px]'><strong>Летний отдых:</strong></div>
                         <ul>
-                          {selectedRegistration!.registrationLinkPrice.map((link, index) => (
-                            <li key={index} className='text-[18px]'>
-                              🏕️ {link.campName}: {' '}
-                              <span className={selectedRegistration.discountСoefficient < 1 ? 'line-through text-gray-500 mr-1' : ''}>
-                                {link.value}₽
-                              </span>
-                              {selectedRegistration.discountСoefficient < 1 && (
-                                <span className='text-green-600 font-semibold'>
-                                  {Math.round(link.value * selectedRegistration.discountСoefficient)}₽
-                                </span>
-                              )}
-                            </li>
-                          ))}
+                          {selectedRegistration!.registrationLinkPrice.map((link, index) => {
+                            const campPrice = selectedRegistration.registrationLinkPrice.find(rp => rp.campName === link.campName);
+                            const discountCoefficient = campPrice!.discountCoefficient!;
+                            const finalPrice = Math.round(link.value * discountCoefficient);
+
+                            return (
+                              <li key={index} className='text-[18px] mb-2'>
+                                🏕️ {link.campName}: {' '}
+                                {discountCoefficient < 1 && (
+                                  <>
+                                    <span className='line-through text-gray-500 mr-1'>
+                                      {link.value}₽
+                                    </span>
+                                    <span className='text-green-600 font-semibold mr-2'>
+                                      {finalPrice}₽
+                                    </span>
+                                    <br />
+                                    <span className='text-sm text-green-600'>
+                                      {discountCoefficient === 0 ? (
+                                        "(до 2 лет бесплатно)"
+                                      ) : discountCoefficient === 0.5 ? (
+                                        "(возраст 2-6 лет - скидка 50%)"
+                                      ) : (
+                                        `(скидка ${Math.round((1 - discountCoefficient) * 100)}%)`
+                                      )}
+                                    </span>
+                                  </>
+                                )}
+                                {discountCoefficient === 1 && (
+                                  <span>{link.value}₽</span>
+                                )}
+                              </li>
+                            )
+                          })}
                         </ul>
 
                         <div className='text-blue-500 font-bold mt-3'>
@@ -572,7 +585,7 @@ export const MyRegistrationPage = () => {
                                   checked={paymentMethod === PaymentTypeEnum.Cash}
                                   onChange={() => setPaymentMethod(PaymentTypeEnum.Cash)}
                                   className="form-radio h-4 w-4 text-blue-600"
-                                  
+
                                 />
                                 <span className="text-gray-700">Наличные</span>
                               </label>

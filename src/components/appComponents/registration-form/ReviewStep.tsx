@@ -11,16 +11,22 @@ interface ReviewStepProps {
   form: UseFormReturn<IRegistrationForm>;
   selectedCamps: ICamp[];
   getCurrentPrice: (prices: IPrice[]) => IPrice | null;
-  age: number;
 }
 
-export const ReviewStep = ({ form, selectedCamps, getCurrentPrice, age }: ReviewStepProps) => {
+export const ReviewStep = ({ form, selectedCamps, getCurrentPrice }: ReviewStepProps) => {
   const { watch } = form;
   const dateOfBirth = watch("dateOfBirth");
 
+  const getAgeAtCampStart = (campStartDate: Date) => {
+    const birth = dayjs(dateOfBirth);
+    const campStart = dayjs(campStartDate);
+    return campStart.diff(birth, 'year');
+  };
+
   const totalPrice = selectedCamps.reduce((acc, camp) => {
+    const ageAtCampStart = getAgeAtCampStart(camp.startDate);
     const basePrice = getCurrentPrice(camp.prices)?.totalValue || 0;
-    return acc + getDiscountedPrice(age, basePrice);
+    return acc + getDiscountedPrice(ageAtCampStart, basePrice);
   }, 0);
 
   return (
@@ -30,8 +36,7 @@ export const ReviewStep = ({ form, selectedCamps, getCurrentPrice, age }: Review
         <Typography variant="body1"><strong>Имя:</strong> {watch("firstName")}</Typography>
         <Typography variant="body1"><strong>Фамилия:</strong> {watch("lastName")}</Typography>
         <Typography variant="body1">
-          <strong>Дата рождения:</strong> {dayjs(dateOfBirth).format("DD.MM.YYYY")} 
-          <span className="ml-2 text-sm text-gray-500">({age} лет)</span>
+          <strong>Дата рождения:</strong> {dayjs(dateOfBirth).format("DD MMM YYYY")}
         </Typography>
         <Typography variant="body1"><strong>Телефон:</strong> {watch("phone")}</Typography>
       </div>
@@ -44,8 +49,9 @@ export const ReviewStep = ({ form, selectedCamps, getCurrentPrice, age }: Review
       <Typography variant="h5" className="text-xl font-semibold text-gray-900 !mt-6 !mb-1">Выбранные отдыхи</Typography>
       <div className="space-y-1 text-gray-700">
         {selectedCamps.map((camp) => {
+          const ageAtCampStart = getAgeAtCampStart(camp.startDate);
           const basePrice = getCurrentPrice(camp.prices)?.totalValue || 0;
-          const discountedPrice = getDiscountedPrice(age, basePrice);
+          const discountedPrice = getDiscountedPrice(ageAtCampStart, basePrice);
           const hasDiscount = discountedPrice !== basePrice;
 
           return (
@@ -59,7 +65,7 @@ export const ReviewStep = ({ form, selectedCamps, getCurrentPrice, age }: Review
                   <>
                     <span className="line-through text-gray-400 mr-1">{basePrice}₽</span>
                     <span className="text-green-600 font-semibold">
-                      {discountedPrice}₽ {age < 2 ? '(бесплатно)' : `(-${Math.round((1 - discountedPrice/basePrice) * 100)}%)`}
+                      {discountedPrice}₽ {ageAtCampStart < 2 ? '(бесплатно)' : `(-${Math.round((1 - discountedPrice / basePrice) * 100)}%)`}
                     </span>
                   </>
                 ) : (
@@ -68,11 +74,16 @@ export const ReviewStep = ({ form, selectedCamps, getCurrentPrice, age }: Review
               </Typography>
               {hasDiscount && (
                 <Typography variant="body2" className="text-xs text-gray-500 mt-1">
-                  {age < 2 
-                    ? "Для детей до 2 лет участие бесплатное" 
-                    : "Для детей 2-6 лет действует скидка 50%"}
+                  {ageAtCampStart < 2
+                    ? "Для детей до 2 лет участие бесплатное"
+                    : ageAtCampStart <= 6
+                      ? "Для детей 2-6 лет действует скидка 50%"
+                      : ""}
                 </Typography>
               )}
+              <Typography variant="body2" className="text-xs text-gray-500 mt-1">
+                Возраст на начало лагеря: {ageAtCampStart} лет
+              </Typography>
             </div>
           );
         })}

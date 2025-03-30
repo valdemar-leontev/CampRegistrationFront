@@ -3,8 +3,18 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { EffectCards } from 'swiper/modules';
 import { FaCalendarAlt } from 'react-icons/fa';
 import { motion } from 'framer-motion';
+import { BiCool } from "react-icons/bi";
+import { FaChild } from "react-icons/fa";
+import { MdFamilyRestroom } from "react-icons/md";
+import { AiFillCustomerService } from "react-icons/ai";
+import { GiMuscleUp } from "react-icons/gi";
+
+
 
 export const CampInfoPage: FC = () => {
+  const currentDate = new Date();
+  const currentMonth = currentDate.toLocaleString('default', { month: 'long' });
+
   const camps = [
     {
       name: "Детский",
@@ -13,6 +23,8 @@ export const CampInfoPage: FC = () => {
       endDate: "05 Июль (СБ)",
       days: 6,
       prices: { April: 500, May: 800, June: 1000, July: 1200 },
+      ageRange: "7-12 лет (6 лет с сопровождением)",
+      icon: <FaChild className="inline mr-1" size={32} />
     },
     {
       name: "Подростковый",
@@ -21,6 +33,8 @@ export const CampInfoPage: FC = () => {
       endDate: "12 Июль (СБ)",
       days: 6,
       prices: { April: 500, May: 800, June: 1000, July: 1200 },
+      ageRange: "12-16 лет (12 лет только с регистрацией в детский)",
+      icon: <BiCool className="inline mr-1" size={32} />
     },
     {
       name: "Мужской",
@@ -29,6 +43,8 @@ export const CampInfoPage: FC = () => {
       endDate: "15 Июль (ВТ)",
       days: 2,
       prices: { April: 1000, May: 1500, June: 2000, July: 2500 },
+      ageRange: "от 18 лет",
+      icon: <GiMuscleUp className="inline mr-1" size={32} />
     },
     {
       name: "Общецерковный",
@@ -37,6 +53,8 @@ export const CampInfoPage: FC = () => {
       endDate: "20 Июль (ВС)",
       days: 4,
       prices: { April: 500, May: 800, June: 1000, July: 1200 },
+      ageRange: "для всех возрастов",
+      icon: <MdFamilyRestroom className="inline mr-1" size={32} />
     },
     {
       name: "Молодежный",
@@ -45,6 +63,8 @@ export const CampInfoPage: FC = () => {
       endDate: "26 Июль (СБ)",
       days: 6,
       prices: { April: 500, May: 800, June: 1000, July: 1200 },
+      ageRange: "от 16 лет (15 лет только с регистрацией в подростковый)",
+      icon: <AiFillCustomerService className="inline mr-1" size={32} />
     },
   ];
 
@@ -55,12 +75,18 @@ export const CampInfoPage: FC = () => {
     'rgba(69, 104, 220)',
   ];
 
-  // Функция для расчета общей стоимости в зависимости от месяца регистрации
+  const getAvailableMonths = () => {
+    const months = ['April', 'May', 'June', 'July'];
+    const currentMonthIndex = months.findIndex(m =>
+      m.toLowerCase() === currentMonth.toLowerCase()
+    );
+    return months.slice(Math.max(0, currentMonthIndex - 1));
+  };
+
   const calculateTotalPrice = (camp: typeof camps[0], month: keyof typeof camp.prices) => {
     return camp.prices[month] * camp.days;
   };
 
-  // Названия месяцев для отображения
   const monthNames = {
     April: "Апрель",
     May: "Май",
@@ -69,57 +95,65 @@ export const CampInfoPage: FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center min-w-full">
-      <h1 className="text-3xl font-bold text-center my-6 text-gray-800 min-w-full">
-        Основная информация
+    <div className="flex flex-col items-center min-w-full px-4">
+      <h1 className="text-2xl font-bold text-center my-4 text-gray-800">
+        Основная информация о лагерях
       </h1>
 
-      <div className='w-full min-w-full h-[65vh] relative flex pb-10 justify-center items-end'>
-        <div className="fixed top-[48%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90%]">
-          <Swiper effect={'cards'} grabCursor={true} modules={[EffectCards]}>
-            {camps.map((camp, index) => (
-              <SwiperSlide key={index}>
-                <motion.div
-                  className="transition-shadow duration-300 p-8 flex flex-col items-center rounded-2xl shadow-md backdrop-blur-sm"
-                  style={{
-                    backgroundColor: cardColors[index % cardColors.length],
-                    color: 'white',
-                    backdropFilter: 'blur(10px)',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
-                  }}
-                >
-                  <h2 className="text-2xl font-semibold mb-2">{camp.name}</h2>
-                  <div className="flex items-center mb-2">
-                    <FaCalendarAlt className="mr-2" />
-                    <p>
-                      <strong>Дата начала:</strong> {camp.startDate}
-                    </p>
+      <div className='w-full h-[40%] !mt- max-w-md mx-auto'>
+        <Swiper
+          effect={'cards'}
+          grabCursor={true}
+          modules={[EffectCards]}
+          className="h-full"
+        >
+          {camps.map((camp, index) => (
+            <SwiperSlide key={index}>
+              <motion.div
+                className="h-full p-4 flex flex-col rounded-2xl shadow-lg"
+                style={{
+                  backgroundColor: cardColors[index % cardColors.length],
+                  color: 'white',
+                }}
+              >
+                <div className="flex items-center mb-2">
+                  {camp.icon}
+                  <h2 className="text-xl font-bold">{camp.name}</h2>
+                </div>
+
+                <div className="text-sm mb-3 text-left">
+                  <div className="flex items-center">
+                    <FaCalendarAlt className="mr-2"  />
+                    <span>{camp.startDate} - {camp.endDate}</span>
                   </div>
-                  <div className="flex items-center mb-4">
-                    <FaCalendarAlt className="mr-2" />
-                    <p>
-                      <strong>Дата конца:</strong> {camp.endDate}
-                    </p>
-                  </div>
-                  <p className="mb-2"><strong>Длительность:</strong> {camp.days} дней</p>
-                  
-                  <h3 className="text-lg font-semibold mt-4 mb-2">Стоимость при регистрации:</h3>
-                  <ul className="grid grid-cols-2 gap-2 w-full">
-                    {(Object.keys(camp.prices) as Array<keyof typeof camp.prices>).map((month) => (
-                      <li key={month} className="bg-white/20 p-2 rounded-2xl">
-                        <div className="font-medium">{monthNames[month]}:</div>
-                        <div className="font-bold text-lg">
-                          {calculateTotalPrice(camp, month)} руб.
-                        </div>
-                        <div className="text-sm opacity-80">({camp.prices[month]} руб./день)</div>
-                      </li>
-                    ))}
-                  </ul>
-                </motion.div>
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        </div>
+                  <div className="ml-6">({camp.days} дней)</div>
+                </div>
+
+                <div className="text-sm bg-white/20 p-2 rounded-xl mb-3">
+                  <strong>Возраст:</strong> {camp.ageRange}
+                </div>
+
+                <h3 className="text-sm font-semibold mb-2">Стоимость:</h3>
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  {getAvailableMonths().map((month) => (
+                    <div
+                      key={month}
+                      className="bg-white/20 p-2 rounded-xl flex flex-col"
+                    >
+                      <div className="font-medium">{monthNames[month as keyof typeof monthNames]}:</div>
+                      <div className="font-bold">
+                        {calculateTotalPrice(camp, month as keyof typeof camp.prices)}₽
+                      </div>
+                      <div className="text-xs opacity-80">
+                        ({camp.prices[month as keyof typeof camp.prices]}₽/день)
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
       </div>
     </div>
   );

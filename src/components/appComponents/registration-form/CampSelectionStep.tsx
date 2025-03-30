@@ -14,7 +14,7 @@ interface CampSelectionStepProps {
   selectedCamps: ICamp[];
   toggleCamp: (camp: ICamp) => void;
   getCurrentPrice: (prices: IPrice[]) => IPrice | null;
-  age: number;
+  birthDate: Date;
   existedRegistrationData: number[];
 }
 
@@ -23,7 +23,7 @@ export const CampSelectionStep = ({
   selectedCamps,
   toggleCamp,
   getCurrentPrice,
-  age,
+  birthDate,
   existedRegistrationData
 }: CampSelectionStepProps) => {
   const [disabledCamps, setDisabledCamps] = useState<number[]>([]);
@@ -42,6 +42,12 @@ export const CampSelectionStep = ({
     })();
   }, []);
 
+  const getAgeAtCampStart = (campStartDate: Date) => {
+    const birth = dayjs(birthDate);
+    const campStart = dayjs(campStartDate);
+    return campStart.diff(birth, 'year');
+  };
+
   return (
     <div className="space-y-4 overflow-auto max-h-[65vh]">
       {campList.map((camp) => {
@@ -49,6 +55,8 @@ export const CampSelectionStep = ({
           existedRegistrationData.includes(camp.id);
         const isDisabled = isCampDisabled(camp.id);
         const isAlreadyRegistered = existedRegistrationData.includes(camp.id);
+        const campStartDate = new Date(camp.startDate);
+        const ageAtCampStart = getAgeAtCampStart(campStartDate);
 
         return (
           <div
@@ -93,18 +101,21 @@ export const CampSelectionStep = ({
               </Typography>
               <Typography variant="body2" className={`text-sm ${isDisabled ? 'text-gray-500' : 'text-gray-600'} mt-1`}>
                 💰 Цена: {' '}
-                {age < 2 ? (
+                {ageAtCampStart < 2 ? (
                   <span className="text-green-600 font-semibold">Бесплатно</span>
-                ) : age <= 6 ? (
+                ) : ageAtCampStart <= 6 ? (
                   <>
                     <span className="line-through text-gray-400 mr-1">{getCurrentPrice(camp.prices)?.totalValue}₽</span>
                     <span className="text-green-600 font-semibold">
-                      {getDiscountedPrice(age, getCurrentPrice(camp.prices)?.totalValue || 0)} ₽ (скидка 50%)
+                      {getDiscountedPrice(ageAtCampStart, getCurrentPrice(camp.prices)?.totalValue || 0)} ₽ (скидка 50%)
                     </span>
                   </>
                 ) : (
                   <span>{getCurrentPrice(camp.prices)?.totalValue}₽</span>
                 )}
+              </Typography>
+              <Typography variant="body2" className="text-xs text-gray-500 mt-1">
+                Возраст на начало лагеря: {ageAtCampStart} лет
               </Typography>
             </div>
           </div>

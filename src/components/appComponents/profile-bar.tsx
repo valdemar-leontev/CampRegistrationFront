@@ -64,7 +64,7 @@ export const ProfileBar = () => {
         const updatedList = prev.map((item) =>
           item.id === id ? { ...item, isRead: true } : item
         );
-        return updatedList.sort((a, b) => (a.isRead === b.isRead ? 0 : a.isRead ? 1 : -1));
+        return updatedList;
       });
     }
 

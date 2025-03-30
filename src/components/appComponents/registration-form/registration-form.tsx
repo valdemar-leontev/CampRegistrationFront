@@ -163,8 +163,8 @@ export const RegistrationForm = () => {
 
     switch (camp.name) {
       case "Детский":
-        if (age < 6 || age > 13) {
-          errorMessage = "Недопустимый возраст для детского летнего отдыха (только от 6 до 13 лет)";
+        if (age < 6 || age > 12) {
+          errorMessage = "Недопустимый возраст для детского летнего отдыха (только от 6 до 12 лет)";
           isValid = false;
         } else if (age === 6) {
           errorMessage = "Для возраста 6 лет требуется сопровождение бабушки или тети";
@@ -439,8 +439,8 @@ export const RegistrationForm = () => {
                     disableHoverListener
                     disableTouchListener
                     title={<>
-                      • Детский: от 7 до 13 лет (6 лет с сопровождением) <br />
-                      • Подростковый: от 13 до 16 лет (12 лет только с регистрацией в детский) <br />
+                      • Детский: от 7 до 12 лет (6 лет с сопровождением) <br />
+                      • Подростковый: от 12 до 16 лет (12 лет только с регистрацией в детский) <br />
                       • Молодежный: от 16 лет (15 лет только с регистрацией в подростковый)</>}
                     arrow
                   >
@@ -508,7 +508,7 @@ export const RegistrationForm = () => {
                   selectedCamps={selectedCamps}
                   toggleCamp={toggleCamp}
                   getCurrentPrice={getCurrentPrice}
-                  age={age}
+                  birthDate={form.getValues('dateOfBirth')}
                   existedRegistrationData={existedRegistrationData}
                 />
               )}
@@ -518,7 +518,7 @@ export const RegistrationForm = () => {
                   form={form}
                   selectedCamps={selectedCamps}
                   getCurrentPrice={getCurrentPrice}
-                  age={age}
+                  // age={age}
                 />
               )}
 

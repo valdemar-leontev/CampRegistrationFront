@@ -40,11 +40,10 @@ interface IAdminRegistration {
     value: number;
     campName: string;
     startDate: Date
+    discountCoefficient: number;
   }[];
   registrationStatus: string;
   church: string;
-  sum: number;
-  discountСoefficient: number;
 }
 
 const renderPaymentCheck = (paymentCheck: string) => {
@@ -377,22 +376,13 @@ export const AdminRegistrationsPage = () => {
                   {dayjs(registration.registrationDate).format('D MMMM YYYY')}
                 </TableCell>
                 <TableCell className="py-2 px-4 text-nowrap">
-                  {registration.discountСoefficient < 1 ? (
+                  {registration.registrationLinkPrice.reduce((sum, link) => sum + link.discountCoefficient, 0) !== 0 ? (
                     <div className="flex flex-col">
-                      <div className="line-through text-gray-400 text-sm">
-                        {registration.registrationLinkPrice.reduce((sum, link) => sum + link.value, 0)}₽
-                      </div>
                       <div className="text-green-600 font-semibold">
-                        {Math.round(registration.registrationLinkPrice.reduce((sum, link) => sum + link.value, 0) * registration.discountСoefficient)}₽
+                        {registration.totalSum} ₽
                       </div>
                       <div className="text-xs text-gray-500 mt-[-2px]">
-                        {registration.discountСoefficient === 0 ? (
-                          "Бесплатно (до 2 лет)"
-                        ) : registration.discountСoefficient === 0.5 ? (
-                          "Скидка 50% (2-6 лет)"
-                        ) : (
-                          `Скидка ${Math.round((1 - registration.discountСoefficient) * 100)}%`
-                        )}
+                        Со скидкой
                       </div>
                     </div>
                   ) : (
@@ -537,46 +527,46 @@ export const AdminRegistrationsPage = () => {
                       <div className='text-[18px]'><strong>Статус:</strong> {selectedRegistration!.registrationStatus}</div>
                       <div className='text-[18px]'><strong>Летний отдых:</strong></div>
                       <ul>
-                        {selectedRegistration!.registrationLinkPrice.map((link, index) => (
-                          <li key={index} className='text-[18px]'>
-                            🏕️ {link.campName}: {' '}
-                            <span className={selectedRegistration.discountСoefficient < 1 ? 'line-through text-gray-500 mr-1' : ''}>
-                              {link.value}₽
-                            </span>
-                            {selectedRegistration.discountСoefficient < 1 && (
-                              <span className='text-green-600 font-semibold'>
-                                {Math.round(link.value * selectedRegistration.discountСoefficient)}₽
-                              </span>
-                            )}
-                          </li>
-                        ))}
+                        {selectedRegistration!.registrationLinkPrice.map((link, index) => {
+                          const campPrice = selectedRegistration.registrationLinkPrice.find(rp => rp.campName === link.campName);
+                          const discountCoefficient = campPrice!.discountCoefficient!;
+                          const finalPrice = Math.round(link.value * discountCoefficient);
+
+                          return (
+                            <li key={index} className='text-[18px] mb-2'>
+                              🏕️ {link.campName}: {' '}
+                              {discountCoefficient < 1 && (
+                                <>
+                                  <span className='line-through text-gray-500 mr-1'>
+                                    {link.value}₽
+                                  </span>
+                                  <span className='text-green-600 font-semibold mr-2'>
+                                    {finalPrice}₽
+                                  </span>
+                                  <br />
+                                  <span className='text-sm text-green-600'>
+                                    {discountCoefficient === 0 ? (
+                                      "(до 2 лет бесплатно)"
+                                    ) : discountCoefficient === 0.5 ? (
+                                      "(возраст 2-6 лет - скидка 50%)"
+                                    ) : (
+                                      `(скидка ${Math.round((1 - discountCoefficient) * 100)}%)`
+                                    )}
+                                  </span>
+                                </>
+                              )}
+                              {discountCoefficient === 1 && (
+                                <span>{link.value}₽</span>
+                              )}
+                            </li>
+                          )
+                        })}
                       </ul>
 
                       <div className='text-blue-500 font-bold mt-3'>
                         ИТОГО:{' '}
-                        {selectedRegistration.discountСoefficient < 1 ? (
-                          <>
-                            <span className='line-through text-gray-500 mr-1'>{totalAmount}₽</span>
-                            <span className='text-green-600 font-semibold'>
-                              {Math.round(totalAmount! * selectedRegistration.discountСoefficient)}₽
-                            </span>
-                          </>
-                        ) : (
-                          <span>{totalAmount}₽</span>
-                        )}
+                        <span>{totalAmount}₽</span>
                       </div>
-
-                      {selectedRegistration.discountСoefficient < 1 && (
-                        <div className="mt-2 text-sm text-gray-600">
-                          {selectedRegistration.discountСoefficient === 0 ? (
-                            <span>✅ До 2 лет - бесплатно (скидка 100%)</span>
-                          ) : selectedRegistration.discountСoefficient === 0.5 ? (
-                            <span>✅ Возраст 2-6 лет - скидка 50%</span>
-                          ) : (
-                            <span>✅ Применена скидка {Math.round((1 - selectedRegistration.discountСoefficient) * 100)}%</span>
-                          )}
-                        </div>
-                      )}
                     </div>
 
                     <PhotoProvider>

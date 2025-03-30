@@ -162,7 +162,7 @@ export const PaymentStep = ({
             </Typography>
             <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
               <Typography variant="body1">
-                <strong>Имя:</strong> {admin.bankCardOwner}
+                <strong>Имя:</strong> {admin.user.firstName} {admin.user.lastName}
               </Typography>
               <Typography variant="body1">
                 <strong>Церковь:</strong> {ChurchEnum[admin.churchId]}

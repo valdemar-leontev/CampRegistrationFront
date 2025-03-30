@@ -12,8 +12,14 @@ export interface IAdmin {
   phoneNumber: string,
 
   userId: number,
-  
+
   churchId: number;
 
   church: IChurch
+
+  user: {
+    firstName: string,
+    
+    lastName: string
+  }
 }

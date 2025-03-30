@@ -55,7 +55,7 @@ const defaultFaqItems: IFaq[] = [
 ];
 
 const FAQ = () => {
-  const [faqItems, setFaqItems] = useState<IFaq[]>(defaultFaqItems);
+  const [faqItems, setFaqItems] = useState<IFaq[]>([]);
 
   useEffect(() => {
     (async () => {

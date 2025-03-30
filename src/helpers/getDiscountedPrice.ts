@@ -1,6 +1,8 @@
-export const getDiscountedPrice = (age: number, basePrice: number) => {
-  if (age < 2) return 0;
-  if (age <= 6) return Math.round(basePrice * 0.5);
+export const getDiscountedPrice = (ageAtCampStart: number, basePrice: number) => {
+  console.log(ageAtCampStart);
+  
+  if (ageAtCampStart < 2) return 0;
+  if (ageAtCampStart <= 6) return Math.round(basePrice * 0.5);
   
   return basePrice; 
 };
