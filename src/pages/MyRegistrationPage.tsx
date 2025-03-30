@@ -28,6 +28,8 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination"
+import { FaRegSadTear } from 'react-icons/fa';
+import { RegistrationForm } from '@/components/appComponents/registration-form/registration-form';
 
 
 interface IRegistration {
@@ -242,491 +244,512 @@ export const MyRegistrationPage = () => {
         Мои регистрации
       </Typography>
 
-      <motion.div
-        initial={{ y: 100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        exit={{ y: 100, opacity: 0 }}
-        transition={{ type: 'spring', stiffness: 100 }}
-      >
-        <Table className="bg-white border border-transparent !overflow-auto !max-h-[50vh]" >
-          <TableHeader>
-            <TableRow className="bg-blue-100 !border-none sticky top-0 z-10">
-              <TableHead className="py-3 px-4 font-bold text-center text-[16px] rounded-s-[40px]">Статус</TableHead>
-              <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Отдых</TableHead>
-              <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Фамилия</TableHead>
-              <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Имя</TableHead>
-              <TableHead className="py-3 px-4 font-bold text-center text-[16px] text-nowrap">Дата регистрации</TableHead>
-              <TableHead className="py-3 px-4 font-bold text-center text-[16px] text-nowrap rounded-e-[40px]">Сумма</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {paginatedData.map((registration) => (
-              <TableRow
-                key={registration.id}
-                className={`border-b hover:bg-gray-50 duration-200 cursor-pointer transition-all ${highlightedRowId === registration.id ? 'bg-blue-100' : ''}`}
-                onClick={() => handleRowClick(registration)}
-              >
-                <TableCell className="text-center flex justify-center flex-col">
-                  <div
-                    className={`flex flex-col items-center gap-1 p-2 rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-200 ${registration.registrationStatusId === RegistrationStatusEnum["Ожидает оплаты"]
-                      ? "bg-gradient-to-br from-yellow-100 to-yellow-200"
-                      : registration.registrationStatusId === RegistrationStatusEnum["На проверке"]
-                        ? "bg-gradient-to-br from-purple-100 to-purple-200"
-                        : registration.registrationStatusId === RegistrationStatusEnum.Оплачено
-                          ? "bg-gradient-to-br from-green-100 to-green-200"
-                          : registration.registrationStatusId === RegistrationStatusEnum.Отклонено
-                            ? "bg-gradient-to-br from-red-100 to-red-200"
-                            : "bg-gradient-to-br from-gray-100 to-gray-200"
-                      }`}
-                  >
-                    <span className="text-sm font-medium text-gray-700">
-                      {RegistrationStatusEnum[registration.registrationStatusId]}
-                    </span>
-                  </div>
-                </TableCell>
-                <TableCell className="py-2 px-4 text-nowrap text-left">
-                  {registration.registrationLinkPrice.map((link, index) => (
-                    <div key={index}>{++index}. {link.campName}</div>
-                  ))}
-                </TableCell>
-                <TableCell className="py-2 px-4 text-nowrap">{registration.lastName}</TableCell>
-                <TableCell className="py-2 px-4 text-nowrap">{registration.name}</TableCell>
-                <TableCell className="py-2 px-4 text-nowrap">
-                  {dayjs(registration.registrationDate).format('D MMMM YYYY')}
-                </TableCell>
-                <TableCell className="py-2 px-4 text-nowrap">
-                  {registration.registrationLinkPrice.reduce((sum, link) => sum + link.discountCoefficient, 0) !== 0 ? (
-                    <div className="flex flex-col">
-                      <div className="text-green-600 font-semibold">
-                        {registration.totalSum} ₽
-                      </div>
-                      <div className="text-xs text-gray-500 mt-[-2px]">
-                        Со скидкой
-                      </div>
-                    </div>
-                  ) : (
-                    <span>
-                      {registration.registrationLinkPrice.reduce((sum, link) => sum + link.value, 0)}₽
-                    </span>
-                  )}
-                </TableCell>
+      {registrationList.length < 0 ? (
+        <motion.div
+          initial={{ y: 100, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: 100, opacity: 0 }}
+          transition={{ type: 'spring', stiffness: 100 }}
+        >
+          <Table className="bg-white border border-transparent !overflow-auto !max-h-[50vh]" >
+            <TableHeader>
+              <TableRow className="bg-blue-100 !border-none sticky top-0 z-10">
+                <TableHead className="py-3 px-4 font-bold text-center text-[16px] rounded-s-[40px]">Статус</TableHead>
+                <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Отдых</TableHead>
+                <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Фамилия</TableHead>
+                <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Имя</TableHead>
+                <TableHead className="py-3 px-4 font-bold text-center text-[16px] text-nowrap">Дата регистрации</TableHead>
+                <TableHead className="py-3 px-4 font-bold text-center text-[16px] text-nowrap rounded-e-[40px]">Сумма</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {paginatedData.map((registration) => (
+                <TableRow
+                  key={registration.id}
+                  className={`border-b hover:bg-gray-50 duration-200 cursor-pointer transition-all ${highlightedRowId === registration.id ? 'bg-blue-100' : ''}`}
+                  onClick={() => handleRowClick(registration)}
+                >
+                  <TableCell className="text-center flex justify-center flex-col">
+                    <div
+                      className={`flex flex-col items-center gap-1 p-2 rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-200 ${registration.registrationStatusId === RegistrationStatusEnum["Ожидает оплаты"]
+                        ? "bg-gradient-to-br from-yellow-100 to-yellow-200"
+                        : registration.registrationStatusId === RegistrationStatusEnum["На проверке"]
+                          ? "bg-gradient-to-br from-purple-100 to-purple-200"
+                          : registration.registrationStatusId === RegistrationStatusEnum.Оплачено
+                            ? "bg-gradient-to-br from-green-100 to-green-200"
+                            : registration.registrationStatusId === RegistrationStatusEnum.Отклонено
+                              ? "bg-gradient-to-br from-red-100 to-red-200"
+                              : "bg-gradient-to-br from-gray-100 to-gray-200"
+                        }`}
+                    >
+                      <span className="text-sm font-medium text-gray-700">
+                        {RegistrationStatusEnum[registration.registrationStatusId]}
+                      </span>
+                    </div>
+                  </TableCell>
+                  <TableCell className="py-2 px-4 text-nowrap text-left">
+                    {registration.registrationLinkPrice.map((link, index) => (
+                      <div key={index}>{++index}. {link.campName}</div>
+                    ))}
+                  </TableCell>
+                  <TableCell className="py-2 px-4 text-nowrap">{registration.lastName}</TableCell>
+                  <TableCell className="py-2 px-4 text-nowrap">{registration.name}</TableCell>
+                  <TableCell className="py-2 px-4 text-nowrap">
+                    {dayjs(registration.registrationDate).format('D MMMM YYYY')}
+                  </TableCell>
+                  <TableCell className="py-2 px-4 text-nowrap">
+                    {registration.registrationLinkPrice.reduce((sum, link) => sum + link.discountCoefficient, 0) !== 0 ? (
+                      <div className="flex flex-col">
+                        <div className="text-green-600 font-semibold">
+                          {registration.totalSum} ₽
+                        </div>
+                        <div className="text-xs text-gray-500 mt-[-2px]">
+                          Со скидкой
+                        </div>
+                      </div>
+                    ) : (
+                      <span>
+                        {registration.registrationLinkPrice.reduce((sum, link) => sum + link.value, 0)}₽
+                      </span>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
 
-        {totalPages > 1 && (
-          <div className="mt-4 flex justify-center">
-            <Pagination>
-              <PaginationContent>
-                <PaginationItem>
-                  <PaginationPrevious
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      goToPrevPage();
-                    }}
-                    isActive={currentPage === 1}
-                  />
-                </PaginationItem>
-
-                <PaginationItem>
-                  <PaginationLink
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      goToPage(1);
-                    }}
-                    isActive={1 === currentPage}
-                  >
-                    1
-                  </PaginationLink>
-                </PaginationItem>
-
-                {currentPage > 2 && (
+          {totalPages > 1 && (
+            <div className="mt-4 flex justify-center">
+              <Pagination>
+                <PaginationContent>
                   <PaginationItem>
-                    <PaginationEllipsis />
+                    <PaginationPrevious
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        goToPrevPage();
+                      }}
+                      isActive={currentPage === 1}
+                    />
                   </PaginationItem>
-                )}
 
-                {currentPage > 1 && currentPage < totalPages && (
                   <PaginationItem>
                     <PaginationLink
                       href="#"
                       onClick={(e) => {
                         e.preventDefault();
-                        goToPage(currentPage);
+                        goToPage(1);
                       }}
-                      isActive
+                      isActive={1 === currentPage}
                     >
-                      {currentPage}
+                      1
                     </PaginationLink>
                   </PaginationItem>
-                )}
 
-                {currentPage < totalPages - 1 && (
-                  <PaginationItem>
-                    <PaginationEllipsis />
-                  </PaginationItem>
-                )}
+                  {currentPage > 2 && (
+                    <PaginationItem>
+                      <PaginationEllipsis />
+                    </PaginationItem>
+                  )}
 
-                {totalPages > 1 && (
+                  {currentPage > 1 && currentPage < totalPages && (
+                    <PaginationItem>
+                      <PaginationLink
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          goToPage(currentPage);
+                        }}
+                        isActive
+                      >
+                        {currentPage}
+                      </PaginationLink>
+                    </PaginationItem>
+                  )}
+
+                  {currentPage < totalPages - 1 && (
+                    <PaginationItem>
+                      <PaginationEllipsis />
+                    </PaginationItem>
+                  )}
+
+                  {totalPages > 1 && (
+                    <PaginationItem>
+                      <PaginationLink
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          goToPage(totalPages);
+                        }}
+                        isActive={totalPages === currentPage}
+                      >
+                        {totalPages}
+                      </PaginationLink>
+                    </PaginationItem>
+                  )}
+
                   <PaginationItem>
-                    <PaginationLink
+                    <PaginationNext
                       href="#"
                       onClick={(e) => {
                         e.preventDefault();
-                        goToPage(totalPages);
+                        goToNextPage();
                       }}
-                      isActive={totalPages === currentPage}
-                    >
-                      {totalPages}
-                    </PaginationLink>
+                      isActive={currentPage === totalPages}
+                    />
                   </PaginationItem>
-                )}
+                </PaginationContent>
+              </Pagination>
+            </div>
+          )}
 
-                <PaginationItem>
-                  <PaginationNext
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      goToNextPage();
-                    }}
-                    isActive={currentPage === totalPages}
-                  />
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
-          </div>
-        )}
+          <AnimatePresence>
+            {isDrawerOpen && (
+              <>
+                <motion.div
+                  initial={{ x: "100%" }}
+                  animate={{ x: 0 }}
+                  exit={{ x: "100%" }}
+                  transition={{ type: "spring", stiffness: 100, damping: 20 }}
+                  className="h-[100vh] overflow-y-auto fixed top-0 right-0 w-full bg-white shadow-lg z-50 p-6"
+                >
+                  <div className="flex justify-between items-center mb-6">
+                    <Button onClick={() => setIsDrawerOpen(false)} variant={'outline'} className="!h-12 !min-w-0 rounded-full !bg-black">
+                      <IoChevronBack />
+                    </Button>
+                    <h2 className="text-xl font-bold">Информация о заявке</h2>
+                  </div>
 
-        <AnimatePresence>
-          {isDrawerOpen && (
-            <>
-              <motion.div
-                initial={{ x: "100%" }}
-                animate={{ x: 0 }}
-                exit={{ x: "100%" }}
-                transition={{ type: "spring", stiffness: 100, damping: 20 }}
-                className="h-[100vh] overflow-y-auto fixed top-0 right-0 w-full bg-white shadow-lg z-50 p-6"
-              >
-                <div className="flex justify-between items-center mb-6">
-                  <Button onClick={() => setIsDrawerOpen(false)} variant={'outline'} className="!h-12 !min-w-0 rounded-full !bg-black">
-                    <IoChevronBack />
-                  </Button>
-                  <h2 className="text-xl font-bold">Информация о заявке</h2>
-                </div>
-
-                {selectedRegistration && <AnimatePresence mode="wait">
-                  {currentStep === "info" ? (
-                    <motion.div
-                      key="info"
-                      initial={{ opacity: 0, x: 100 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -100 }}
-                      transition={{ duration: 0.3 }}
-                      className="space-y-4 text-left pb-24"
-                    >
-                      {selectedRegistration!.registrationStatusId === RegistrationStatusEnum["Ожидает оплаты"] && (
-                        <div className="bg-yellow-100 p-4 rounded-2xl">
-                          <p className="text-yellow-800 font-semibold">Ожидает оплаты</p>
-                          <Typography variant="body1" className="text-yellow-800 mt-2">
-                            Для завершения регистрации необходимо произвести оплату. Выберите удобный способ оплаты ниже.
-                          </Typography>
-                          <br />
-                          <Typography variant="body1" className="text-yellow-800 mt-2 !font-bold">
-                            Ваша заявка удалится в течении 7 дней автоматически, если оплата не поступила.
-                          </Typography>
-                        </div>
-                      )}
-
-                      {selectedRegistration!.registrationStatusId === RegistrationStatusEnum["На проверке"] && (
-                        <div className="bg-blue-100 p-6 rounded-2xl shadow-md">
-                          <Typography variant="h6" className="!font-semibold !mb-3 text-gray-800">
-                            Ваша заявка на проверке
-                          </Typography>
-                          <Typography variant="body1" className="text-gray-600">
-                            Вашу заявку проверяет администратор: <span className="!font-semibold text-gray-900">{admin?.bankCardOwner}</span>.
-                          </Typography>
-                          <Typography variant="body1" className="text-gray-600 !mt-2">
-                            Проверка займет несколько дней. Спасибо за ожидание!
-                          </Typography>
-                          <Typography variant="body1" className="text-gray-600 !mt-2">
-                            Если у вас есть вопросы, свяжитесь с администратором по телефону: <br /><span className="!font-semibold text-gray-900">{admin?.phoneNumber}</span>.
-                          </Typography>
-                        </div>
-                      )}
-
-                      {selectedRegistration!.registrationStatusId === RegistrationStatusEnum.Оплачено && (
-                        <div className="bg-white p-6 rounded-2xl shadow-md">
-                          <Typography variant="h6" className="!font-semibold !mb-3 text-gray-800">
-                            Оплата успешно завершена
-                          </Typography>
-                          <Typography variant="body1" className="text-gray-600">
-                            Мы ждем вас на нашем летнем отдыхе! Все оплачено, и ваша заявка подтверждена.
-                          </Typography>
-                          <Typography variant="body1" className="text-gray-600 !mt-2">
-                            Если у вас есть вопросы, свяжитесь с администратором по телефону: <span className="!font-semibold text-gray-900">{admin?.phoneNumber}</span>.
-                          </Typography>
-                        </div>
-                      )}
-
-                      {selectedRegistration!.registrationStatusId === RegistrationStatusEnum.Отклонено && (
-                        <div className="bg-red-100 p-6 rounded-2xl shadow-md">
-                          <Typography variant="h6" className="!font-semibold !mb-3 text-red-800">
-                            Заявка отклонена
-                          </Typography>
-                          <Typography variant="body1" className="text-red-800">
-                            К сожалению, ваша заявка была отклонена администратором.
-                          </Typography>
-                          <Typography variant="body1" className="text-red-800 !mt-2">
-                            Пожалуйста, свяжитесь с администратором для уточнения деталей: <span className="!font-semibold text-red-900">{admin?.phoneNumber}</span>.
-                          </Typography>
-                        </div>
-                      )}
-
-                      <div>
-                        <div className='text-[18px]'><strong>Фамилия:</strong> {selectedRegistration!.lastName}</div>
-                        <div className='text-[18px]'><strong>Имя:</strong> {selectedRegistration!.name}</div>
-                        <div className='text-[18px]'><strong>Дата рождения:</strong> {dayjs(selectedRegistration!.birthdate).format('D MMMM YYYY')}</div>
-                        <div className='text-[18px]'><strong>Город:</strong> {selectedRegistration!.city}</div>
-                        <div className='text-[18px]'><strong>Дата регистрации:</strong> {dayjs(selectedRegistration!.registrationDate).format('D MMMM YYYY, HH:mm')}</div>
-                        <div className='text-[18px]'><strong>Статус:</strong> {selectedRegistration!.registrationStatus.name}</div>
-                        <div className='text-[18px]'><strong>Летний отдых:</strong></div>
-                        <ul>
-                          {selectedRegistration!.registrationLinkPrice.map((link, index) => {
-                            const campPrice = selectedRegistration.registrationLinkPrice.find(rp => rp.campName === link.campName);
-                            const discountCoefficient = campPrice!.discountCoefficient!;
-                            const finalPrice = Math.round(link.value * discountCoefficient);
-
-                            return (
-                              <li key={index} className='text-[18px] mb-2'>
-                                🏕️ {link.campName}: {' '}
-                                {discountCoefficient < 1 && (
-                                  <>
-                                    <span className='line-through text-gray-500 mr-1'>
-                                      {link.value}₽
-                                    </span>
-                                    <span className='text-green-600 font-semibold mr-2'>
-                                      {finalPrice}₽
-                                    </span>
-                                    <br />
-                                    <span className='text-sm text-green-600'>
-                                      {discountCoefficient === 0 ? (
-                                        "(до 2 лет бесплатно)"
-                                      ) : discountCoefficient === 0.5 ? (
-                                        "(возраст 2-6 лет - скидка 50%)"
-                                      ) : (
-                                        `(скидка ${Math.round((1 - discountCoefficient) * 100)}%)`
-                                      )}
-                                    </span>
-                                  </>
-                                )}
-                                {discountCoefficient === 1 && (
-                                  <span>{link.value}₽</span>
-                                )}
-                              </li>
-                            )
-                          })}
-                        </ul>
-
-                        <div className='text-blue-500 font-bold mt-3'>
-                          ИТОГО:{' '}
-                          {selectedRegistration.discountСoefficient < 1 ? (
-                            <>
-                              <span className='line-through text-gray-500 mr-1'>{totalSum}₽</span>
-                              <span className='text-green-600 font-semibold'>
-                                {Math.round(totalSum! * selectedRegistration.discountСoefficient)}₽
-                              </span>
-                            </>
-                          ) : (
-                            <span>{totalSum}₽</span>
-                          )}
-                        </div>
-
-                        {selectedRegistration.discountСoefficient < 1 && (
-                          <div className="mt-2 text-sm text-gray-600">
-                            {selectedRegistration.discountСoefficient === 0 ? (
-                              <span>✅ До 2 лет - бесплатно (скидка 100%)</span>
-                            ) : selectedRegistration.discountСoefficient === 0.5 ? (
-                              <span>✅ Возраст 2-6 лет - скидка 50%</span>
-                            ) : (
-                              <span>✅ Применена скидка {Math.round((1 - selectedRegistration.discountСoefficient) * 100)}%</span>
-                            )}
+                  {selectedRegistration && <AnimatePresence mode="wait">
+                    {currentStep === "info" ? (
+                      <motion.div
+                        key="info"
+                        initial={{ opacity: 0, x: 100 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -100 }}
+                        transition={{ duration: 0.3 }}
+                        className="space-y-4 text-left pb-24"
+                      >
+                        {selectedRegistration!.registrationStatusId === RegistrationStatusEnum["Ожидает оплаты"] && (
+                          <div className="bg-yellow-100 p-4 rounded-2xl">
+                            <p className="text-yellow-800 font-semibold">Ожидает оплаты</p>
+                            <Typography variant="body1" className="text-yellow-800 mt-2">
+                              Для завершения регистрации необходимо произвести оплату. Выберите удобный способ оплаты ниже.
+                            </Typography>
+                            <br />
+                            <Typography variant="body1" className="text-yellow-800 mt-2 !font-bold">
+                              Ваша заявка удалится в течении 7 дней автоматически, если оплата не поступила.
+                            </Typography>
                           </div>
                         )}
-                      </div>
 
-                      {currentPaymentCheck && <PhotoProvider>
-                        {renderPaymentCheck(currentPaymentCheck as any)}
-                      </PhotoProvider>}
-                    </motion.div>
-                  ) : (
-                    <motion.div
-                      key="payment"
-                      initial={{ opacity: 0, x: 100 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -100 }}
-                      transition={{ duration: 0.3 }}
-                      className="space-y-4 text-left pb-24"
-                    >
-                      {selectedRegistration!.registrationStatusId === RegistrationStatusEnum["Ожидает оплаты"] && (
-                        <>
+                        {selectedRegistration!.registrationStatusId === RegistrationStatusEnum["На проверке"] && (
+                          <div className="bg-blue-100 p-6 rounded-2xl shadow-md">
+                            <Typography variant="h6" className="!font-semibold !mb-3 text-gray-800">
+                              Ваша заявка на проверке
+                            </Typography>
+                            <Typography variant="body1" className="text-gray-600">
+                              Вашу заявку проверяет администратор: <span className="!font-semibold text-gray-900">{admin?.bankCardOwner}</span>.
+                            </Typography>
+                            <Typography variant="body1" className="text-gray-600 !mt-2">
+                              Проверка займет несколько дней. Спасибо за ожидание!
+                            </Typography>
+                            <Typography variant="body1" className="text-gray-600 !mt-2">
+                              Если у вас есть вопросы, свяжитесь с администратором по телефону: <br /><span className="!font-semibold text-gray-900">{admin?.phoneNumber}</span>.
+                            </Typography>
+                          </div>
+                        )}
+
+                        {selectedRegistration!.registrationStatusId === RegistrationStatusEnum.Оплачено && (
                           <div className="bg-white p-6 rounded-2xl shadow-md">
                             <Typography variant="h6" className="!font-semibold !mb-3 text-gray-800">
-                              Выберите способ оплаты
+                              Оплата успешно завершена
                             </Typography>
-                            <div className="space-y-3">
-                              <label className="flex items-center space-x-2">
-                                <input
-                                  type="radio"
-                                  name="paymentMethod"
-                                  value="cash"
-                                  checked={paymentMethod === PaymentTypeEnum.Cash}
-                                  onChange={() => setPaymentMethod(PaymentTypeEnum.Cash)}
-                                  className="form-radio h-4 w-4 text-blue-600"
+                            <Typography variant="body1" className="text-gray-600">
+                              Мы ждем вас на нашем летнем отдыхе! Все оплачено, и ваша заявка подтверждена.
+                            </Typography>
+                            <Typography variant="body1" className="text-gray-600 !mt-2">
+                              Если у вас есть вопросы, свяжитесь с администратором по телефону: <span className="!font-semibold text-gray-900">{admin?.phoneNumber}</span>.
+                            </Typography>
+                          </div>
+                        )}
 
-                                />
-                                <span className="text-gray-700">Наличные</span>
-                              </label>
-                              <label className="flex items-center space-x-2">
-                                <input
-                                  type="radio"
-                                  name="paymentMethod"
-                                  value="card"
-                                  checked={paymentMethod === PaymentTypeEnum.Card}
-                                  onChange={() => setPaymentMethod(PaymentTypeEnum.Card)}
-                                  className="form-radio h-4 w-4 text-blue-600"
-                                  disabled
-                                />
-                                <span className="text-gray-400">Карта (с 1 Июня, для гостей)</span>
-                              </label>
-                            </div>
+                        {selectedRegistration!.registrationStatusId === RegistrationStatusEnum.Отклонено && (
+                          <div className="bg-red-100 p-6 rounded-2xl shadow-md">
+                            <Typography variant="h6" className="!font-semibold !mb-3 text-red-800">
+                              Заявка отклонена
+                            </Typography>
+                            <Typography variant="body1" className="text-red-800">
+                              К сожалению, ваша заявка была отклонена администратором.
+                            </Typography>
+                            <Typography variant="body1" className="text-red-800 !mt-2">
+                              Пожалуйста, свяжитесь с администратором для уточнения деталей: <span className="!font-semibold text-red-900">{admin?.phoneNumber}</span>.
+                            </Typography>
+                          </div>
+                        )}
+
+                        <div>
+                          <div className='text-[18px]'><strong>Фамилия:</strong> {selectedRegistration!.lastName}</div>
+                          <div className='text-[18px]'><strong>Имя:</strong> {selectedRegistration!.name}</div>
+                          <div className='text-[18px]'><strong>Дата рождения:</strong> {dayjs(selectedRegistration!.birthdate).format('D MMMM YYYY')}</div>
+                          <div className='text-[18px]'><strong>Город:</strong> {selectedRegistration!.city}</div>
+                          <div className='text-[18px]'><strong>Дата регистрации:</strong> {dayjs(selectedRegistration!.registrationDate).format('D MMMM YYYY, HH:mm')}</div>
+                          <div className='text-[18px]'><strong>Статус:</strong> {selectedRegistration!.registrationStatus.name}</div>
+                          <div className='text-[18px]'><strong>Летний отдых:</strong></div>
+                          <ul>
+                            {selectedRegistration!.registrationLinkPrice.map((link, index) => {
+                              const campPrice = selectedRegistration.registrationLinkPrice.find(rp => rp.campName === link.campName);
+                              const discountCoefficient = campPrice!.discountCoefficient!;
+                              const finalPrice = Math.round(link.value * discountCoefficient);
+
+                              return (
+                                <li key={index} className='text-[18px] mb-2'>
+                                  🏕️ {link.campName}: {' '}
+                                  {discountCoefficient < 1 && (
+                                    <>
+                                      <span className='line-through text-gray-500 mr-1'>
+                                        {link.value}₽
+                                      </span>
+                                      <span className='text-green-600 font-semibold mr-2'>
+                                        {finalPrice}₽
+                                      </span>
+                                      <br />
+                                      <span className='text-sm text-green-600'>
+                                        {discountCoefficient === 0 ? (
+                                          "(до 2 лет бесплатно)"
+                                        ) : discountCoefficient === 0.5 ? (
+                                          "(возраст 2-6 лет - скидка 50%)"
+                                        ) : (
+                                          `(скидка ${Math.round((1 - discountCoefficient) * 100)}%)`
+                                        )}
+                                      </span>
+                                    </>
+                                  )}
+                                  {discountCoefficient === 1 && (
+                                    <span>{link.value}₽</span>
+                                  )}
+                                </li>
+                              )
+                            })}
+                          </ul>
+
+                          <div className='text-blue-500 font-bold mt-3'>
+                            ИТОГО:{' '}
+                            {selectedRegistration.discountСoefficient < 1 ? (
+                              <>
+                                <span className='line-through text-gray-500 mr-1'>{totalSum}₽</span>
+                                <span className='text-green-600 font-semibold'>
+                                  {Math.round(totalSum! * selectedRegistration.discountСoefficient)}₽
+                                </span>
+                              </>
+                            ) : (
+                              <span>{totalSum}₽</span>
+                            )}
                           </div>
 
-                          {paymentMethod === PaymentTypeEnum.Cash && (
-                            <div className="bg-white p-6 rounded-2xl shadow-md">
-                              <Typography variant="h6" className="!font-semibold !mb-3 text-gray-800">
-                                Способ оплаты: Наличные
-                              </Typography>
-                              <Typography variant="body1" className="text-gray-600">
-                                Передайте <span className="!font-semibold text-gray-900">{totalSum! * selectedRegistration.discountСoefficient}₽</span> администратору.
-                              </Typography>
-                              <Typography variant="body1" className="text-gray-600 !mt-2">
-                                Получатель: <span className="!font-semibold text-gray-900">{admin?.bankCardOwner}</span>
-                              </Typography>
-                              <Typography variant="body1" className="text-gray-600 !mt-2">
-                                Контактный телефон: <span className="!font-semibold text-gray-900">{admin?.phoneNumber}</span>
-                              </Typography>
+                          {selectedRegistration.discountСoefficient < 1 && (
+                            <div className="mt-2 text-sm text-gray-600">
+                              {selectedRegistration.discountСoefficient === 0 ? (
+                                <span>✅ До 2 лет - бесплатно (скидка 100%)</span>
+                              ) : selectedRegistration.discountСoefficient === 0.5 ? (
+                                <span>✅ Возраст 2-6 лет - скидка 50%</span>
+                              ) : (
+                                <span>✅ Применена скидка {Math.round((1 - selectedRegistration.discountСoefficient) * 100)}%</span>
+                              )}
                             </div>
                           )}
+                        </div>
 
-                          {paymentMethod === PaymentTypeEnum.Card && (
+                        {currentPaymentCheck && <PhotoProvider>
+                          {renderPaymentCheck(currentPaymentCheck as any)}
+                        </PhotoProvider>}
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        key="payment"
+                        initial={{ opacity: 0, x: 100 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -100 }}
+                        transition={{ duration: 0.3 }}
+                        className="space-y-4 text-left pb-24"
+                      >
+                        {selectedRegistration!.registrationStatusId === RegistrationStatusEnum["Ожидает оплаты"] && (
+                          <>
                             <div className="bg-white p-6 rounded-2xl shadow-md">
                               <Typography variant="h6" className="!font-semibold !mb-3 text-gray-800">
-                                Способ оплаты: Карта
+                                Выберите способ оплаты
                               </Typography>
-                              <Typography variant="body1" className="text-gray-600">
-                                Переведите <span className="!font-semibold text-gray-900">{totalSum! * selectedRegistration.discountСoefficient}₽</span> на карту.
-                              </Typography>
-                              <Typography variant="body1" className="text-gray-600 !mt-2">
-                                Номер карты: <span className="!font-semibold text-gray-900">{admin?.bankCardNumber}</span>
-                              </Typography>
-                              <Typography variant="body1" className="text-gray-600 !mt-2">
-                                Получатель: <span className="!font-semibold text-gray-900">{admin?.bankCardOwner}</span>
-                              </Typography>
-                              <Typography variant="body1" className="text-gray-600 !mt-2">
-                                Банк: <span className="!font-semibold text-gray-900">{admin?.bankName}</span>
-                              </Typography>
-
-                              <div className="mt-4">
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                  Прикрепите скриншот оплаты:
-                                </label>
-                                <div>
+                              <div className="space-y-3">
+                                <label className="flex items-center space-x-2">
                                   <input
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={handleFileUpload}
-                                    className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                                    type="radio"
+                                    name="paymentMethod"
+                                    value="cash"
+                                    checked={paymentMethod === PaymentTypeEnum.Cash}
+                                    onChange={() => setPaymentMethod(PaymentTypeEnum.Cash)}
+                                    className="form-radio h-4 w-4 text-blue-600"
+
                                   />
-                                  {errorMessage && (
-                                    <div className="text-red-500 mt-2">
-                                      {errorMessage}
-                                    </div>
-                                  )}
-                                </div>
+                                  <span className="text-gray-700">Наличные</span>
+                                </label>
+                                <label className="flex items-center space-x-2">
+                                  <input
+                                    type="radio"
+                                    name="paymentMethod"
+                                    value="card"
+                                    checked={paymentMethod === PaymentTypeEnum.Card}
+                                    onChange={() => setPaymentMethod(PaymentTypeEnum.Card)}
+                                    className="form-radio h-4 w-4 text-blue-600"
+                                    disabled
+                                  />
+                                  <span className="text-gray-400">Карта (с 1 Июня, для гостей)</span>
+                                </label>
                               </div>
                             </div>
+
+                            {paymentMethod === PaymentTypeEnum.Cash && (
+                              <div className="bg-white p-6 rounded-2xl shadow-md">
+                                <Typography variant="h6" className="!font-semibold !mb-3 text-gray-800">
+                                  Способ оплаты: Наличные
+                                </Typography>
+                                <Typography variant="body1" className="text-gray-600">
+                                  Передайте <span className="!font-semibold text-gray-900">{totalSum! * selectedRegistration.discountСoefficient}₽</span> администратору.
+                                </Typography>
+                                <Typography variant="body1" className="text-gray-600 !mt-2">
+                                  Получатель: <span className="!font-semibold text-gray-900">{admin?.bankCardOwner}</span>
+                                </Typography>
+                                <Typography variant="body1" className="text-gray-600 !mt-2">
+                                  Контактный телефон: <span className="!font-semibold text-gray-900">{admin?.phoneNumber}</span>
+                                </Typography>
+                              </div>
+                            )}
+
+                            {paymentMethod === PaymentTypeEnum.Card && (
+                              <div className="bg-white p-6 rounded-2xl shadow-md">
+                                <Typography variant="h6" className="!font-semibold !mb-3 text-gray-800">
+                                  Способ оплаты: Карта
+                                </Typography>
+                                <Typography variant="body1" className="text-gray-600">
+                                  Переведите <span className="!font-semibold text-gray-900">{totalSum! * selectedRegistration.discountСoefficient}₽</span> на карту.
+                                </Typography>
+                                <Typography variant="body1" className="text-gray-600 !mt-2">
+                                  Номер карты: <span className="!font-semibold text-gray-900">{admin?.bankCardNumber}</span>
+                                </Typography>
+                                <Typography variant="body1" className="text-gray-600 !mt-2">
+                                  Получатель: <span className="!font-semibold text-gray-900">{admin?.bankCardOwner}</span>
+                                </Typography>
+                                <Typography variant="body1" className="text-gray-600 !mt-2">
+                                  Банк: <span className="!font-semibold text-gray-900">{admin?.bankName}</span>
+                                </Typography>
+
+                                <div className="mt-4">
+                                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    Прикрепите скриншот оплаты:
+                                  </label>
+                                  <div>
+                                    <input
+                                      type="file"
+                                      accept="image/*"
+                                      onChange={handleFileUpload}
+                                      className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                                    />
+                                    {errorMessage && (
+                                      <div className="text-red-500 mt-2">
+                                        {errorMessage}
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                          </>
+                        )}
+
+                        <div className="bg-gray-100 p-6 rounded-2xl shadow-sm">
+                          <Typography variant="h6" className="!font-semibold !mb-2 !text-blue-500">
+                            Итоговая сумма
+                          </Typography>
+                          <Typography variant="body1" className="!text-2xl !font-bold !text-blue-500">
+                            {totalSum! * selectedRegistration.discountСoefficient}₽
+                          </Typography>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>}
+
+                  <div className="fixed bottom-0 left-0 right-0 bg-white p-6 border-t">
+                    <div className="flex gap-4">
+                      {currentStep === "info" ? (
+                        <>
+                          {selectedRegistration!.registrationStatusId === RegistrationStatusEnum["Ожидает оплаты"] && (
+                            <Button
+                              onClick={() => setCurrentStep("payment")}
+                              className="flex-1 bg-blue-500 text-white"
+                            >
+                              Оплата
+                            </Button>
+                          )}
+                          <Button
+                            onClick={() => setIsDrawerOpen(false)}
+                            variant="outline"
+                            className="flex-1"
+                          >
+                            Закрыть
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          <Button
+                            onClick={() => setCurrentStep("info")}
+                            variant="outline"
+                            className="flex-1"
+                          >
+                            Назад
+                          </Button>
+                          {selectedRegistration!.registrationStatusId === RegistrationStatusEnum["Ожидает оплаты"] && paymentMethod === PaymentTypeEnum.Card && (
+                            <Button
+                              onClick={async () => {
+                                console.log("Отправлено на проверку");
+                                setIsDrawerOpen(false);
+                                await changeRequestStatus();
+                                setUploadedFile(null);
+                              }}
+                              variant={"outline"}
+                              className="flex-1 bg-blue-500 text-white"
+                              disabled={!uploadedFile}
+                            >
+                              Отправить на проверку
+                            </Button>
                           )}
                         </>
                       )}
-
-                      <div className="bg-gray-100 p-6 rounded-2xl shadow-sm">
-                        <Typography variant="h6" className="!font-semibold !mb-2 !text-blue-500">
-                          Итоговая сумма
-                        </Typography>
-                        <Typography variant="body1" className="!text-2xl !font-bold !text-blue-500">
-                          {totalSum! * selectedRegistration.discountСoefficient}₽
-                        </Typography>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>}
-
-                <div className="fixed bottom-0 left-0 right-0 bg-white p-6 border-t">
-                  <div className="flex gap-4">
-                    {currentStep === "info" ? (
-                      <>
-                        {selectedRegistration!.registrationStatusId === RegistrationStatusEnum["Ожидает оплаты"] && (
-                          <Button
-                            onClick={() => setCurrentStep("payment")}
-                            className="flex-1 bg-blue-500 text-white"
-                          >
-                            Оплата
-                          </Button>
-                        )}
-                        <Button
-                          onClick={() => setIsDrawerOpen(false)}
-                          variant="outline"
-                          className="flex-1"
-                        >
-                          Закрыть
-                        </Button>
-                      </>
-                    ) : (
-                      <>
-                        <Button
-                          onClick={() => setCurrentStep("info")}
-                          variant="outline"
-                          className="flex-1"
-                        >
-                          Назад
-                        </Button>
-                        {selectedRegistration!.registrationStatusId === RegistrationStatusEnum["Ожидает оплаты"] && paymentMethod === PaymentTypeEnum.Card && (
-                          <Button
-                            onClick={async () => {
-                              console.log("Отправлено на проверку");
-                              setIsDrawerOpen(false);
-                              await changeRequestStatus();
-                              setUploadedFile(null);
-                            }}
-                            variant={"outline"}
-                            className="flex-1 bg-blue-500 text-white"
-                            disabled={!uploadedFile}
-                          >
-                            Отправить на проверку
-                          </Button>
-                        )}
-                      </>
-                    )}
+                    </div>
                   </div>
-                </div>
-              </motion.div>
-            </>
-          )}
-        </AnimatePresence>
-      </motion.div>
+                </motion.div>
+              </>
+            )}
+          </AnimatePresence>
+        </motion.div>
+      ) : (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          className="flex flex-col items-center justify-center py-12"
+        >
+          <div className="bg-blue-50 p-8 rounded-2xl shadow-sm text-center max-w-md">
+            <div className="flex justify-center mb-4">
+              <FaRegSadTear className="text-5xl text-blue-400" />
+            </div>
+            <Typography variant="h5" className="!font-bold !mb-3 !text-blue-600">
+              У вас пока нет регистраций
+            </Typography>
+            <Typography variant="body1" className="!text-gray-600 !mb-4">
+              Вы ещё не зарегистрировались ни на один из наших летних отдыхов.
+            </Typography>
+            <RegistrationForm />
+          </div>
+        </motion.div>)}
       <Backdrop
         sx={{
           color: '#fff',
