@@ -164,7 +164,7 @@ export const RegistrationForm = () => {
     switch (camp.name) {
       case "Детский":
         if (ageAtCampStart < 6 || ageAtCampStart > 12) {
-          errorMessage = `Недопустимый возраст для детского лагеря (только от 6 до 12 лет)`;
+          errorMessage = `Недопустимый возраст для детского отдыха (только от 6 до 12 лет)`;
           isValid = false;
         } else if (ageAtCampStart === 6) {
           errorMessage = "Для возраста 6 лет требуется сопровождение бабушки или тети";
@@ -172,12 +172,12 @@ export const RegistrationForm = () => {
         break;
       case "Подростковый":
         if (ageAtCampStart < 12 || ageAtCampStart > 16) {
-          errorMessage = `Недопустимый возраст для подросткового лагеря (только от 12 до 16 лет)`;
+          errorMessage = `Недопустимый возраст для подросткового отдыха (только от 12 до 16 лет)`;
           isValid = false;
         } else if (ageAtCampStart === 12
           && !selectedCamps.some((c) => c.name === "Детский")
           && !existedRegistrationData.some(r => r === CampEnum.Детский)) {
-          errorMessage = "В 12 лет можно ехать в подростковый лагерь только при регистрации в детский";
+          errorMessage = "В 12 лет можно ехать в подростковый отдых только при регистрации в детский";
           isValid = false;
         }
         break;
@@ -186,12 +186,12 @@ export const RegistrationForm = () => {
           && !selectedCamps.some((c) => c.name === "Подростковый")
           && !existedRegistrationData.some(r => r === CampEnum.Подростковый)
         ) {
-          errorMessage = "В 15 лет можно ехать в молодежный лагерь только при регистрации в подростковый";
+          errorMessage = "В 15 лет можно ехать в молодежный отдых только при регистрации в подростковый";
           isValid = false;
         }
   
         if (ageAtCampStart < 15) {
-          errorMessage = `Недопустимый возраст для молодежного лагеря (только от 15 лет)`;
+          errorMessage = `Недопустимый возраст для молодежного отдыха (только от 15 лет)`;
           isValid = false;
         }
         break;
@@ -314,10 +314,10 @@ export const RegistrationForm = () => {
       });
 
       const body: ICreateRegistration = {
-        name: formValues.firstName,
-        lastName: formValues.lastName,
+        name: formValues.firstName?.trim(),
+        lastName: formValues.lastName?.trim(),
         birthdate: formValues.dateOfBirth,
-        city: formValues.city,
+        city: formValues.city?.trim(),
         registrationDate: new Date(),
         priceIds: priceList,
         userId: user ? user.id : 0,
@@ -328,7 +328,7 @@ export const RegistrationForm = () => {
       return response.data;
     } catch (error: any) {
       if (error.response?.status === 400) {
-        setSnackbarMessage('Места на выбранные виды отдыха уже закончились, выберите лагеря заново');
+        setSnackbarMessage('Места на выбранные виды отдыха уже закончились, выберите отдых заново');
         setSnackbarOpen(true);
         setSelectedCamps([]);
         setStep(2);

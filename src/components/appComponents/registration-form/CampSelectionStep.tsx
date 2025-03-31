@@ -116,7 +116,7 @@ export const CampSelectionStep = ({
                 )}
               </Typography>
               <Typography variant="body2" className="text-xs text-gray-500 mt-1">
-                Возраст на начало лагеря: {ageAtCampStart} лет
+                Возраст на начало отдыха: {ageAtCampStart} лет
               </Typography>
             </div>
           </div>

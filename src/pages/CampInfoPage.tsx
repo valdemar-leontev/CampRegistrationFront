@@ -46,7 +46,7 @@ export const CampInfoPage: FC = () => {
       dayText: '2 дня',
       days: 2,
       prices: { April: 1000, May: 1500, June: 2000, July: 2500 },
-      ageRange: "от 18 лет",
+      ageRange: "для всех возрастов",
       icon: <GiMuscleUp className="inline mr-1" size={32} />
     },
     {
@@ -102,7 +102,7 @@ export const CampInfoPage: FC = () => {
   return (
     <div className="flex flex-col items-center min-w-full px-4">
       <h1 className="text-2xl font-bold text-center my-4 text-gray-800">
-        Основная информация о лагерях
+        Основная информация об отдыхе
       </h1>
 
       <div className='w-full h-[40%] !mt- max-w-md mx-auto'>
@@ -128,7 +128,7 @@ export const CampInfoPage: FC = () => {
 
                 <div className="text-sm mb-3 text-left">
                   <div className="flex items-center">
-                    <FaCalendarAlt className="mr-2"  />
+                    <FaCalendarAlt className="mr-2" />
                     <span>{camp.startDate} - {camp.endDate}</span>
                   </div>
                   <div className="ml-6">({camp.dayText})</div>
