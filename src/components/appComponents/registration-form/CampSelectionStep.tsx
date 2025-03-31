@@ -83,14 +83,15 @@ export const CampSelectionStep = ({
             <div className="flex-1">
               <Typography
                 variant="h6"
-                className={`!text-[16px] font-semibold flex items-center ${isDisabled ? 'text-gray-500' : 'text-gray-900'}`}
+                className={`!text-[16px] font-semibold flex items-start flex-col ${isDisabled ? 'text-gray-500' : 'text-gray-900'}`}
               >
                 {camp.name}
+          
                 {isDisabled && !isAlreadyRegistered && (
-                  <span className="ml-2 text-sm text-red-500 !text-[14px]">(Места закончились)</span>
+                  <p className="text-sm text-red-500 !text-[14px]">(Места закончились)</p>
                 )}
                 {isAlreadyRegistered && (
-                  <span className="ml-2 text-sm text-green-600 !text-[14px]">(Зарегистрирован)</span>
+                  <p className="text-sm text-green-600 !text-[14px]">(Зарегистрирован)</p>
                 )}
               </Typography>
               <Typography

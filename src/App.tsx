@@ -21,7 +21,7 @@ const App = () => {
     >
       {activeTab === "home" && (
         <div className='h-full justify-center flex items-center'>
-          <RegistrationPage username={`${user ? user.userName : 'Друг'}`} />
+          <RegistrationPage firstName={`${user ? user.firstName : 'Друг'}`} />
         </div>
       )}
 

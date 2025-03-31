@@ -3,10 +3,10 @@ import { motion } from "framer-motion";
 import { FC } from 'react';
 
 interface IRegistrationPageProps {
-  username: string;
+  firstName: string;
 }
 
-export const RegistrationPage: FC<IRegistrationPageProps> = ({ username }) => {
+export const RegistrationPage: FC<IRegistrationPageProps> = ({ firstName }) => {
   return (
     <motion.div
       className="!min-h-[70vh] relative flex items-center justify-center"
@@ -39,7 +39,7 @@ export const RegistrationPage: FC<IRegistrationPageProps> = ({ username }) => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.6 }}
         >
-          Привет, {username}!
+          Привет, {firstName ? firstName : 'друг'}!
         </motion.div>
         <motion.h1
           className="text-4xl font-extrabold text-gray-800 mb-6"

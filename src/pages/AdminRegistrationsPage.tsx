@@ -376,7 +376,7 @@ export const AdminRegistrationsPage = () => {
                   {dayjs(registration.registrationDate).format('D MMMM YYYY')}
                 </TableCell>
                 <TableCell className="py-2 px-4 text-nowrap">
-                  {registration.registrationLinkPrice.reduce((sum, link) => sum + link.discountCoefficient, 0) !== 0 ? (
+                  {registration.registrationLinkPrice.some(p => p.discountCoefficient !== 1) ? (
                     <div className="flex flex-col">
                       <div className="text-green-600 font-semibold">
                         {registration.totalSum} ₽

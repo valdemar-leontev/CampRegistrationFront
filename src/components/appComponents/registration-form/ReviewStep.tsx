@@ -46,7 +46,7 @@ export const ReviewStep = ({ form, selectedCamps, getCurrentPrice }: ReviewStepP
         <Typography variant="body1"><strong>Церковь:</strong> {ChurchEnum[watch("church")]}</Typography>
       </div>
 
-      <Typography variant="h5" className="text-xl font-semibold text-gray-900 !mt-6 !mb-1">Выбранные отдыхи</Typography>
+      <Typography variant="h5" className="text-xl font-semibold text-gray-900 !mt-6 !mb-1">Выбранные виды отдыха</Typography>
       <div className="space-y-1 text-gray-700">
         {selectedCamps.map((camp) => {
           const ageAtCampStart = getAgeAtCampStart(camp.startDate);

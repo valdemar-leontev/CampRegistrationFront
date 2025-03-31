@@ -297,7 +297,7 @@ export const MyRegistrationPage = () => {
                     {dayjs(registration.registrationDate).format('D MMMM YYYY')}
                   </TableCell>
                   <TableCell className="py-2 px-4 text-nowrap">
-                    {registration.registrationLinkPrice.reduce((sum, link) => sum + link.discountCoefficient, 0) !== 0 ? (
+                    {registration.registrationLinkPrice.some(p => p.discountCoefficient !== 1) ? (
                       <div className="flex flex-col">
                         <div className="text-green-600 font-semibold">
                           {registration.totalSum} ₽
@@ -594,7 +594,7 @@ export const MyRegistrationPage = () => {
                                   Передайте <span className="!font-semibold text-gray-900">{totalSum!} ₽</span> администратору.
                                 </Typography>
                                 <Typography variant="body1" className="text-gray-600 !mt-2">
-                                  Получатель: <span className="!font-semibold text-gray-900">{admin?.bankCardOwner}</span>
+                                  Получатель: <span className="!font-semibold text-gray-900">{admin?.user.firstName} {admin?.user.lastName}</span>
                                 </Typography>
                                 <Typography variant="body1" className="text-gray-600 !mt-2">
                                   Контактный телефон: <span className="!font-semibold text-gray-900">{admin?.phoneNumber}</span>
@@ -712,7 +712,7 @@ export const MyRegistrationPage = () => {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
           className="flex flex-col items-center justify-center py-12"
         >
           <div className="bg-blue-50 p-8 rounded-2xl shadow-sm text-center max-w-md">

@@ -21,6 +21,7 @@ export const CampInfoPage: FC = () => {
       code: "D",
       startDate: "30 Июнь (ПН)",
       endDate: "05 Июль (СБ)",
+      dayText: '6 дней',
       days: 6,
       prices: { April: 500, May: 800, June: 1000, July: 1200 },
       ageRange: "7-12 лет (6 лет с сопровождением)",
@@ -31,9 +32,10 @@ export const CampInfoPage: FC = () => {
       code: "P",
       startDate: "07 Июль (ПН)",
       endDate: "12 Июль (СБ)",
+      dayText: '6 дней',
       days: 6,
       prices: { April: 500, May: 800, June: 1000, July: 1200 },
-      ageRange: "12-16 лет (12 лет только с регистрацией в детский)",
+      ageRange: "13-16 лет (12 лет только с регистрацией в детский)",
       icon: <BiCool className="inline mr-1" size={32} />
     },
     {
@@ -41,6 +43,7 @@ export const CampInfoPage: FC = () => {
       code: "M",
       startDate: "14 Июль (ПН)",
       endDate: "15 Июль (ВТ)",
+      dayText: '2 дня',
       days: 2,
       prices: { April: 1000, May: 1500, June: 2000, July: 2500 },
       ageRange: "от 18 лет",
@@ -51,6 +54,7 @@ export const CampInfoPage: FC = () => {
       code: "O",
       startDate: "17 Июль (ЧТ)",
       endDate: "20 Июль (ВС)",
+      dayText: '4 дня',
       days: 4,
       prices: { April: 500, May: 800, June: 1000, July: 1200 },
       ageRange: "для всех возрастов",
@@ -61,6 +65,7 @@ export const CampInfoPage: FC = () => {
       code: "Y",
       startDate: "21 Июль (ПН)",
       endDate: "26 Июль (СБ)",
+      dayText: '6 дней',
       days: 6,
       prices: { April: 500, May: 800, June: 1000, July: 1200 },
       ageRange: "от 16 лет (15 лет только с регистрацией в подростковый)",
@@ -108,7 +113,7 @@ export const CampInfoPage: FC = () => {
           className="h-full"
         >
           {camps.map((camp, index) => (
-            <SwiperSlide key={index}>
+            <SwiperSlide key={index} className='rounded-2xl'>
               <motion.div
                 className="h-full p-4 flex flex-col rounded-2xl shadow-lg"
                 style={{
@@ -126,7 +131,7 @@ export const CampInfoPage: FC = () => {
                     <FaCalendarAlt className="mr-2"  />
                     <span>{camp.startDate} - {camp.endDate}</span>
                   </div>
-                  <div className="ml-6">({camp.days} дней)</div>
+                  <div className="ml-6">({camp.dayText})</div>
                 </div>
 
                 <div className="text-sm bg-white/20 p-2 rounded-xl mb-3">
