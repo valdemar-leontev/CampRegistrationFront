@@ -244,7 +244,7 @@ export const MyRegistrationPage = () => {
         Мои регистрации
       </Typography>
 
-      {registrationList.length < 0 ? (
+      {registrationList.length > 0 ? (
         <motion.div
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}

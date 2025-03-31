@@ -50,7 +50,7 @@ export const PaymentStep = ({
   }, [selectedChurch, setPaymentMethod]);
 
   return (
-    admin && <div className="text-left bg-white p-6 rounded-2xl shadow-lg border border-gray-200 overflow-auto">
+    admin && admin.user && <div className="text-left bg-white p-6 rounded-2xl shadow-lg border border-gray-200 overflow-auto">
       <Typography variant="h5" className="text-xl font-semibold text-gray-900 mb-3">Оплата</Typography>
       <Typography variant="body1" className="mb-4">
         Ваша заявка оформлена! Осталось только оплатить.
