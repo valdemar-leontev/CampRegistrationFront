@@ -55,7 +55,6 @@ interface IRegistration {
   registrationStatus: {
     name: string;
   };
-  discountСoefficient: number;
 }
 
 const renderPaymentCheck = (paymentCheck: string) => {
@@ -535,29 +534,8 @@ export const MyRegistrationPage = () => {
 
                           <div className='text-blue-500 font-bold mt-3'>
                             ИТОГО:{' '}
-                            {selectedRegistration.discountСoefficient < 1 ? (
-                              <>
-                                <span className='line-through text-gray-500 mr-1'>{totalSum}₽</span>
-                                <span className='text-green-600 font-semibold'>
-                                  {Math.round(totalSum! * selectedRegistration.discountСoefficient)}₽
-                                </span>
-                              </>
-                            ) : (
-                              <span>{totalSum}₽</span>
-                            )}
+                            <span>{totalSum}₽</span>
                           </div>
-
-                          {selectedRegistration.discountСoefficient < 1 && (
-                            <div className="mt-2 text-sm text-gray-600">
-                              {selectedRegistration.discountСoefficient === 0 ? (
-                                <span>✅ До 2 лет - бесплатно (скидка 100%)</span>
-                              ) : selectedRegistration.discountСoefficient === 0.5 ? (
-                                <span>✅ Возраст 2-6 лет - скидка 50%</span>
-                              ) : (
-                                <span>✅ Применена скидка {Math.round((1 - selectedRegistration.discountСoefficient) * 100)}%</span>
-                              )}
-                            </div>
-                          )}
                         </div>
 
                         {currentPaymentCheck && <PhotoProvider>
@@ -613,7 +591,7 @@ export const MyRegistrationPage = () => {
                                   Способ оплаты: Наличные
                                 </Typography>
                                 <Typography variant="body1" className="text-gray-600">
-                                  Передайте <span className="!font-semibold text-gray-900">{totalSum! * selectedRegistration.discountСoefficient}₽</span> администратору.
+                                  Передайте <span className="!font-semibold text-gray-900">{totalSum!} ₽</span> администратору.
                                 </Typography>
                                 <Typography variant="body1" className="text-gray-600 !mt-2">
                                   Получатель: <span className="!font-semibold text-gray-900">{admin?.bankCardOwner}</span>
@@ -630,7 +608,7 @@ export const MyRegistrationPage = () => {
                                   Способ оплаты: Карта
                                 </Typography>
                                 <Typography variant="body1" className="text-gray-600">
-                                  Переведите <span className="!font-semibold text-gray-900">{totalSum! * selectedRegistration.discountСoefficient}₽</span> на карту.
+                                  Переведите <span className="!font-semibold text-gray-900">{totalSum!}₽</span> на карту.
                                 </Typography>
                                 <Typography variant="body1" className="text-gray-600 !mt-2">
                                   Номер карты: <span className="!font-semibold text-gray-900">{admin?.bankCardNumber}</span>
@@ -670,7 +648,7 @@ export const MyRegistrationPage = () => {
                             Итоговая сумма
                           </Typography>
                           <Typography variant="body1" className="!text-2xl !font-bold !text-blue-500">
-                            {totalSum! * selectedRegistration.discountСoefficient}₽
+                            {totalSum!}₽
                           </Typography>
                         </div>
                       </motion.div>
