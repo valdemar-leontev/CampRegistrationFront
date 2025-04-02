@@ -126,7 +126,7 @@ export const ProfileBar = () => {
         )}
         <div className='flex flex-col text-left'>
           <h1 className='text-[18px] font-bold max-w-[220px] text-nowrap text-ellipsis overflow-hidden'>
-            {user ? `${user.lastName} ${user.firstName}` : 'Test user'}
+            {user ? `${user.firstName ? user.firstName : user.userName}` : 'Неизвестный'}
           </h1>
           <h1 className='text-[#c448a4] font-bold text-[16px]'>
             {user?.admins?.length > 0 ? 'Администратор' : 'Пользователь'}

@@ -239,7 +239,7 @@ export const AdminRegistrationsPage = () => {
   return (
     registrationList && statusList && churchList && campList && <div className="relative">
       <div className="flex flex-col gap-4 relative">
-        <div className='flex items-center justify-between'>
+        <div className='flex items-center justify-between mb-1'>
           <Typography className="!font-bold !text-xl">
             Управление заявками
           </Typography>
@@ -249,7 +249,7 @@ export const AdminRegistrationsPage = () => {
               <AccordionTrigger className="bg-blue-500 rounded-full p-3 text-white hover:bg-blue-600 transition-colors">
                 <CiFilter className="w-5 h-5" />
               </AccordionTrigger>
-              <AccordionContent className="!py-0 !px-0 absolute left-0 z-[1000000]">
+              <AccordionContent className="!py-0 !px-0 absolute left-0 z-[1000]">
                 <AnimatePresence mode='sync'>
                   <motion.div
                     className="flex gap-4 mb-6 flex-col bg-white p-4 rounded-lg shadow-md"
@@ -355,7 +355,7 @@ export const AdminRegistrationsPage = () => {
               >
                 <TableCell className="text-center flex justify-center flex-col">
                   <div
-                    className={`flex flex-col items-center gap-1 p-2 rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-200 ${registration.registrationStatusId === RegistrationStatusEnum["Ожидает оплаты"]
+                    className={`flex flex-col items-center gap-1 p-1 rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-200 ${registration.registrationStatusId === RegistrationStatusEnum["Ожидает оплаты"]
                       ? "bg-gradient-to-br from-yellow-100 to-yellow-200"
                       : registration.registrationStatusId === RegistrationStatusEnum["На проверке"]
                         ? "bg-gradient-to-br from-purple-100 to-purple-200"
@@ -409,7 +409,7 @@ export const AdminRegistrationsPage = () => {
         </Table>
 
         {totalPages > 1 && (
-          <div className="mt-4 flex justify-center">
+          <div className="mt-2 flex justify-center">
             <Pagination>
               <PaginationContent>
                 <PaginationItem>
