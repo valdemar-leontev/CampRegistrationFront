@@ -321,6 +321,7 @@ export const RegistrationForm = () => {
         registrationDate: new Date(),
         priceIds: priceList,
         userId: user ? user.id : 0,
+        phone: formValues.phone!,
         churchId: formValues.church
       };
 

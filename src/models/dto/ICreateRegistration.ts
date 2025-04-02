@@ -7,4 +7,5 @@ export interface ICreateRegistration {
     priceIds: number[]
     userId: number,
     churchId: number,
+    phone: string;
 }
