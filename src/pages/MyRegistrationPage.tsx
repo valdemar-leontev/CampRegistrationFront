@@ -238,8 +238,8 @@ export const MyRegistrationPage = () => {
   };
 
   return (
-    registrationList && <div className="py-6 relative">
-      <Typography className="!font-bold !text-4xl !mb-8">
+    registrationList && <div className="relative">
+      <Typography className="!font-bold !text-2xl !mb-2">
         Мои регистрации
       </Typography>
 

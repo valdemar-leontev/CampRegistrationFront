@@ -23,6 +23,9 @@ import { IChurch } from '@/models/IChurch';
 import { useUserStore } from '@/stores/UserStore';
 import { AccordionItem, AccordionTrigger, AccordionContent, Accordion } from '@radix-ui/react-accordion';
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationLink, PaginationNext, PaginationPrevious, PaginationItem } from '@/components/ui/pagination';
+import { CiFilter } from "react-icons/ci";
+
+
 
 interface IAdminRegistration {
   id: number;
@@ -234,90 +237,94 @@ export const AdminRegistrationsPage = () => {
   }, [user?.id]);
 
   return (
-    registrationList && statusList && churchList && campList && <div className="py-6 relative">
-      <Typography className="!font-bold !text-2xl !mb-2">
-        Управление заявками
-      </Typography>
+    registrationList && statusList && churchList && campList && <div className="relative">
+      <div className="flex flex-col gap-4 relative">
+        <div className='flex items-center justify-between'>
+          <Typography className="!font-bold !text-xl">
+            Управление заявками
+          </Typography>
 
-      <Accordion type="single" collapsible>
-        <AccordionItem value={'Фильтры'}>
-          <AccordionTrigger className='p-3 border mb-3 border-blue-100 rounded-2xl'>Фильтры</AccordionTrigger>
-          <AccordionContent>
-            <AnimatePresence mode='sync'>
-
-              <motion.div
-                className="flex gap-4 mb-6 flex-col"
-                initial={{ opacity: 0, height: 0, y: -10 }}
-                animate={{ opacity: 1, height: "auto", y: 0 }}
-                exit={{ opacity: 0, height: 0, y: -10 }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}>
-
-                <div className="flex gap-4 mb-6 flex-wrap">
-                  <TextField
-                    label="Поиск"
-                    variant="outlined"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full md:w-auto"
-                  />
-                  <FormControl variant="outlined" className="w-full md:w-auto">
-                    <InputLabel>Статус</InputLabel>
-                    <Select
-                      label={'Статус'}
-                      multiple
-                      value={statusFilter}
-                      onChange={(e) => setStatusFilter(e.target.value as number[])}
-                      renderValue={(selected) => (selected as number[]).map((s) => RegistrationStatusEnum[s]).join(', ')}
-                    >
-                      {statusList!.map(({ id, name }) => (
-                        <MenuItem key={id} value={id}>
-                          <Checkbox checked={statusFilter.includes(id)} />
-                          <ListItemText primary={name} />
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                  <FormControl variant="outlined" className="w-full md:w-auto">
-                    <InputLabel>Церковь</InputLabel>
-                    <Select
-                      label={'Церковь'}
-                      multiple
-                      value={churchFilter}
-                      onChange={(e) => setChurchFilter(e.target.value as string[])}
-                      renderValue={(selected) => selected.join(', ')}
-                    >
-                      {churchList.map(({ id, name }) => (
-                        <MenuItem key={id} value={name}>
-                          <Checkbox checked={churchFilter.includes(name)} />
-                          <ListItemText primary={name} />
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                  <FormControl variant="outlined" className="w-full md:w-auto">
-                    <InputLabel>Летний отдых</InputLabel>
-                    <Select
-                      label={'Летний отдых'}
-                      multiple
-                      value={campFilter}
-                      onChange={(e) => setCampFilter(e.target.value as string[])}
-                      renderValue={(selected) => selected.join(', ')}
-                    >
-                      {campList.map(({ id, name }) => (
-                        <MenuItem key={id} value={name}>
-                          <Checkbox checked={campFilter.includes(name)} />
-                          <ListItemText primary={name} />
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </div>
-              </motion.div>
-            </AnimatePresence>
-
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
+          <Accordion type="single" collapsible>
+            <AccordionItem value="Фильтры">
+              <AccordionTrigger className="bg-blue-500 rounded-full p-3 text-white hover:bg-blue-600 transition-colors">
+                <CiFilter className="w-5 h-5" />
+              </AccordionTrigger>
+              <AccordionContent className="!py-0 !px-0 absolute left-0 z-[1000000]">
+                <AnimatePresence mode='sync'>
+                  <motion.div
+                    className="flex gap-4 mb-6 flex-col bg-white p-4 rounded-lg shadow-md"
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                  >
+                    <div className="flex gap-4 flex-wrap">
+                      <TextField
+                        label="Поиск"
+                        variant="outlined"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full md:w-auto"
+                      />
+                      <FormControl variant="outlined" className="w-full md:w-auto">
+                        <InputLabel>Статус</InputLabel>
+                        <Select
+                          label={'Статус'}
+                          multiple
+                          value={statusFilter}
+                          onChange={(e) => setStatusFilter(e.target.value as number[])}
+                          renderValue={(selected) => (selected as number[]).map((s) => RegistrationStatusEnum[s]).join(', ')}
+                        >
+                          {statusList!.map(({ id, name }) => (
+                            <MenuItem key={id} value={id}>
+                              <Checkbox checked={statusFilter.includes(id)} />
+                              <ListItemText primary={name} />
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                      <FormControl variant="outlined" className="w-full md:w-auto">
+                        <InputLabel>Церковь</InputLabel>
+                        <Select
+                          label={'Церковь'}
+                          multiple
+                          value={churchFilter}
+                          onChange={(e) => setChurchFilter(e.target.value as string[])}
+                          renderValue={(selected) => selected.join(', ')}
+                        >
+                          {churchList.map(({ id, name }) => (
+                            <MenuItem key={id} value={name}>
+                              <Checkbox checked={churchFilter.includes(name)} />
+                              <ListItemText primary={name} />
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                      <FormControl variant="outlined" className="w-full md:w-auto">
+                        <InputLabel>Летний отдых</InputLabel>
+                        <Select
+                          label={'Летний отдых'}
+                          multiple
+                          value={campFilter}
+                          onChange={(e) => setCampFilter(e.target.value as string[])}
+                          renderValue={(selected) => selected.join(', ')}
+                        >
+                          {campList.map(({ id, name }) => (
+                            <MenuItem key={id} value={name}>
+                              <Checkbox checked={campFilter.includes(name)} />
+                              <ListItemText primary={name} />
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </div>
+                  </motion.div>
+                </AnimatePresence>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </div>
+      </div>
 
       <motion.div
         initial={{ y: 100, opacity: 0 }}
