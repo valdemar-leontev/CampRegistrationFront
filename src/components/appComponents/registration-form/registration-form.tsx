@@ -174,11 +174,6 @@ export const RegistrationForm = () => {
         if (ageAtCampStart < 12 || ageAtCampStart > 16) {
           errorMessage = `Недопустимый возраст для подросткового отдыха (только от 12 до 16 лет)`;
           isValid = false;
-        } else if (ageAtCampStart === 12
-          && !selectedCamps.some((c) => c.name === "Детский")
-          && !existedRegistrationData.some(r => r === CampEnum.Детский)) {
-          errorMessage = "В 12 лет можно ехать в подростковый отдых только при регистрации в детский";
-          isValid = false;
         }
         break;
       case "Молодежный":
@@ -223,13 +218,6 @@ export const RegistrationForm = () => {
         let newCamps = prev.includes(camp)
           ? prev.filter((c) => c !== camp)
           : [...prev, camp];
-  
-        if ((ageAtCampStart === 12 || ageAtCampStart === 11) && camp.name === "Детский" && !newCamps.includes(camp)) {
-          const teenCamp = campList.find((c) => c.name === "Подростковый");
-          if (teenCamp) {
-            newCamps = newCamps.filter((c) => c.id !== teenCamp.id);
-          }
-        }
 
         if ((ageAtCampStart === 15 || ageAtCampStart === 14) && camp.name === "Подростковый" && !newCamps.includes(camp)) {
           const youthCamp = campList.find((c) => c.name === "Молодежный");
@@ -469,7 +457,7 @@ export const RegistrationForm = () => {
                     disableTouchListener
                     title={<>
                       • Детский: от 7 до 12 лет (6 лет с сопровождением) <br />
-                      • Подростковый: от 13 до 16 лет (12 лет только с регистрацией в детский) <br />
+                      • Подростковый: от 12 до 16 лет (12 лет только с регистрацией в детский) <br />
                       • Молодежный: от 16 лет (15 лет только с регистрацией в подростковый)</>}
                     arrow
                   >

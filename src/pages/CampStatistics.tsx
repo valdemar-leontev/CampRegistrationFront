@@ -16,94 +16,64 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart"
 import { motion, AnimatePresence } from "framer-motion"
+import apiClient from '@/axios'
 
-const camps = [
-  {
-    id: 1,
-    name: "Детский лагерь",
-    registered: 126,
-    waiting: 57,
-    limit: 200,
-    colorRegistered: "#3b82f6", // Синий
-    colorWaiting: "#f59e0b", // Оранжевый
-    colorFree: "#10b981", // Зеленый
-  },
-  {
-    id: 2,
-    name: "Подростковый лагерь",
-    registered: 98,
-    waiting: 42,
-    limit: 180,
-    colorRegistered: "#3b82f6",
-    colorWaiting: "#f59e0b",
-    colorFree: "#10b981",
-  },
-  {
-    id: 3,
-    name: "Мужской лагерь",
-    registered: 85,
-    waiting: 31,
-    limit: 150,
-    colorRegistered: "#3b82f6",
-    colorWaiting: "#f59e0b",
-    colorFree: "#10b981",
-  },
-  {
-    id: 4,
-    name: "Общецерковный лагерь",
-    registered: 110,
-    waiting: 45,
-    limit: 200,
-    colorRegistered: "#3b82f6",
-    colorWaiting: "#f59e0b",
-    colorFree: "#10b981",
-  },
-  {
-    id: 5,
-    name: "Молодёжный лагерь",
-    registered: 110,
-    waiting: 38,
-    limit: 180,
-    colorRegistered: "#3b82f6",
-    colorWaiting: "#f59e0b",
-    colorFree: "#10b981",
-  },
-]
-
+interface ICampStatistic {
+  id: number
+  name: string
+  seats_limit: number
+  seats_remain: number
+  active_count: number
+  wait_payment: number
+  on_confirmation: number
+  paid: number
+  booked: number
+}
 
 export const CampRegistrationStats = () => {
   const [currentCampIndex, setCurrentCampIndex] = useState(0)
   const [direction, setDirection] = useState(1)
   const [displayedCampIndex, setDisplayedCampIndex] = useState(0)
   const [isTransitioning, setIsTransitioning] = useState(false)
+  const [campStatistics, setCampStatistics] = useState<ICampStatistic[]>([])
+  const [isLoading, setIsLoading] = useState(true)
 
-  const currentCamp = camps[currentCampIndex]
-  const displayedCamp = camps[displayedCampIndex]
-  const totalParticipants = displayedCamp.limit
-  const freeSpots = Math.max(0, displayedCamp.limit - displayedCamp.registered - displayedCamp.waiting)
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await apiClient.get('registrations/analytics')
+        setCampStatistics(response.data)
+      } catch (error) {
+        console.error('Error fetching camp statistics:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    fetchData()
+  }, [])
 
   const nextCamp = () => {
-    if (isTransitioning) return
+    if (isTransitioning || campStatistics.length === 0) return
     setDirection(1)
     setIsTransitioning(true)
-    setCurrentCampIndex((prev) => (prev + 1) % camps.length)
+    setCurrentCampIndex((prev) => (prev + 1) % campStatistics.length)
   }
 
   const prevCamp = () => {
-    if (isTransitioning) return
+    if (isTransitioning || campStatistics.length === 0) return
     setDirection(-1)
     setIsTransitioning(true)
-    setCurrentCampIndex((prev) => (prev - 1 + camps.length) % camps.length)
+    setCurrentCampIndex((prev) => (prev - 1 + campStatistics.length) % campStatistics.length)
   }
 
   useEffect(() => {
-    if (currentCampIndex !== displayedCampIndex && !isTransitioning) {
+    if (currentCampIndex !== displayedCampIndex && !isTransitioning && campStatistics.length > 0) {
       setIsTransitioning(true)
     }
-  }, [currentCampIndex, displayedCampIndex])
+  }, [currentCampIndex, displayedCampIndex, campStatistics.length])
 
   useEffect(() => {
-    if (!isTransitioning) return
+    if (!isTransitioning || campStatistics.length === 0) return
 
     const timer = setTimeout(() => {
       setDisplayedCampIndex(currentCampIndex)
@@ -111,17 +81,37 @@ export const CampRegistrationStats = () => {
     }, 100)
 
     return () => clearTimeout(timer)
-  }, [isTransitioning, currentCampIndex])
+  }, [isTransitioning, currentCampIndex, campStatistics.length])
+
+  if (isLoading) {
+    return (
+      <Card className="flex flex-col min-h-[450px] items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
+        <p className="mt-4">Загрузка данных...</p>
+      </Card>
+    )
+  }
+
+  if (campStatistics.length === 0) {
+    return (
+      <Card className="flex flex-col min-h-[450px] items-center justify-center">
+        <p>Нет данных для отображения</p>
+      </Card>
+    )
+  }
+
+  const currentCamp = campStatistics[currentCampIndex]
+  const displayedCamp = campStatistics[displayedCampIndex]
+
 
   return (
-    <Card className="flex flex-col min-h-[400px]">
-      <div className='text-[20px] font-bold bg-red-400 text-white'>В РАЗРАБОТКЕ!!!</div>
+    <Card className="flex flex-col !overflow-scroll">
       <CardHeader className="items-center pb-0">
         <div className="flex items-center gap-4">
           <button
             onClick={prevCamp}
             disabled={isTransitioning}
-            className="p-1 rounded-full transition-colors disabled:opacity-50"
+            className="p-1 rounded-full transition-colors disabled:opacity-50 hover:bg-gray-100"
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
@@ -143,37 +133,37 @@ export const CampRegistrationStats = () => {
           <button
             onClick={nextCamp}
             disabled={isTransitioning}
-            className="p-1 rounded-full transition-colors disabled:opacity-50"
+            className="p-1 rounded-full transition-colors disabled:opacity-50 hover:bg-gray-100"
           >
             <ChevronRight className="h-5 w-5" />
           </button>
         </div>
       </CardHeader>
 
-      <CardContent className="flex flex-1 items-center pb-0">
+      <CardContent className="flex flex-1 items-center pb-0 min-h-[250px] ">
         {!isTransitioning && (
           <ChartContainer
             config={{
-              registered: {
-                label: "Подтверждено",
-                color: displayedCamp.colorRegistered,
+              paid: {
+                label: "Одобрено",
+                color: "#3b82f6",
               },
-              waiting: {
-                label: "На проверке",
-                color: displayedCamp.colorWaiting,
+              booked: {
+                label: "Резерв",
+                color: "#ef4444",
               },
               free: {
                 label: "Свободно",
-                color: displayedCamp.colorFree,
+                color: "#10b981",
               },
             }}
             className="mx-auto aspect-square w-full max-w-[250px]"
           >
             <RadialBarChart
               data={[{
-                registered: displayedCamp.registered,
-                waiting: displayedCamp.waiting,
-                free: freeSpots,
+                paid: displayedCamp.paid,
+                booked: displayedCamp.booked,
+                free: displayedCamp.seats_remain,
               }]}
               endAngle={360}
               innerRadius={80}
@@ -194,14 +184,14 @@ export const CampRegistrationStats = () => {
                             y={(viewBox.cy || 0) - 16}
                             className="fill-black text-2xl font-bold"
                           >
-                            {totalParticipants}
+                            {displayedCamp.seats_limit}
                           </tspan>
                           <tspan
                             x={viewBox.cx}
                             y={(viewBox.cy || 0) + 4}
                             className="fill-black"
                           >
-                            Участников
+                            Мест всего
                           </tspan>
                         </text>
                       )
@@ -210,30 +200,30 @@ export const CampRegistrationStats = () => {
                 />
               </PolarRadiusAxis>
               <RadialBar
-                dataKey="registered"
+                dataKey="paid"
                 stackId="a"
                 cornerRadius={5}
-                fill={displayedCamp.colorRegistered}
+                fill="#3b82f6"
                 className="stroke-transparent stroke-2"
                 animationBegin={0}
                 animationDuration={1000}
               />
               <RadialBar
-                dataKey="waiting"
-                fill={displayedCamp.colorWaiting}
+                dataKey="booked"
                 stackId="a"
                 cornerRadius={5}
+                fill="#ef4444"
                 className="stroke-transparent stroke-2"
-                animationBegin={500}
+                animationBegin={300}
                 animationDuration={1000}
               />
               <RadialBar
                 dataKey="free"
-                fill={displayedCamp.colorFree}
                 stackId="a"
                 cornerRadius={5}
+                fill="#10b981"
                 className="stroke-transparent stroke-2"
-                animationBegin={1000}
+                animationBegin={900}
                 animationDuration={1000}
               />
             </RadialBarChart>
@@ -241,24 +231,24 @@ export const CampRegistrationStats = () => {
         )}
       </CardContent>
 
-      <CardFooter className="flex-col gap-2 text-sm">
-        <AnimatePresence mode="wait" custom={direction}>
-          <motion.div
-            key={currentCamp.id}
-            custom={direction}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="flex flex-col gap-2 w-full"
-          >
-            <div className="flex justify-between leading-none text-muted-foreground">
-              <span>Подтверждено: {displayedCamp.registered}</span>
-              <span>На проверке: {displayedCamp.waiting}</span>
-              <span>Свободно: {freeSpots}</span>
-            </div>
-          </motion.div>
-        </AnimatePresence>
+      <CardFooter className="p-3 flex justify-between gap-2 text-xs border-t">
+        <div className="flex flex-col items-center p-1">
+          <div className="w-3 h-3 rounded-full bg-blue-500 mb-1"></div>
+          <span className="font-medium text-blue-600">Одобрено</span>
+          <span className="text-gray-600">{displayedCamp.paid}</span>
+        </div>
+
+        <div className="flex flex-col items-center p-1">
+          <div className="w-3 h-3 rounded-full bg-green-500 mb-1"></div>
+          <span className="font-medium text-green-600">Свободно</span>
+          <span className="text-gray-600">{displayedCamp.seats_remain}</span>
+        </div>
+
+        <div className="flex flex-col items-center p-1">
+          <div className="w-3 h-3 rounded-full bg-[#ef4444] mb-1"></div>
+          <span className="font-medium text-green-600">Резерв</span>
+          <span className="text-gray-600">{displayedCamp.booked}</span>
+        </div>
       </CardFooter>
     </Card>
   )

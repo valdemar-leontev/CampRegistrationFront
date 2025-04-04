@@ -35,7 +35,7 @@ export const CampInfoPage: FC = () => {
       dayText: '6 дней',
       days: 6,
       prices: { April: 500, May: 800, June: 1000, July: 1200 },
-      ageRange: "13-16 лет (12 лет только с регистрацией в детский)",
+      ageRange: "12-16 лет",
       icon: <BiCool className="inline mr-1" size={32} />
     },
     {
