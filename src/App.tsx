@@ -8,6 +8,7 @@ import { MyRegistrationPage } from './pages/MyRegistrationPage';
 import { AdminRegistrationsPage } from './pages/AdminRegistrationsPage';
 import { useUserStore } from './stores/UserStore';
 import { CampRegistrationStats } from './pages/CampStatistics';
+import { ExportPage } from './pages/ExportPage';
 
 const App = () => {
   const { activeTab } = useTabStore();
@@ -44,6 +45,12 @@ const App = () => {
         </div>
       )}
 
+      {activeTab === "export" && (
+        <div>
+          <ExportPage />
+        </div>
+      )}
+
       {activeTab === "info" && (
         <div>
           <CampInfoPage />
@@ -55,6 +62,7 @@ const App = () => {
           <FAQ />
         </div>
       )}
+
     </motion.div >
   );
 };

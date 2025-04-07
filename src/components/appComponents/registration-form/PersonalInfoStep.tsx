@@ -1,6 +1,6 @@
 import { IRegistrationForm } from '@/models/IRegistrationForm';
 import { TextField } from "@mui/material";
-import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
+import { LocalizationProvider, DateField } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 // @ts-ignore
@@ -38,9 +38,7 @@ export const PersonalInfoStep: FC<IPersonalInfoStepProps> = ({ form }) => {
         helperText={formState.errors.city?.message}
       />
       <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ru">
-        <DatePicker
-          maxDate={dayjs()}
-          minDate={dayjs().subtract(100, 'year')}
+        <DateField
           label="Дата рождения"
           value={watch("dateOfBirth") ? dayjs(watch("dateOfBirth")) : null}
           onChange={(date) => {
@@ -49,12 +47,18 @@ export const PersonalInfoStep: FC<IPersonalInfoStepProps> = ({ form }) => {
             } else {
               setValue("dateOfBirth", new Date());
             }
+
+            console.log(date);
+            
           }}
-          format="DD MMMM YYYY"
+          format="DD MMM YYYY"
+          maxDate={dayjs()}
+          minDate={dayjs().subtract(100, 'year')}
           slotProps={{
             textField: {
               error: !!formState.errors.dateOfBirth,
               helperText: formState.errors.dateOfBirth?.message,
+              onKeyDown: (e) => e.stopPropagation(),
             },
           }}
         />

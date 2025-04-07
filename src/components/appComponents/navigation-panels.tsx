@@ -86,6 +86,16 @@ export const NavigationPanels = () => {
                     <FiPieChart size={18} />
                     <span>Статистика</span>
                   </TabsTrigger>
+
+                  {/* <TabsTrigger
+                    value="export"
+                    className={`justify-start gap-3 !px-2 rounded-2xl transition-all ${activeTab === 'export' ? 'bg-gray-100 font-medium scale-110' : 'hover:bg-gray-50'
+                      }`}
+                    onClick={() => setActiveTab("export")}
+                  >
+                    <FiPieChart size={18} />
+                    <span>Выгрузка</span>
+                  </TabsTrigger> */}
                 </motion.div>
               </PopoverContent>
             </Popover>
