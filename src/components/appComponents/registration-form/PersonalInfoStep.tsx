@@ -51,7 +51,7 @@ export const PersonalInfoStep: FC<IPersonalInfoStepProps> = ({ form }) => {
             console.log(date);
             
           }}
-          format="DD MM YYYY"
+          format="DD.MM.YYYY"
           maxDate={dayjs()}
           minDate={dayjs().subtract(100, 'year')}
           slotProps={{
