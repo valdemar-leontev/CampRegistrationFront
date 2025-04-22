@@ -88,7 +88,7 @@ const Root = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsVisible(true);
-    }, 1500);
+    }, 3000);
 
     return () => clearTimeout(timer);
   }, []);

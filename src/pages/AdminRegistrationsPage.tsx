@@ -337,10 +337,10 @@ export const AdminRegistrationsPage = () => {
           <TableHeader>
             <TableRow className="bg-blue-100 !border-none sticky top-0 z-10">
               <TableHead className="py-3 px-4 font-bold text-center text-[16px] rounded-s-[40px]">Статус</TableHead>
-              <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Церковь</TableHead>
-              <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Отдых</TableHead>
               <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Фамилия</TableHead>
               <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Имя</TableHead>
+              <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Церковь</TableHead>
+              <TableHead className="py-3 px-4 font-bold text-center text-[16px]">Отдых</TableHead>
               <TableHead className="py-3 px-4 font-bold text-center text-[16px] text-nowrap">Дата регистрации</TableHead>
               <TableHead className="py-3 px-4 font-bold text-center text-[16px] text-nowrap ">Сумма</TableHead>
               <TableHead className="py-3 px-4 font-bold text-center text-[16px] rounded-e-[40px]">Возраст</TableHead>
@@ -371,14 +371,15 @@ export const AdminRegistrationsPage = () => {
                     </span>
                   </div>
                 </TableCell>
+                <TableCell className="py-2 px-4 text-nowrap">{registration.lastName}</TableCell>
+                <TableCell className="py-2 px-4 text-nowrap">{registration.name}</TableCell>
                 <TableCell className="py-2 px-4 text-nowrap">{registration.church}</TableCell>
                 <TableCell className="py-2 px-4 text-nowrap text-left">
                   {registration.registrationLinkPrice!.map((link, index) => (
                     <div key={index}>{++index}. {link.campName}</div>
                   ))}
                 </TableCell>
-                <TableCell className="py-2 px-4 text-nowrap">{registration.lastName}</TableCell>
-                <TableCell className="py-2 px-4 text-nowrap">{registration.name}</TableCell>
+
                 <TableCell className="py-2 px-4 text-nowrap">
                   {dayjs(registration.registrationDate).format('D MMMM YYYY')}
                 </TableCell>
