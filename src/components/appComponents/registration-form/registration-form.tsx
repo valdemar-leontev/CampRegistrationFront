@@ -72,7 +72,7 @@ export const RegistrationForm = () => {
     for (const price of prices) {
       const startDate = new Date(price.startDate);
       const endDate = new Date(price.endDate);
-      if (now >= startDate && now <= endDate) {
+      if (now.getMonth() >= startDate.getMonth() && now <= endDate) {
         return price;
       }
     }
@@ -111,7 +111,9 @@ export const RegistrationForm = () => {
       dateOfBirth: undefined,
       phone: "",
       city: "",
-      church: undefined
+      church: undefined,
+      isMedicalWorker: false,
+      isOrganizer: false,
     },
     mode: "onChange"
   });
@@ -158,6 +160,8 @@ export const RegistrationForm = () => {
   };
 
   const validateAgeForCamp = (camp: ICamp, ageAtCampStart: number): boolean => {
+    return true;
+    
     let isValid = true;
     let errorMessage = null;
   
@@ -310,7 +314,9 @@ export const RegistrationForm = () => {
         priceIds: priceList,
         userId: user ? user.id : 0,
         phone: formValues.phone!,
-        churchId: formValues.church
+        churchId: formValues.church,
+        isMedicalWorker: formValues.isMedicalWorker,
+        isOrganizer: formValues.isOrganizer
       };
 
       const response = await apiClient.post(`/registrations`, body);

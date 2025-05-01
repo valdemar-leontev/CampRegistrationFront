@@ -8,6 +8,8 @@ import { useUserStore } from '@/stores/UserStore.ts';
 import { FiUsers, FiPieChart, FiSettings } from "react-icons/fi";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { motion } from "framer-motion";
+import { CiExport } from "react-icons/ci";
+
 
 export const NavigationPanels = () => {
   const { activeTab, setActiveTab } = useTabStore();
@@ -87,15 +89,15 @@ export const NavigationPanels = () => {
                     <span>Статистика</span>
                   </TabsTrigger>
 
-                  {/* <TabsTrigger
+                  <TabsTrigger
                     value="export"
                     className={`justify-start gap-3 !px-2 rounded-2xl transition-all ${activeTab === 'export' ? 'bg-gray-100 font-medium scale-110' : 'hover:bg-gray-50'
                       }`}
                     onClick={() => setActiveTab("export")}
                   >
-                    <FiPieChart size={18} />
+                    <CiExport size={18} />
                     <span>Выгрузка</span>
-                  </TabsTrigger> */}
+                  </TabsTrigger>
                 </motion.div>
               </PopoverContent>
             </Popover>

@@ -17,4 +17,6 @@ export const registrationSchema = z.object({
     ),
   city: z.string().min(1, "Город обязателен"),
   church: z.number().min(1, "Церковь обязательна"),
+  isMedicalWorker: z.boolean(),
+  isOrganizer: z.boolean(),
 });

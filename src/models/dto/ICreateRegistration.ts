@@ -8,4 +8,6 @@ export interface ICreateRegistration {
     userId: number,
     churchId: number,
     phone: string;
+    isMedicalWorker: boolean,
+    isOrganizer: boolean,
 }

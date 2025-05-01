@@ -1,139 +1,117 @@
 "use client"
 
-import { DownloadCloud, FileText, Loader2 } from "lucide-react"
+import { FileText, Loader2, CheckCircle } from "lucide-react"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { motion, AnimatePresence } from "framer-motion"
-import apiClient from '@/axios'
+import { useToast } from "@/hooks/use-toast"
+import { useUserStore } from '@/stores/UserStore'
+import axios from 'axios'
 
 export const ExportPage = () => {
   const [isLoading, setIsLoading] = useState(false)
-  const [progress, setProgress] = useState(0)
   const [isComplete, setIsComplete] = useState(false)
+  const { toast } = useToast()
+  const { user } = useUserStore()
+  const telegramId = user?.telegramId
 
   const handleExport = async () => {
+    if (!telegramId) {
+      toast({
+        title: "Ошибка",
+        description: "Не удалось определить ваш Telegram ID",
+        variant: "destructive",
+      })
+      return
+    }
+
     setIsLoading(true)
-    setProgress(0)
     setIsComplete(false)
 
-    // Имитация процесса выгрузки
-    const interval = setInterval(() => {
-      setProgress(prev => {
-        if (prev >= 90) {
-          clearInterval(interval)
-          return prev
-        }
-        return prev + 10
-      })
-    }, 300)
-
     try {
-      // Замените на реальный API-вызов
-      await apiClient.post('/export/excel', { /* параметры */ })
-
-      clearInterval(interval)
-      setProgress(100)
+      await axios.post(`https://slovo-istiny-kzn.ru:7443/send-registration-journal?telegramId=${telegramId}`)
+      
       setIsComplete(true)
-
-      // toast.success("Файл успешно сформирован", {
-      //   description: "Данные готовы к скачиванию",
-      //   action: {
-      //     label: "Скачать",
-      //     onClick: () => window.open('/download/excel', '_blank')
-      //   }
-      // })
+      toast({
+        title: "Файл отправлен",
+        description: "Проверьте свои личные сообщения в Telegram",
+      })
     } catch (error) {
-      clearInterval(interval)
-      // toast.error("Ошибка при выгрузке", {
-      //   description: "Попробуйте еще раз позже"
-      // })
+      toast({
+        title: "Ошибка при отправке",
+        description: "Пожалуйста, попробуйте еще раз позже",
+        variant: "destructive",
+      })
+      console.error("Export error:", error)
     } finally {
       setIsLoading(false)
     }
   }
 
   return (
-    <Card className="w-full max-w-md border-0 shadow-lg rounded-2xl overflow-hidden bg-gradient-to-br from-white to-gray-50">
-      <CardHeader className="pb-2">
+    <Card className="w-full max-w-md border-0 shadow-xl rounded-3xl overflow-hidden bg-gradient-to-br from-white to-gray-50">
+      <CardHeader className="pb-4">
         <CardTitle className="text-2xl font-bold text-gray-800 flex items-center gap-3">
           <FileText className="h-8 w-8 text-blue-500" />
-          <span>Экспорт данных</span>
+          Экспорт данных
         </CardTitle>
       </CardHeader>
 
       <CardContent className="p-6 pt-0">
         <div className="space-y-6">
-          <div className="space-y-2">
-            <p className="text-gray-600">Выберите формат и параметры экспорта:</p>
-
-            <div className="grid grid-cols-2 gap-3 mt-4">
-              <div className="border rounded-lg p-3 hover:border-blue-400 transition-colors cursor-pointer">
-                <div className="flex items-center gap-2">
-                  <div className="bg-blue-100 p-2 rounded-full">
-                    <FileText className="h-5 w-5 text-blue-600" />
-                  </div>
-                  <span className="font-medium">Excel (.xlsx)</span>
-                </div>
-              </div>
-
-              <div className="border rounded-lg p-3 opacity-50 cursor-not-allowed">
-                <div className="flex items-center gap-2">
-                  <div className="bg-gray-100 p-2 rounded-full">
-                    <FileText className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <span className="font-medium text-gray-400">PDF (скоро)</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
           <AnimatePresence mode="wait">
-            {isLoading ? (
+            {isLoading && (
               <motion.div
-                initial={{ opacity: 0, y: 10 }}
+                key="loading"
+                initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
-                className="space-y-3"
+                transition={{ duration: 0.3 }}
+                className="space-y-4"
               >
-                <div className="flex justify-between text-sm text-gray-600">
-                  <span>Формирование файла...</span>
-                  <span>{progress}%</span>
+                <div className="flex justify-center items-center gap-3 text-sm text-gray-600">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <span>Отправляем файл в Telegram...</span>
                 </div>
-                {/* <Progress value={progress} className="h-2" /> */}
               </motion.div>
-            ) : isComplete ? (
+            )}
+
+            {isComplete && (
               <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
+                key="complete"
+                initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="bg-green-50 rounded-lg p-4 text-center"
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.4 }}
+                className="bg-green-50 rounded-lg p-5 text-center border border-green-200"
               >
                 <div className="flex flex-col items-center">
-                  <DownloadCloud className="h-8 w-8 text-green-500 mb-2" />
-                  <p className="font-medium text-green-800">Файл готов!</p>
+                  <CheckCircle className="h-8 w-8 text-green-500 mb-3" />
+                  <p className="font-semibold text-green-800">Файл отправлен!</p>
                   <p className="text-sm text-green-600 mt-1">
-                    Нажмите кнопку ниже чтобы скачать
+                    Проверьте свои личные сообщения в Telegram
                   </p>
                 </div>
               </motion.div>
-            ) : null}
+            )}
           </AnimatePresence>
 
           <Button
             onClick={handleExport}
-            disabled={isLoading}
+            disabled={isLoading || isComplete}
             size="lg"
             className="w-full rounded-xl shadow-md hover:shadow-lg transition-shadow"
           >
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Формируем файл...
+                Отправляем...
               </>
             ) : isComplete ? (
-              <>Скачать Excel файл</>
+              <>Отправлено в Telegram</>
             ) : (
-              <>Экспортировать в Excel</>
+              <>Экспортировать в Telegram</>
             )}
           </Button>
         </div>

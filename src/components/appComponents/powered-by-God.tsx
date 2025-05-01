@@ -13,8 +13,7 @@ const PoweredByGod: FC = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  // Генерация частиц
-  const particles = Array.from({ length: 30 }).map((_, i) => {
+  const particles = Array.from({ length: 10 }).map((_, i) => {
     const size = Math.random() * 10 + 5;
     return (
       <motion.div

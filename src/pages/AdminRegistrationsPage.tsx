@@ -24,7 +24,8 @@ import { useUserStore } from '@/stores/UserStore';
 import { AccordionItem, AccordionTrigger, AccordionContent, Accordion } from '@radix-ui/react-accordion';
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationLink, PaginationNext, PaginationPrevious, PaginationItem } from '@/components/ui/pagination';
 import { CiFilter } from "react-icons/ci";
-
+import { CiMedicalCase } from "react-icons/ci";
+import { VscOrganization } from "react-icons/vsc";
 
 
 interface IAdminRegistration {
@@ -47,6 +48,9 @@ interface IAdminRegistration {
   }[];
   registrationStatus: string;
   church: string;
+  phone: string;
+  isMedicalWorker: boolean;
+  isOrganizer: boolean;
 }
 
 const renderPaymentCheck = (paymentCheck: string) => {
@@ -532,6 +536,7 @@ export const AdminRegistrationsPage = () => {
                       <div className='text-[18px]'><strong>Город:</strong> {selectedRegistration!.city}</div>
                       <div className='text-[18px]'><strong>Церковь:</strong> {selectedRegistration!.church}</div>
                       <div className='text-[18px]'><strong>Дата регистрации:</strong> {dayjs(selectedRegistration!.registrationDate).format('D MMMM YYYY, HH:mm')}</div>
+                      <div className='text-[18px]'><strong>Телефон:</strong> {selectedRegistration!.phone}</div>
                       <div className='text-[18px]'><strong>Статус:</strong> {selectedRegistration!.registrationStatus}</div>
                       <div className='text-[18px]'><strong>Летний отдых:</strong></div>
                       <ul>
@@ -571,10 +576,27 @@ export const AdminRegistrationsPage = () => {
                         })}
                       </ul>
 
-                      <div className='text-blue-500 font-bold mt-3'>
+                      <div className='text-blue-500 font-bold mt-3 mb-10'>
                         ИТОГО:{' '}
                         <span>{totalAmount}₽</span>
                       </div>
+
+
+
+                      {selectedRegistration!.isMedicalWorker ?
+                        <div className='flex items-center gap-2'>
+                          <CiMedicalCase size={20} />
+                          <div className='text-[18px]'><strong>Обладает мед. знаниями:</strong> Да</div>
+                        </div> :
+                        <></>
+                      }
+                      {selectedRegistration!.isOrganizer ?
+                        <div className='flex items-center gap-2'>
+                          <VscOrganization size={20} />
+                          <div className='text-[18px]'><strong>Из команды организаторов:</strong> Да</div>
+                        </div> :
+                        <></>
+                      }
                     </div>
 
                     <PhotoProvider>

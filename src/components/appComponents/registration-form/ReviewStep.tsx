@@ -6,6 +6,10 @@ import { IRegistrationForm } from '@/models/IRegistrationForm';
 import { Typography } from "@mui/material";
 import dayjs from "dayjs";
 import { UseFormReturn } from 'react-hook-form';
+import { CiMedicalCase } from "react-icons/ci";
+import { VscOrganization } from "react-icons/vsc";
+
+
 
 interface ReviewStepProps {
   form: UseFormReturn<IRegistrationForm>;
@@ -87,6 +91,23 @@ export const ReviewStep = ({ form, selectedCamps, getCurrentPrice }: ReviewStepP
             </div>
           );
         })}
+
+        {form.getValues("isMedicalWorker") && (
+          <div className='flex flex-row items-center gap-2'>
+            <div className='rounded-full p-1'>
+              <CiMedicalCase size={20} />
+            </div>
+            <Typography variant="body2" className='text-xs text-gray-500 mt-1'>Обладает медицинскими знаниями</Typography>
+          </div>
+        )}
+        {form.getValues("isOrganizer") && (
+          <div className='flex flex-row items-center gap-2'>
+            <div className='rounded-full p-1'>
+              <VscOrganization size={20} />
+            </div>
+            <Typography variant="body2" className='text-xs text-gray-500 mt-1'>Член команды организаторов</Typography>
+          </div>
+        )}
       </div>
 
       <Typography variant="h5" className="text-xl font-semibold text-gray-900 !mt-6">

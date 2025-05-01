@@ -55,6 +55,9 @@ interface IRegistration {
   registrationStatus: {
     name: string;
   };
+  phone: string;
+  isMedicalWorker: boolean;
+  isOrganizer: boolean;
 }
 
 const renderPaymentCheck = (paymentCheck: string) => {
@@ -492,9 +495,18 @@ export const MyRegistrationPage = () => {
                           <div className='text-[18px]'><strong>Имя:</strong> {selectedRegistration!.name}</div>
                           <div className='text-[18px]'><strong>Дата рождения:</strong> {dayjs(selectedRegistration!.birthdate).format('D MMMM YYYY')}</div>
                           <div className='text-[18px]'><strong>Город:</strong> {selectedRegistration!.city}</div>
+                          <div className='text-[18px]'><strong>Телефон:</strong> {selectedRegistration!.phone}</div>
                           <div className='text-[18px]'><strong>Дата регистрации:</strong> {dayjs(selectedRegistration!.registrationDate).format('D MMMM YYYY, HH:mm')}</div>
                           <div className='text-[18px]'><strong>Статус:</strong> {selectedRegistration!.registrationStatus.name}</div>
                           <div className='text-[18px]'><strong>Летний отдых:</strong></div>
+                          {selectedRegistration!.isMedicalWorker ?
+                            <div className='text-[18px]'><strong>Обладает мед. знаниями:</strong> Да</div> :
+                            <></>
+                          }
+                          {selectedRegistration!.isOrganizer ?
+                            <div className='text-[18px]'><strong>Из команды организаторов:</strong> Да</div> :
+                            <></>
+                          }
                           <ul>
                             {selectedRegistration!.registrationLinkPrice.map((link, index) => {
                               const campPrice = selectedRegistration.registrationLinkPrice.find(rp => rp.campName === link.campName);

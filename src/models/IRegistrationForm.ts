@@ -10,4 +10,8 @@ export interface IRegistrationForm {
   city: string;
 
   church: number;
+
+  isMedicalWorker: boolean;
+
+  isOrganizer: boolean;
 }
