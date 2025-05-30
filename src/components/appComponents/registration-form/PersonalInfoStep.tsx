@@ -5,18 +5,20 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 // @ts-ignore
 import { MuiTelInput, matchIsValidTel } from 'mui-tel-input';
-import { FC } from 'react';
+import { Dispatch, FC, SetStateAction } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { motion } from 'framer-motion';
 import { FaUserMd, FaUsersCog } from 'react-icons/fa';
+import { ICamp } from '@/models/ICamp';
 
 dayjs.locale('ru');
 
 interface IPersonalInfoStepProps {
   form: UseFormReturn<IRegistrationForm>;
+  setSelectedCamps: Dispatch<SetStateAction<ICamp[]>>;
 }
 
-export const PersonalInfoStep: FC<IPersonalInfoStepProps> = ({ form }) => {
+export const PersonalInfoStep: FC<IPersonalInfoStepProps> = ({ form, setSelectedCamps }) => {
   const { register, watch, setValue, formState, clearErrors, setError } = form;
 
   return (
@@ -96,7 +98,9 @@ export const PersonalInfoStep: FC<IPersonalInfoStepProps> = ({ form }) => {
             ${watch("isMedicalWorker")
               ? "bg-blue-50 border-2 border-blue-200"
               : "bg-gray-50 border-2 border-gray-200"}`}
-          onClick={() => setValue("isMedicalWorker", !watch("isMedicalWorker"))}
+          onClick={() => {
+            setValue("isMedicalWorker", !watch("isMedicalWorker"));
+          }}
         >
           <div className={`w-6 h-6 rounded-md flex items-center justify-center mr-3 transition-all
             ${watch("isMedicalWorker")
@@ -133,7 +137,10 @@ export const PersonalInfoStep: FC<IPersonalInfoStepProps> = ({ form }) => {
             ${watch("isOrganizer")
               ? "bg-purple-50 border-2 border-purple-200"
               : "bg-gray-50 border-2 border-gray-200"}`}
-          onClick={() => setValue("isOrganizer", !watch("isOrganizer"))}
+          onClick={() => {
+            setValue("isOrganizer", !watch("isOrganizer"))
+            setSelectedCamps([]);
+          }}
         >
           <div className={`w-6 h-6 rounded-md flex items-center justify-center mr-3 transition-all
             ${watch("isOrganizer")

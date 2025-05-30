@@ -85,7 +85,7 @@ export const CampInfoPage: FC = () => {
     const currentMonthIndex = months.findIndex(m =>
       m.toLowerCase() === currentMonth.toLowerCase()
     );
-    return months.slice(Math.max(0, currentMonthIndex - 1));
+    return months.slice(Math.max(0, currentMonthIndex));
   };
 
   const calculateTotalPrice = (camp: typeof camps[0], month: keyof typeof camp.prices) => {

@@ -159,12 +159,14 @@ export const RegistrationForm = () => {
     setIsExistedCampRegistrationTooltipOpen(true);
   };
 
-  const validateAgeForCamp = (camp: ICamp, ageAtCampStart: number): boolean => {
-    return true;
-    
+  const validateAgeForCamp = useCallback((camp: ICamp, ageAtCampStart: number): boolean => {
+    if (form.watch('isOrganizer') == true) {
+      return true
+    }
+
     let isValid = true;
     let errorMessage = null;
-  
+
     switch (camp.name) {
       case "Детский":
         if (ageAtCampStart < 6 || ageAtCampStart > 12) {
@@ -188,7 +190,7 @@ export const RegistrationForm = () => {
           errorMessage = "В 15 лет можно ехать в молодежный отдых только при регистрации в подростковый";
           isValid = false;
         }
-  
+
         if (ageAtCampStart < 15) {
           errorMessage = `Недопустимый возраст для молодежного отдыха (только от 15 лет)`;
           isValid = false;
@@ -197,14 +199,14 @@ export const RegistrationForm = () => {
       default:
         break;
     }
-  
+
     if (errorMessage) {
       setSnackbarMessage(errorMessage);
       setSnackbarOpen(true);
     }
-  
+
     return isValid;
-  };
+  }, [form.watch('isOrganizer')]);
 
   const toggleCamp = (camp: ICamp) => {
     const birthDate = form.getValues('dateOfBirth');
@@ -213,10 +215,10 @@ export const RegistrationForm = () => {
       setSnackbarOpen(true);
       return;
     }
-  
+
     const campStartDate = new Date(camp.startDate);
     const ageAtCampStart = calculateAge(birthDate, campStartDate);
-  
+
     if (validateAgeForCamp(camp, ageAtCampStart)) {
       setSelectedCamps((prev) => {
         let newCamps = prev.includes(camp)
@@ -229,23 +231,23 @@ export const RegistrationForm = () => {
             newCamps = newCamps.filter((c) => c.id !== youthCamp.id);
           }
         }
-  
+
         return newCamps;
       });
     }
   };
-  
+
   const calculateAge = (birthDate: Date, targetDate: Date) => {
     const birth = new Date(birthDate);
     const target = new Date(targetDate);
-    
+
     let age = target.getFullYear() - birth.getFullYear();
     const monthDiff = target.getMonth() - birth.getMonth();
-    
+
     if (monthDiff < 0 || (monthDiff === 0 && target.getDate() < birth.getDate())) {
       age--;
     }
-    
+
     return age;
   };
 
@@ -515,7 +517,7 @@ export const RegistrationForm = () => {
             </Box>}
 
             <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-5 overflow-x-scroll pt-5">
-              {step === 0 && <PersonalInfoStep form={form} />}
+              {step === 0 && <PersonalInfoStep form={form} setSelectedCamps={setSelectedCamps} />}
 
               {step === 1 && (
                 <ChurchStep
@@ -541,7 +543,7 @@ export const RegistrationForm = () => {
                   form={form}
                   selectedCamps={selectedCamps}
                   getCurrentPrice={getCurrentPrice}
-                  // age={age}
+                // age={age}
                 />
               )}
 
