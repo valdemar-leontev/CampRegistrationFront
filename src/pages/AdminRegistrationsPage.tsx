@@ -538,6 +538,7 @@ export const AdminRegistrationsPage = () => {
                       <div className='text-[18px]'><strong>Дата регистрации:</strong> {dayjs(selectedRegistration!.registrationDate).format('D MMMM YYYY, HH:mm')}</div>
                       <div className='text-[18px]'><strong>Телефон:</strong> {selectedRegistration!.phone}</div>
                       <div className='text-[18px]'><strong>Статус:</strong> {selectedRegistration!.registrationStatus}</div>
+                      <div className='text-[18px]'><strong>Церковь:</strong> {selectedRegistration!.church}</div>
                       <div className='text-[18px]'><strong>Летний отдых:</strong></div>
                       <ul>
                         {selectedRegistration!.registrationLinkPrice.map((link, index) => {

@@ -9,17 +9,16 @@ import { UseFormReturn } from 'react-hook-form';
 import { CiMedicalCase } from "react-icons/ci";
 import { VscOrganization } from "react-icons/vsc";
 
-
-
 interface ReviewStepProps {
   form: UseFormReturn<IRegistrationForm>;
   selectedCamps: ICamp[];
-  getCurrentPrice: (prices: IPrice[]) => IPrice | null;
+  getCurrentPrice: (prices: IPrice[], churchId?: number) => IPrice | null;
 }
 
 export const ReviewStep = ({ form, selectedCamps, getCurrentPrice }: ReviewStepProps) => {
   const { watch } = form;
   const dateOfBirth = watch("dateOfBirth");
+  const churchId = watch('church');
 
   const getAgeAtCampStart = (campStartDate: Date) => {
     const birth = dayjs(dateOfBirth);
@@ -29,7 +28,8 @@ export const ReviewStep = ({ form, selectedCamps, getCurrentPrice }: ReviewStepP
 
   const totalPrice = selectedCamps.reduce((acc, camp) => {
     const ageAtCampStart = getAgeAtCampStart(camp.startDate);
-    const basePrice = getCurrentPrice(camp.prices)?.totalValue || 0;
+    const basePrice = getCurrentPrice(camp.prices, churchId)?.totalValue || 0;
+
     return acc + getDiscountedPrice(ageAtCampStart, basePrice);
   }, 0);
 
@@ -54,7 +54,7 @@ export const ReviewStep = ({ form, selectedCamps, getCurrentPrice }: ReviewStepP
       <div className="space-y-1 text-gray-700">
         {selectedCamps.map((camp) => {
           const ageAtCampStart = getAgeAtCampStart(camp.startDate);
-          const basePrice = getCurrentPrice(camp.prices)?.totalValue || 0;
+          const basePrice = getCurrentPrice(camp.prices, churchId)?.totalValue || 0;
           const discountedPrice = getDiscountedPrice(ageAtCampStart, basePrice);
           const hasDiscount = discountedPrice !== basePrice;
 

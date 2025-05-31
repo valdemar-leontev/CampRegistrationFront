@@ -1,4 +1,3 @@
-import { ChurchEnum } from '@/models/enums/ChurchEnum';
 import { IChurch } from '@/models/IChurch';
 import { IRegistrationForm } from '@/models/IRegistrationForm';
 import { FormControl, InputLabel, Select, MenuItem, FormHelperText } from "@mui/material";
@@ -39,18 +38,9 @@ export const ChurchStep: FC<ChurchStepProps> = ({ form, churchesList, setSelecte
             <MenuItem
               key={church.id}
               value={church.id}
-              disabled={
-                church.id === ChurchEnum.Другая &&
-                !dayjs().isAfter(dayjs('2025-06-01'))
-              }
             >
               <div className="flex flex-col">
                 <span>{church.name}</span>
-                {church.id === ChurchEnum.Другая && !dayjs().isAfter(dayjs('2025-06-01')) && (
-                  <p className="text-xs text-red-500 mt-1">
-                    Регистрация откроется 1 июня
-                  </p>
-                )}
               </div>
             </MenuItem>
           ))}

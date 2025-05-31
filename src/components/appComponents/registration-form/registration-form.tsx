@@ -42,6 +42,7 @@ import { useDebounce } from '@/hooks/useDebounce';
 import { CampEnum } from '@/models/enums/CampEnum';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
+import { ChurchEnum } from '@/models/enums/ChurchEnum';
 
 dayjs.extend(utc);
 
@@ -67,8 +68,19 @@ export const RegistrationForm = () => {
 
   const [admin, setAdmin] = useState<IAdmin>()
 
-  const getCurrentPrice = (prices: IPrice[]): IPrice | null => {
+  const getCurrentPrice = (prices: IPrice[], churchId?: number): IPrice | null => {
     const now = new Date();
+
+    if (churchId === ChurchEnum.Другая) {
+      for (const price of prices) {
+        const startDate = new Date(price.startDate);
+        if (startDate.getMonth() === 6) {
+          return price;
+        }
+      }
+      return null;
+    }
+
     for (const price of prices) {
       const startDate = new Date(price.startDate);
       const endDate = new Date(price.endDate);
@@ -76,6 +88,7 @@ export const RegistrationForm = () => {
         return price;
       }
     }
+    
     return null;
   };
 
@@ -300,7 +313,7 @@ export const RegistrationForm = () => {
     try {
       const formValues = form.getValues();
       const priceList = selectedCamps.map((camp) => {
-        const currentPrice = getCurrentPrice(camp.prices);
+        const currentPrice = getCurrentPrice(camp.prices, form.getValues('church'));
         if (!currentPrice) {
           throw new Error(`Цена для летнего отдыха ${camp.name} не найдена.`);
         }
@@ -535,6 +548,7 @@ export const RegistrationForm = () => {
                   getCurrentPrice={getCurrentPrice}
                   birthDate={form.getValues('dateOfBirth')}
                   existedRegistrationData={existedRegistrationData}
+                  churchId={form.getValues('church')}
                 />
               )}
 

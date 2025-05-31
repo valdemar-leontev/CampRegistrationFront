@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/pagination"
 import { FaRegSadTear } from 'react-icons/fa';
 import { RegistrationForm } from '@/components/appComponents/registration-form/registration-form';
+import { ChurchEnum } from '@/models/enums/ChurchEnum';
 
 
 interface IRegistration {
@@ -44,6 +45,7 @@ interface IRegistration {
   paymentTypeId: number;
   adminId: number;
   totalSum: number;
+  churchId: number;
   registrationLinkPrice: {
     value: number;
     campName: string;
@@ -58,6 +60,7 @@ interface IRegistration {
   phone: string;
   isMedicalWorker: boolean;
   isOrganizer: boolean;
+  church: { name: string; }
 }
 
 const renderPaymentCheck = (paymentCheck: string) => {
@@ -498,6 +501,7 @@ export const MyRegistrationPage = () => {
                           <div className='text-[18px]'><strong>Телефон:</strong> {selectedRegistration!.phone}</div>
                           <div className='text-[18px]'><strong>Дата регистрации:</strong> {dayjs(selectedRegistration!.registrationDate).format('D MMMM YYYY, HH:mm')}</div>
                           <div className='text-[18px]'><strong>Статус:</strong> {selectedRegistration!.registrationStatus.name}</div>
+                          <div className='text-[18px]'><strong>Церковь:</strong> {selectedRegistration!.church.name}</div>
                           <div className='text-[18px]'><strong>Летний отдых:</strong></div>
                           {selectedRegistration!.isMedicalWorker ?
                             <div className='text-[18px]'><strong>Обладает мед. знаниями:</strong> Да</div> :
@@ -578,9 +582,13 @@ export const MyRegistrationPage = () => {
                                     checked={paymentMethod === PaymentTypeEnum.Cash}
                                     onChange={() => setPaymentMethod(PaymentTypeEnum.Cash)}
                                     className="form-radio h-4 w-4 text-blue-600"
-
+                                    disabled={selectedRegistration.churchId === ChurchEnum.Другая}
                                   />
-                                  <span className="text-gray-700">Наличные</span>
+                                  {selectedRegistration.churchId !== ChurchEnum.Другая ? (
+                                    <span className="text-gray-700">Наличные</span>
+                                  ) : (
+                                    <span className="text-gray-400">Наличные (только для Казанцев)</span>
+                                  )}
                                 </label>
                                 <label className="flex items-center space-x-2">
                                   <input
@@ -590,14 +598,18 @@ export const MyRegistrationPage = () => {
                                     checked={paymentMethod === PaymentTypeEnum.Card}
                                     onChange={() => setPaymentMethod(PaymentTypeEnum.Card)}
                                     className="form-radio h-4 w-4 text-blue-600"
-                                    disabled
+                                    disabled={selectedRegistration.churchId !== ChurchEnum.Другая}
                                   />
-                                  <span className="text-gray-400">Карта (с 1 Июня, для гостей)</span>
+                                  {selectedRegistration.churchId === ChurchEnum.Другая ? (
+                                    <span className="text-gray-700">Карта</span>
+                                  ) : (
+                                    <span className="text-gray-400">Карта (только для гостей)</span>
+                                  )}
                                 </label>
                               </div>
                             </div>
 
-                            {paymentMethod === PaymentTypeEnum.Cash && (
+                            {paymentMethod === PaymentTypeEnum.Cash && selectedRegistration.churchId !== ChurchEnum.Другая && (
                               <div className="bg-white p-6 rounded-2xl shadow-md">
                                 <Typography variant="h6" className="!font-semibold !mb-3 text-gray-800">
                                   Способ оплаты: Наличные
@@ -630,6 +642,9 @@ export const MyRegistrationPage = () => {
                                 </Typography>
                                 <Typography variant="body1" className="text-gray-600 !mt-2">
                                   Банк: <span className="!font-semibold text-gray-900">{admin?.bankName}</span>
+                                </Typography>
+                                <Typography variant="body1" className="text-gray-600 !mt-2">
+                                  Контактный телефон: <span className="!font-semibold text-gray-900"><br />{admin?.phoneNumber}</span>
                                 </Typography>
 
                                 <div className="mt-4">

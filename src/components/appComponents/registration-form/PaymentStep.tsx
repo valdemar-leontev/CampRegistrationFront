@@ -16,7 +16,7 @@ interface PaymentStepProps {
   setPaymentMethod: (value: number) => void;
   paymentTypes: IPaymentType[];
   selectedCamps: ICamp[];
-  getCurrentPrice: (prices: IPrice[]) => IPrice | null;
+  getCurrentPrice: (prices: IPrice[], churchId?: number) => IPrice | null;
   handleCopyCardNumber: () => void;
   handleFileUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
   file: File | null;
@@ -78,7 +78,7 @@ export const PaymentStep = ({
               />
               {paymentType.id === PaymentTypeEnum.Card && (
                 <span className="text-sm text-gray-400">
-                  (после 1 июня, для гостей)
+                  (Для гостей)
                 </span>
               )}
             </div>
@@ -97,7 +97,7 @@ export const PaymentStep = ({
             className="space-y-4"
           >
             <Typography variant="body1">
-              Пожалуйста, переведите сумму <strong>{selectedCamps.reduce((acc, camp) => acc + getCurrentPrice(camp.prices)?.totalValue!, 0)}₽</strong> по данному номеру карты:
+              Пожалуйста, переведите сумму <strong>{selectedCamps.reduce((acc, camp) => acc + getCurrentPrice(camp.prices, selectedChurch!)?.totalValue!, 0)}₽</strong> по данному номеру карты:
             </Typography>
             <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
               <Typography variant="body1" className="font-mono">
@@ -158,7 +158,7 @@ export const PaymentStep = ({
             className="space-y-4"
           >
             <Typography variant="body1">
-              Пожалуйста, передайте сумму <strong>{ getDiscountedPrice(age, selectedCamps.reduce((acc, camp) => acc + getCurrentPrice(camp.prices)?.totalValue!, 0))}₽</strong> следующему человеку:
+              Пожалуйста, передайте сумму <strong>{ getDiscountedPrice(age, selectedCamps.reduce((acc, camp) => acc + getCurrentPrice(camp.prices, selectedChurch!)?.totalValue!, 0))}₽</strong> следующему человеку:
             </Typography>
             <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
               <Typography variant="body1">
